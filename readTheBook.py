@@ -29,10 +29,10 @@ def read_1_BCbook_recipe(pic):
 
     img.save("new1.jpg")
     # left or right page?
-    img_footpage = img.crop((0, img.height * 0.9, img.width, img.height))
+    img_footpage = img.crop((0, img.height * 0.95, img.width, img.height))
     img_footpage.save('img_footpage.jpg')
     try:
-        txt_footpage = reader.readtext(image='img_footpage.jpg')
+        txt_footpage = reader.readtext(image='img_footpage.jpg', text_threshold=.7)
     except:
         print('No text found')
 
@@ -46,7 +46,7 @@ def read_1_BCbook_recipe(pic):
     else:
         # right page
         xr1, yr1, xr2, yr2 = 0, 0, 2 * img.width/3, img.height
-        xi1, xi2, yi1, yi2 = 2 * img.width/3, 0, img.width, img.height*.8
+        xi1, xi2, yi1, yi2 = 2 * img.width/3, 0, img.width*.95, img.height*.8
 
     img_recipe = img.crop((xr1, yr1, xr2, yr2))
     img_recipe.save('img_recipe.jpg')
@@ -57,7 +57,7 @@ def read_1_BCbook_recipe(pic):
     img_ingredients = enhancer.enhance(1)
     img_ingredients.save('img_ingredients.jpg')
     try:
-        ingredients = reader.readtext(image='img_ingredients.jpg', detail=0, paragraph=True, x_ths=2000, y_ths=.2, text_threshold=.1, height_ths=1000)
+        ingredients = reader.readtext(image='img_ingredients.jpg', detail=0, paragraph=True, x_ths=2000, y_ths=.2, text_threshold=.1, height_ths=1000) #, ycenter_ths=.13
         # ingredients = reader.readtext(image='img_ingredients.jpg', detail=0, width_ths=1000, slope_ths=.100)
     except:
         print('No text found')
@@ -65,6 +65,9 @@ def read_1_BCbook_recipe(pic):
     print(ingredients)
     # ref = 'BCp' + ingredients[-1].split(sep=' ')[1]   
     ref = 'BCp' + txt_footpage[0][1].split(sep=' ')[0]
+    print('txt_footpage:')
+    print(txt_footpage)
+    print('ref: ' + ref)
 
     try:
         instructions = reader.readtext(image='img_recipe.jpg', detail=0, paragraph=True, height_ths=0.3, x_ths=0.002) #, x_ths=0.2
@@ -77,7 +80,7 @@ def parse_ingredients(raw_list_of_ingredients: list):
     """Return a dict(name, amount)"""
     # print(raw_list_of_ingredients)    
     result = dict()
-    for item in raw_list_of_ingredients[0:-1]:
+    for item in raw_list_of_ingredients:
         splitted_item = str(item).split(sep=' ')
         if str(splitted_item[0]).isnumeric():
             amount = int(splitted_item[0])
