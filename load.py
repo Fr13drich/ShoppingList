@@ -6,14 +6,13 @@ from classes import Recipe, Menu
 spell = SpellChecker(language='fr')
 spell.distance = 1
 
-def load_all_recipe_files(dir='./json/'):
+def load_all_recipe_files(location='./json/'):
     all_recipes_list = []
-    for root, _dirs, files in os.walk(dir):
+    for root, _dirs, files in os.walk(location):
         for name in files:
-            # print(dir + name)
-            with open(dir + name, 'r', encoding='utf-16') as recipe_file:
+            with open(location + name, 'r', encoding='utf-16') as recipe_file:
                 recipe_dict = json.load(recipe_file)
-                check_spell(recipe_dict['ingredients'])
+                # check_spell(recipe_dict['ingredients'])
                 all_recipes_list.append(Recipe(recipe_dict['ref'], recipe_dict['name'], recipe_dict['ingredients']))
     return all_recipes_list
 
