@@ -8,7 +8,7 @@ spell.distance = 1
 
 def load_all_recipe_files(location='./json/'):
     all_recipes_list = []
-    for root, _dirs, files in os.walk(location):
+    for _root, _dirs, files in os.walk(location):
         for name in files:
             with open(location + name, 'r', encoding='utf-16') as recipe_file:
                 recipe_dict = json.load(recipe_file)
