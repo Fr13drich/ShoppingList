@@ -134,15 +134,10 @@ class App(customtkinter.CTk):
         self.recipes_frame.grid(row=0, column=0, padx=10, pady=(10, 0), sticky="nswe")
         self.ingredients_frame = IngredientsFrame(self)
         self.ingredients_frame.grid(row=0, column=1, padx=10, pady=(10, 0), sticky="nswe")
-        self.button = customtkinter.CTkButton(self, text="make shopping list", command=self.button_callback)
+        self.button = customtkinter.CTkButton(self, text="make shopping list", command=self.generate_shopping_list)
         self.button.grid(row=1, column=0, padx=20, pady=20, columnspan=2)
         
-        # self.checkbox_1 = customtkinter.CTkCheckBox(self, text="checkbox 1")
-        # self.checkbox_1.grid(row=1, column=0, padx=20, pady=(0, 20), sticky="w")
-        # self.checkbox_2 = customtkinter.CTkCheckBox(self, text="checkbox 2")
-        # self.checkbox_2.grid(row=1, column=1, padx=20, pady=(0, 20), sticky="w")
-        
-    def button_callback(self):
+    def generate_shopping_list(self):
         menu = Menu('Hiver')
         for j in range(RecipesFrame.nb_of_week):
             if self.recipes_frame.disable_button_list[j].get():
@@ -151,7 +146,7 @@ class App(customtkinter.CTk):
                 for recipe in all_recipes:
                     if recipe.name == self.recipes_frame.recipe_frame_list[j][i].recipe_picker.get():
                         menu.add_recipe(recipe, self.recipes_frame.recipe_frame_list[j][i].ratio.get())
-                        print(recipe.ref + ': ' + recipe.name)
+                        print(recipe)
                         break
         shopping_list = menu.merge_ingredients()
         text = ''

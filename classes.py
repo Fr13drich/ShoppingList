@@ -27,6 +27,9 @@ class Recipe():
             self.ingredients.append((Ingredient(rest), ingredients_bill[line], unit))
         self.instructions = instructions
 
+    def __str__(self):
+        return f"{self.name} ({self.ref})"
+
 class Menu():
     """A list of recipes"""
     def __init__(self, season='None') -> None:

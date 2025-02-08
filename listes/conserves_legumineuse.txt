@@ -1,0 +1,1 @@
+['Bouillon de poulet', 'Chili mexicain de piments chipotles', 'Choucroute au lard', 'Ragoût de haricots à la tomate et aux saucisses dagneau épicées', 'Ragoût de lentilles et ses saucisses italiennes', 'None', 'None', 'None', 'None', 'None', 'None', 'None', 'None', 'None']
