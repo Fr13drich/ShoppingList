@@ -1,18 +1,13 @@
+from operator import itemgetter
+import json
 import tkinter
 import tkinter.messagebox
 import tkinter.filedialog
 import customtkinter
-import json
-from operator import itemgetter
 import load
 from classes import Recipe, Menu
 
 all_recipes = load.load_all_recipe_files()
-    # for recipe in all_recipes:
-    #     if recipe.name == choice:
-    #         for ingredient, ingredient_bill, unit in recipe.ingredients:
-    #             app.ingredients_frame.ingredients_list.insert("0.0",  ingredient.name + str(ingredient_bill) + unit + '\n')
-    #         break
 
 class RecipeFrame(customtkinter.CTkFrame):
     def __init__(self, master):
@@ -33,14 +28,13 @@ class RecipeFrame(customtkinter.CTkFrame):
 
     def combobox_callback(self, choice=None):
         pass
-                
 
 class RecipesFrame(customtkinter.CTkFrame):
     nb_of_combo = 9
     nb_of_week = 4
     def __init__(self, master):
         super().__init__(master)
-        # super().__init__(parent)
+        self.master = master
         self.recipe_frame_list = []
         self.disable_button_list = []
         values=[r.name for r in all_recipes]
@@ -63,9 +57,8 @@ class RecipesFrame(customtkinter.CTkFrame):
         self.load_button.grid(row=RecipesFrame.nb_of_combo+2, column=1, padx=10, pady=(10, 0))
         self.reset_button = customtkinter.CTkButton(self, text='Reset', command=self.reset_menu)
         self.reset_button.grid(row=RecipesFrame.nb_of_combo+2, column=2, padx=10, pady=(10, 0))
-        # self.merge_button = customtkinter.CTkButton(self, text='Merge', command=self.merge_ingredients)
-        # self.merge_button.grid(row=7, column=3, padx=10, pady=(10, 0))
-
+        self.button = customtkinter.CTkButton(self, text="make shopping list", command=self.generate_shopping_list)
+        self.button.grid(row=RecipesFrame.nb_of_combo+2, column=3, padx=20, pady=20, columnspan=2)
 
     def save_menu(self):
         f = tkinter.filedialog.asksaveasfile(mode='w', defaultextension=".json", )
@@ -95,57 +88,17 @@ class RecipesFrame(customtkinter.CTkFrame):
         for j in range(RecipesFrame.nb_of_week):
             for i in range(RecipesFrame.nb_of_combo):
                 self.recipe_frame_list[j][i].recipe_picker.set('None')
-        self.ingredients_list.delete("0.0", "end")
-    
-    # def merge_ingredients(self):
-    #     self.ingredients_list.delete("0.0", "end")
-    #     menu = Menu('Hiver')
-    #     for j in range(RecipesFrame.nb_of_week):
-    #         for i in range(RecipesFrame.nb_of_combo):
-    #             for recipe in all_recipes:
-    #                 if recipe.name == self.recipe_frame_list[j][i].recipe_picker.get():
-    #                     menu.add_recipe(recipe, self.recipe_frame_list[j][i].ratio.get())
-    #                     print(recipe.ref + ': ' + recipe.name)
-    #                     break
-        
-    #     shopping_list = menu.merge_ingredients()
-    #     a = ''
-    #     for name, amounts in dict(sorted(shopping_list.items(), key=itemgetter(0))).items():
-    #         a += name + ':\t'
-    #         for amount in amounts.items():
-    #             a += str(amount[1]) + ' ' + amount[0] + '\t'
-    #         a += '\n'
-    #     self.ingredients_list.insert("0.0", a)
+        self.master.ingredients_frame.merged_ingredients.delete("0.0", "end")
 
-class IngredientsFrame(customtkinter.CTkFrame):
-    def __init__(self, master):
-        super().__init__(master)
-        self.merged_ingredients = customtkinter.CTkTextbox(self, width=500, height=700, activate_scrollbars=True)
-        self.merged_ingredients.grid(rowspan=6, columnspan=2)
-
-
-class App(customtkinter.CTk):
-    def __init__(self):
-        super().__init__()
-        self.title("Shopping list")
-        self.geometry("1600x1200")
-        # self.grid_columnconfigure((0, 1), weight=1)
-        self.recipes_frame = RecipesFrame(self)
-        self.recipes_frame.grid(row=0, column=0, padx=10, pady=(10, 0), sticky="nswe")
-        self.ingredients_frame = IngredientsFrame(self)
-        self.ingredients_frame.grid(row=0, column=1, padx=10, pady=(10, 0), sticky="nswe")
-        self.button = customtkinter.CTkButton(self, text="make shopping list", command=self.generate_shopping_list)
-        self.button.grid(row=1, column=0, padx=20, pady=20, columnspan=2)
-        
     def generate_shopping_list(self):
         menu = Menu('Hiver')
         for j in range(RecipesFrame.nb_of_week):
-            if self.recipes_frame.disable_button_list[j].get():
+            if self.disable_button_list[j].get():
                 continue
             for i in range(RecipesFrame.nb_of_combo):
                 for recipe in all_recipes:
-                    if recipe.name == self.recipes_frame.recipe_frame_list[j][i].recipe_picker.get():
-                        menu.add_recipe(recipe, self.recipes_frame.recipe_frame_list[j][i].ratio.get())
+                    if recipe.name == self.recipe_frame_list[j][i].recipe_picker.get():
+                        menu.add_recipe(recipe, self.recipe_frame_list[j][i].ratio.get())
                         print(recipe)
                         break
         shopping_list = menu.merge_ingredients()
@@ -155,9 +108,26 @@ class App(customtkinter.CTk):
             for amount in amounts.items():
                 text += str(amount[1]) + ' ' + amount[0] + '\t'
             text += '\n'
-        self.ingredients_frame.merged_ingredients.delete("0.0", "end")
-        self.ingredients_frame.merged_ingredients.insert("0.0", text)
+        self.master.ingredients_frame.merged_ingredients.delete("0.0", "end")
+        self.master.ingredients_frame.merged_ingredients.insert("0.0", text)
 
+class IngredientsFrame(customtkinter.CTkFrame):
+    def __init__(self, master):
+        super().__init__(master)
+        self.merged_ingredients = customtkinter.CTkTextbox(self, width=400, height=800, activate_scrollbars=True)
+        self.merged_ingredients.grid(row=0, column=0, rowspan=6, columnspan=2, sticky="e")
+
+
+class App(customtkinter.CTk):
+    def __init__(self):
+        super().__init__()
+        self.title("Shopping list")
+        self.geometry("1600x1200")
+        self.grid_columnconfigure((0, 1), weight=1)
+        self.recipes_frame = RecipesFrame(self)
+        self.recipes_frame.grid(row=0, column=0, padx=10, pady=(10, 0), sticky="nsw")
+        self.ingredients_frame = IngredientsFrame(self)
+        self.ingredients_frame.grid(row=0, column=1, padx=10, pady=(10, 0), sticky="e")
 
 app = App()
 app.mainloop()
