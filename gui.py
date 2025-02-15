@@ -1,4 +1,5 @@
 from operator import itemgetter
+import pathlib
 import json
 import tkinter
 import tkinter.messagebox
@@ -7,6 +8,7 @@ import customtkinter
 import load
 from classes import Recipe, Menu
 
+load.load_all_ingredient_files()
 all_recipes = load.load_all_recipe_files()
 
 class RecipeFrame(customtkinter.CTkFrame):
@@ -14,7 +16,7 @@ class RecipeFrame(customtkinter.CTkFrame):
         super().__init__(master)
         values=[r.name for r in all_recipes]
         values.sort()
-        self.recipe_picker = customtkinter.CTkComboBox(self, values=values, width=200, command=self.combobox_callback)
+        self.recipe_picker = customtkinter.CTkComboBox(self, values=values, width=200, hover=True, command=self.combobox_callback)
         self.recipe_picker.set('None')
         self.recipe_picker.grid(row=0, column=0, padx=10, pady=(10, 0))#, sticky="ew"
         self.ratio = customtkinter.CTkSlider(self, from_=0, to=1, number_of_steps=4, command=self.update_label)
@@ -49,8 +51,6 @@ class RecipesFrame(customtkinter.CTkFrame):
             disable_button.deselect()
             disable_button.grid(row=RecipesFrame.nb_of_combo+1, column=j)
             self.disable_button_list.append(disable_button)
-        # self.ingredients_list = customtkinter.CTkTextbox(self, width=400, height=800, activate_scrollbars=True)
-        # self.ingredients_list.grid(row=0, column=5, sticky="e", rowspan=10)
         self.save_button = customtkinter.CTkButton(self, text='Save', command=self.save_menu)
         self.save_button.grid(row=RecipesFrame.nb_of_combo+2, column=0, padx=10, pady=(10, 0))
         self.load_button = customtkinter.CTkButton(self, text='Load', command=self.load_menu)
@@ -79,7 +79,6 @@ class RecipesFrame(customtkinter.CTkFrame):
             text = json.load(recipes_file)
             for j in range(RecipesFrame.nb_of_week):
                 for i in range(RecipesFrame.nb_of_combo):
-                    # print(i,j)
                     self.recipe_frame_list[j][i].recipe_picker.set(text[j][i][0])
                     self.recipe_frame_list[j][i].ratio.set(text[j][i][1])
                     self.recipe_frame_list[j][i].update_label(text[j][i][1])
@@ -97,26 +96,28 @@ class RecipesFrame(customtkinter.CTkFrame):
                 continue
             for i in range(RecipesFrame.nb_of_combo):
                 for recipe in all_recipes:
-                    if recipe.name == self.recipe_frame_list[j][i].recipe_picker.get():
+                    if recipe.name == self.recipe_frame_list[j][i].recipe_picker.get()\
+                        and recipe.name != 'None':
                         menu.add_recipe(recipe, self.recipe_frame_list[j][i].ratio.get())
-                        print(recipe)
+                        # print(recipe)
                         break
         shopping_list = menu.merge_ingredients()
-        text = ''
-        for name, amounts in dict(sorted(shopping_list.items(), key=itemgetter(0))).items():
-            text += name + ':\t'
-            for amount in amounts.items():
-                text += str(amount[1]) + ' ' + amount[0] + '\t'
-            text += '\n'
+        # text = ''
+        # for name, amounts in dict(sorted(shopping_list.items(), key=itemgetter(0))).items():
+        #     text += name + ':\t'
+        #     for amount in amounts.items():
+        #         text += str(amount[1]) + ' ' + amount[0] + '\t'
+        #     text += '\n'
         self.master.ingredients_frame.merged_ingredients.delete("0.0", "end")
-        self.master.ingredients_frame.merged_ingredients.insert("0.0", text)
+        for i in range(len(shopping_list)):
+            # print(shopping_list[i])
+            self.master.ingredients_frame.merged_ingredients.insert(f"{i}.0", str(shopping_list[i]) + '\n')
 
 class IngredientsFrame(customtkinter.CTkFrame):
     def __init__(self, master):
         super().__init__(master)
         self.merged_ingredients = customtkinter.CTkTextbox(self, width=400, height=800, activate_scrollbars=True)
         self.merged_ingredients.grid(row=0, column=0, rowspan=6, columnspan=2, sticky="e")
-
 
 class App(customtkinter.CTk):
     def __init__(self):
