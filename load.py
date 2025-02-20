@@ -32,13 +32,14 @@ def load_all_ingredient_files(location='./ingredient_files/'):
             with open(location + name, 'r', encoding='utf-16') as ingredient_file:
                 ingredient = json.load(ingredient_file)
                 Ingredient.add(name=ingredient['name'], lemma=ingredient['lemma'],\
-                    wiki_ref=ingredient['wiki_ref'], category=ingredient['category'])
+                    wiki_ref=ingredient['wiki_ref'], category=ingredient['category'],\
+                    other_recipe_ref=ingredient['other_recipe_ref'])
 
-def write_ingredient_file(ingredient: Ingredient):
-    name = ingredient.wiki_ref if ingredient.wiki_ref else ingredient.name
-    filename = name + '.json'
-    with open('./ingredient_files/' + filename, 'w', encoding='utf-16') as outfile:
-        json.dump(ingredient.serialize(), outfile, indent=2, ensure_ascii=False)
+# def write_ingredient_file(ingredient: Ingredient):
+#     name = ingredient.wiki_ref if ingredient.wiki_ref else ingredient.name
+#     filename = name + '.json'
+#     with open('./ingredient_files/' + filename, 'w', encoding='utf-16') as outfile:
+#         json.dump(ingredient.serialize(), outfile, indent=2, ensure_ascii=False)
 
 def check_spell(ingredient: dict):
     for text, num in ingredient.items():

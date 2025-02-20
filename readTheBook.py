@@ -34,7 +34,7 @@ def pics2json(location):
     # strategy = choose_strategy(location)
     for _root, _dirs, files in os.walk(location):
         for name in files:
-            print('Reading ' + str(name) + 'from' + location)
+            print('Reading ' + str(name) + ' from ' + location)
             ref, name, ingredients = Reader.parse(location, name)
             parsed_ingredients = parse_ingredients(ingredients)
             outfile = 'json/' + ref + '.json'

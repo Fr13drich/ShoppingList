@@ -17,13 +17,15 @@ class Ingredient:
     #               'Boulangerie', 'Epicerie', 'Boisson', 'Vin']
     # knowkn_ingredients_list = load.load_all_ingredients_files()
     knowkn_ingredients_list = []
-    def __init__(self, name: str, lemma: str, wiki_ref=None, category=None, synonymes=None, recipe_ref=None):
+    def __init__(self, name: str, lemma: str, wiki_ref=None, category=None,\
+                 synonymes=None, recipe_ref=None, other_recipe_ref=None):
         self.name = name
         self.lemma = lemma
         self.wiki_ref = wiki_ref #if wiki_ref else Ingredient.get_wiki_ref(name)
         self.category = category
         self.synonymes = synonymes if synonymes else set([name, lemma])
         self.recipe_refs = recipe_ref if recipe_ref else set()
+        self.other_recipe_ref = other_recipe_ref
         # prefered_unit
         # possible_units
         Ingredient.knowkn_ingredients_list.append(self)
@@ -35,7 +37,7 @@ class Ingredient:
         filename = name + '.json'
         with open('./ingredient_files/' + str(filename).encode('utf-16').decode('utf-16'),\
                   'w', encoding='utf-16') as outfile:
-            json.dump(self.serialize(), outfile, indent=2)
+            json.dump(self.serialize(), outfile, indent=2, ensure_ascii=False)
         logger.info('%s written', filename)
 
     def __str__(self):
@@ -45,7 +47,7 @@ class Ingredient:
                   )
 
     @classmethod
-    def add(cls, name: str, lemma: str, wiki_ref=None, category=None, recipe_ref=None):
+    def add(cls, name: str, lemma: str, wiki_ref=None, category=None, recipe_ref=None, other_recipe_ref=None):
         """ add a new ingredient in the ingredients list if necessary
         otherwise update and return an existing ingredient"""
         # look for the name in all synonymes list
@@ -60,7 +62,8 @@ class Ingredient:
                 return knowkn_ingredient
         print(name)
         new_ingredient = Ingredient(name=name, lemma=lemma, wiki_ref=wiki_ref, category=category,\
-                                    synonymes=set([name]), recipe_ref=recipe_ref)
+                                    synonymes=set([name]), recipe_ref=recipe_ref,\
+                                    other_recipe_ref=other_recipe_ref)
         new_ingredient.write_ingredient_file()
         return new_ingredient
 
@@ -145,7 +148,8 @@ class Ingredient:
                      'wiki_ref': self.wiki_ref if self.wiki_ref else "",\
                      'category': self.category,\
                      'synonymes': list(self.synonymes),\
-                     'recipe_refs': list(self.recipe_refs)\
+                     'recipe_refs': list(self.recipe_refs),\
+                     'other_recipe_ref': self.other_recipe_ref if self.other_recipe_ref else ""\
                     })
 
 
@@ -177,7 +181,13 @@ class Recipe():
         self.name = name
         self.ingredients_bill = ingredients_bill
     @staticmethod
-    def strategy01(d: str, text_list, lemma_list):
+    def strategy01(d: str, text_list, lemma_list, pos_list, book_ref: str):
+        other_recipe_ref = None
+        #check for a ref to another recipe
+        if pos_list[-5:] == ["PUNCT", "VERB", "NOUN", "NUM", "PUNCT"]:
+            other_recipe_ref = book_ref + 'p' + str(text_list[-2])
+            lemma_list = lemma_list[:-5]
+            d = d[0:d.index(' (')] if d.find('(') else d
         if lemma_list[1] in Recipe.UNIT_LIST:
             lemma = ' '.join(lemma_list[3:])
             unit = str(lemma_list[1])
@@ -189,9 +199,16 @@ class Recipe():
             jxt = ''
             name = d[d.index(text_list[1]):]
         # lemma = ' '.join(lemma_list[1:])
-        return (unit, jxt, name, lemma)
+        return (unit, jxt, name, lemma, other_recipe_ref)
     @staticmethod
-    def strategy013(d: str, text_list, lemma_list):
+    def strategy013(d: str, text_list, lemma_list, pos_list, book_ref: str):
+        other_recipe_ref = None
+        #check for a ref
+        if pos_list[-5:] == ["PUNCT", "VERB", "NOUN", "NUM", "PUNCT"]:
+            other_recipe_ref = book_ref + 'p' + str(text_list[-2])
+            lemma_list = lemma_list[:-5]
+            d = d[0:d.index(' (')] if d.find('(') else d
+        #check for a unit
         if lemma_list[1] in Recipe.UNIT_LIST:
             lemma = ' '.join(lemma_list[3:])
             unit = str(lemma_list[1])
@@ -202,29 +219,48 @@ class Recipe():
             unit = 'p'
             jxt = ''
             name = d[d.index(text_list[1]):]
-        return (unit, jxt, name, lemma)
+        return (unit, jxt, name, lemma, other_recipe_ref)
 
     @staticmethod
-    def strategy0135(d: str, text_list, lemma_list):
+    def strategy0135(d: str, text_list, lemma_list, pos_list, book_ref: str):
+        other_recipe_ref = None
+        #check for a ref
+        if pos_list[-5:] == ["PUNCT", "VERB", "NOUN", "NUM", "PUNCT"]:
+            other_recipe_ref = book_ref + 'p' + str(text_list[-2])
+            lemma_list = lemma_list[:-5]
+            d = d[0:d.index(' (')] if d.find('(') else d
         lemma = ' '.join(lemma_list[3:5])
         unit = str(lemma_list[1])
         jxt = str(text_list[2])
         name = d[d.index(text_list[3]):d.index(text_list[4])+len(text_list[4])]
-        return (unit, jxt, name, lemma)
+        return (unit, jxt, name, lemma, other_recipe_ref)
     @staticmethod
-    def strategy0156(d: str, text_list, lemma_list):
+    def strategy0156(d: str, text_list, lemma_list, pos_list, book_ref: str):
+        other_recipe_ref = None
+        #check for a ref
+        if pos_list[-5:] == ["PUNCT", "VERB", "NOUN", "NUM", "PUNCT"]:
+            # buils a recipe ref based on the page number found(NUM)
+            other_recipe_ref = book_ref + 'p' + str(text_list[-2])
+            lemma_list = lemma_list[:-5]
+            d = d[0:d.index(' (')] if d.find('(') else d
         lemma = ' '.join(lemma_list[6:])
         unit = ' '.join(lemma_list[1:5])
         jxt = str(text_list[5])
         name = d[d.index(text_list[6]):]
-        return (unit, jxt, name, lemma)
+        return (unit, jxt, name, lemma, other_recipe_ref)
     @staticmethod
-    def strategy04(d: str, text_list, lemma_list):
+    def strategy04(d: str, text_list, lemma_list, pos_list, book_ref: str):
         """Ingredient name in position 4. No unit nor jxt."""
+        other_recipe_ref = None
+        #check for a ref
+        if pos_list[-5:] == ["PUNCT", "VERB", "NOUN", "NUM", "PUNCT"]:
+            other_recipe_ref = book_ref + 'p' + str(text_list[-2])
+            lemma_list = lemma_list[:-5]
+            d = d[0:d.index(' (')] if d.find('(') else d
         lemma = ' '.join(lemma_list[4:])
         unit = 'p'
         name = d[d.index(text_list[4]):]
-        return (unit, '', name, lemma)
+        return (unit, '', name, lemma, other_recipe_ref)
     @staticmethod
     def choose_strategy(s: str):
         if s == "strategy01":
@@ -253,10 +289,14 @@ class Recipe():
             doc = nlp(' '.join([str(amount), d]))
             ingredient_bill_morphology = ' '.join([token.pos_ for token in doc])
             strategy = Recipe.choose_strategy(morphology[ingredient_bill_morphology])
-            unit, jxt, name, lemma = strategy(d, text_list=[token.text for token in doc],\
-                                              lemma_list=[token.lemma_ for token in doc])
+            unit, jxt, name, lemma, other_recipe_ref =\
+                strategy(d, text_list=[token.text for token in doc],\
+                         lemma_list=[token.lemma_ for token in doc],\
+                         pos_list=[token.pos_ for token in doc],\
+                         book_ref = recipe_ref[0:recipe_ref.rindex('p')] if 'p' in recipe_ref else None)
             ingredients.append(IngredientBill(amount, unit, jxt,\
-                        Ingredient.add(name=name,lemma=lemma, recipe_ref=set([str(recipe_ref)]))))
+                        Ingredient.add(name=name,lemma=lemma, recipe_ref=set([str(recipe_ref)]),\
+                                       other_recipe_ref=other_recipe_ref)))
 
             # unit = 'p'
             # jxt = ''
