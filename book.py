@@ -6,14 +6,6 @@ import easyocr
 
 reader = easyocr.Reader(['fr'])
 
-class QuoteModel():
-    """A quote and its author."""
-
-    def __init__(self, body="", author="") -> None:
-        """Construct."""
-        self.body = body
-        self.author = author
-
 class ReaderInterface(ABC):
     """Generic class to read text from a jpg picture."""
 

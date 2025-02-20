@@ -1,37 +1,47 @@
 from operator import itemgetter
 import pathlib
+import logging
 import json
 import tkinter
 import tkinter.messagebox
 import tkinter.filedialog
 import customtkinter
 import load
-from classes import Recipe, Menu
+from classes import Recipe, Menu, Ingredient
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(filename='shoppingList.log', level=logging.INFO, encoding='utf-16')
 
 load.load_all_ingredient_files()
 all_recipes = load.load_all_recipe_files()
-
+logger.info('Total number of ingredients: %s', len(Ingredient.knowkn_ingredients_list))
+print(len(Ingredient.knowkn_ingredients_list))
 class RecipeFrame(customtkinter.CTkFrame):
     def __init__(self, master):
         super().__init__(master)
         values=[r.name for r in all_recipes]
         values.sort()
-        self.recipe_picker = customtkinter.CTkComboBox(self, values=values, width=200, hover=True, command=self.combobox_callback)
+        self.recipe_picker = customtkinter.CTkComboBox(self, values=values,\
+                        width=200, hover=True, command=self.combobox_callback)
         self.recipe_picker.set('None')
         self.recipe_picker.grid(row=0, column=0, padx=10, pady=(10, 0))#, sticky="ew"
-        self.ratio = customtkinter.CTkSlider(self, from_=0, to=1, number_of_steps=4, command=self.update_label)
+        self.ratio = customtkinter.CTkSlider(self, from_=0, to=1,\
+                        number_of_steps=4, command=self.update_label)
         self.ratio.set(1)
         self.ratio.grid(row=1, column=0, padx=10, pady=(10, 0))
         self.ratio_label = customtkinter.CTkLabel(self, text='1')
         self.ratio_label.grid(row=1, column=1)
 
     def update_label(self, choice=None):
+        """When the slide is modified the ratio label is updated."""
         self.ratio_label.configure(text=str(choice))
 
     def combobox_callback(self, choice=None):
+        """Can be used one day to replace the 'make shopping list button."""
         pass
 
 class RecipesFrame(customtkinter.CTkFrame):
+    """A grid of recipes combobox"""
     nb_of_combo = 9
     nb_of_week = 4
     def __init__(self, master):
@@ -57,10 +67,12 @@ class RecipesFrame(customtkinter.CTkFrame):
         self.load_button.grid(row=RecipesFrame.nb_of_combo+2, column=1, padx=10, pady=(10, 0))
         self.reset_button = customtkinter.CTkButton(self, text='Reset', command=self.reset_menu)
         self.reset_button.grid(row=RecipesFrame.nb_of_combo+2, column=2, padx=10, pady=(10, 0))
-        self.button = customtkinter.CTkButton(self, text="make shopping list", command=self.generate_shopping_list)
+        self.button = customtkinter.CTkButton(self, text="make shopping list",\
+                                              command=self.generate_shopping_list)
         self.button.grid(row=RecipesFrame.nb_of_combo+2, column=3, padx=20, pady=20, columnspan=2)
 
     def save_menu(self):
+        """write a list of recipe with their ratio on disk in json"""
         f = tkinter.filedialog.asksaveasfile(mode='w', defaultextension=".json", )
         if f is None: # asksaveasfile return `None` if dialog closed with "cancel".
             return
@@ -70,8 +82,8 @@ class RecipesFrame(customtkinter.CTkFrame):
                 save_list.append([(a.recipe_picker.get(), a.ratio.get()) for a in self.recipe_frame_list[j]])
             json.dump(save_list, outfile, indent=2, ensure_ascii=False)
 
-
     def load_menu(self):
+        """load a list of recipe name and ratio from a json file"""
         f = tkinter.filedialog.askopenfile(mode='r')
         if f is None: # asksaveasfile return `None` if dialog closed with "cancel".
             return
@@ -84,6 +96,7 @@ class RecipesFrame(customtkinter.CTkFrame):
                     self.recipe_frame_list[j][i].update_label(text[j][i][1])
 
     def reset_menu(self):
+        """set all entries to a dummy empty recipe named 'None'"""
         for j in range(RecipesFrame.nb_of_week):
             for i in range(RecipesFrame.nb_of_combo):
                 self.recipe_frame_list[j][i].recipe_picker.set('None')
@@ -101,25 +114,28 @@ class RecipesFrame(customtkinter.CTkFrame):
                         menu.add_recipe(recipe, self.recipe_frame_list[j][i].ratio.get())
                         # print(recipe)
                         break
-        shopping_list = menu.merge_ingredients()
-        # text = ''
-        # for name, amounts in dict(sorted(shopping_list.items(), key=itemgetter(0))).items():
-        #     text += name + ':\t'
-        #     for amount in amounts.items():
-        #         text += str(amount[1]) + ' ' + amount[0] + '\t'
-        #     text += '\n'
+        total_ingredients_bill = menu.merge_ingredients()
+        # shopping_list.sort(key=Ingredient_bill.n)
         self.master.ingredients_frame.merged_ingredients.delete("0.0", "end")
-        for i in range(len(shopping_list)):
-            # print(shopping_list[i])
-            self.master.ingredients_frame.merged_ingredients.insert(f"{i}.0", str(shopping_list[i]) + '\n')
+        previous_ingredient_lemma = ''
+        for bill_item in total_ingredients_bill:
+            if bill_item.ingredient.lemma != previous_ingredient_lemma:
+                self.master.ingredients_frame.merged_ingredients.insert("end", '\n' + str(bill_item))
+            else:
+                self.master.ingredients_frame.merged_ingredients.insert("end",\
+                                            ' ' + str(bill_item.amount) + ' ' +str(bill_item.unit))
+            previous_ingredient_lemma = bill_item.ingredient.lemma
 
 class IngredientsFrame(customtkinter.CTkFrame):
+    """Frame for the text box that display the shopping list."""
     def __init__(self, master):
         super().__init__(master)
-        self.merged_ingredients = customtkinter.CTkTextbox(self, width=400, height=800, activate_scrollbars=True)
+        self.merged_ingredients = customtkinter.CTkTextbox(self, width=400,\
+                                        height=800, activate_scrollbars=True)
         self.merged_ingredients.grid(row=0, column=0, rowspan=6, columnspan=2, sticky="e")
 
 class App(customtkinter.CTk):
+    """Main classe. Contains a grid of recipes, a text zone and some buttons."""
     def __init__(self):
         super().__init__()
         self.title("Shopping list")
