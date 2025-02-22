@@ -1,7 +1,6 @@
 """Extract ingredients bills from my cooking book"""
 import os
 import json
-from classes import Recipe
 from book import Reader
 
 def parse_ingredients(raw_list_of_ingredients: list):

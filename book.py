@@ -124,7 +124,7 @@ class BcReader(ReaderInterface):
         cls.autocrop(cls.title_workfile)
         try:
             instructions = reader.readtext(image=cls.title_workfile, detail=1, paragraph=True,\
-                                           height_ths=0.2, min_size=50) #, x_ths=0.002, min_size=200
+                                           y_ths=.1, height_ths=0.2, min_size=50) #, x_ths=0.002, min_size=200
         except ValueError():
             print('No text found')
         for box in instructions:
