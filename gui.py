@@ -1,5 +1,3 @@
-from operator import itemgetter
-import pathlib
 import logging
 import json
 import tkinter
@@ -7,16 +5,19 @@ import tkinter.messagebox
 import tkinter.filedialog
 import customtkinter
 import load
-from classes import Recipe, Menu, Ingredient
+from classes import Menu, Ingredient
 
+LOGFILE = 'shoppingList.log'
 logger = logging.getLogger(__name__)
-logging.basicConfig(filename='shoppingList.log', level=logging.INFO, encoding='utf-16')
+logging.basicConfig(filename=LOGFILE, level=logging.INFO, encoding='utf-16')
+print('Logfile: ' + LOGFILE)
 
 load.load_all_ingredient_files()
 all_recipes = load.load_all_recipe_files()
 logger.info('Total number of ingredients: %s', len(Ingredient.knowkn_ingredients_list))
 print(len(Ingredient.knowkn_ingredients_list))
 class RecipeFrame(customtkinter.CTkFrame):
+    """A grid of reipe combobox + ratio slider."""
     def __init__(self, master):
         super().__init__(master)
         values=[r.name for r in all_recipes]
@@ -33,12 +34,12 @@ class RecipeFrame(customtkinter.CTkFrame):
         self.ratio_label.grid(row=1, column=1)
 
     def update_label(self, choice=None):
-        """When the slide is modified the ratio label is updated."""
+        """When the ratio slider is modified the ratio label is updated as well."""
         self.ratio_label.configure(text=str(choice))
 
     def combobox_callback(self, choice=None):
         """Can be used one day to replace the 'make shopping list button."""
-        pass
+        # pass
 
 class RecipesFrame(customtkinter.CTkFrame):
     """A grid of recipes combobox"""
@@ -72,14 +73,15 @@ class RecipesFrame(customtkinter.CTkFrame):
         self.button.grid(row=RecipesFrame.nb_of_combo+2, column=3, padx=20, pady=20, columnspan=2)
 
     def save_menu(self):
-        """write a list of recipe with their ratio on disk in json"""
+        """Write a list of recipe along with their ratio on disk in json format."""
         f = tkinter.filedialog.asksaveasfile(mode='w', defaultextension=".json", )
         if f is None: # asksaveasfile return `None` if dialog closed with "cancel".
             return
         save_list = []
         with open(f.name, 'w', encoding='utf-16') as outfile:
             for j in range(RecipesFrame.nb_of_week):
-                save_list.append([(a.recipe_picker.get(), a.ratio.get()) for a in self.recipe_frame_list[j]])
+                save_list.append([(a.recipe_picker.get(), a.ratio.get())\
+                                  for a in self.recipe_frame_list[j]])
             json.dump(save_list, outfile, indent=2, ensure_ascii=False)
 
     def load_menu(self):
@@ -96,7 +98,7 @@ class RecipesFrame(customtkinter.CTkFrame):
                     self.recipe_frame_list[j][i].update_label(text[j][i][1])
 
     def reset_menu(self):
-        """set all entries to a dummy empty recipe named 'None'"""
+        """Set all entries to a dummy empty recipe named 'None'."""
         for j in range(RecipesFrame.nb_of_week):
             for i in range(RecipesFrame.nb_of_combo):
                 self.recipe_frame_list[j][i].recipe_picker.set('None')
@@ -115,15 +117,15 @@ class RecipesFrame(customtkinter.CTkFrame):
                         # print(recipe)
                         break
         total_ingredients_bill = menu.merge_ingredients()
-        # shopping_list.sort(key=Ingredient_bill.n)
         self.master.ingredients_frame.merged_ingredients.delete("0.0", "end")
         previous_ingredient_lemma = ''
         for bill_item in total_ingredients_bill:
             if bill_item.ingredient.lemma != previous_ingredient_lemma:
-                self.master.ingredients_frame.merged_ingredients.insert("end", '\n' + str(bill_item))
+                self.master.ingredients_frame.merged_ingredients.insert\
+                    ("end", '\n' + str(bill_item))
             else:
-                self.master.ingredients_frame.merged_ingredients.insert("end",\
-                                            ' ' + str(bill_item.amount) + ' ' +str(bill_item.unit))
+                self.master.ingredients_frame.merged_ingredients.insert\
+                    ("end", ' ' + str(bill_item.amount) + ' ' +str(bill_item.unit))
             previous_ingredient_lemma = bill_item.ingredient.lemma
 
 class IngredientsFrame(customtkinter.CTkFrame):
