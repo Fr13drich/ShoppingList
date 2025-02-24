@@ -1,16 +1,20 @@
 import logging
 import json
+import configparser
 import tkinter
 import tkinter.messagebox
 import tkinter.filedialog
 import customtkinter
 import load
-from classes import Menu, Ingredient
+from classes import Menu#, Ingredient
+from Ingredient import Ingredient
 
-LOGFILE = 'shoppingList.log'
+config = configparser.ConfigParser()
+config.read('./config.cfg')
+# LOGFILE = 'shoppingList.log'
 logger = logging.getLogger(__name__)
-logging.basicConfig(filename=LOGFILE, level=logging.INFO, encoding='utf-16')
-print('Logfile: ' + LOGFILE)
+logging.basicConfig(filename=config['DEFAULT']['LOG_FILE'], level=logging.INFO, encoding='utf-16')
+print('Logfile: ' + config['DEFAULT']['LOG_FILE'])
 
 load.load_all_ingredient_files()
 all_recipes = load.load_all_recipe_files()

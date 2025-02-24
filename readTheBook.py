@@ -1,7 +1,11 @@
-"""Extract ingredients bills from my cooking book"""
+"""Extract ingredients bills from my cooking books."""
 import os
 import json
-from book import Reader
+import configparser
+from Reader import Reader
+
+config = configparser.ConfigParser()
+config.read('./config.cfg')
 
 def parse_ingredients(raw_list_of_ingredients: list):
     """Return a dict(name, amount)"""
@@ -36,15 +40,15 @@ def pics2json(location):
             print('Reading ' + str(name) + ' from ' + location)
             ref, name, ingredients = Reader.parse(location, name)
             parsed_ingredients = parse_ingredients(ingredients)
-            outfile = 'json/' + ref + '.json'
+            outfile = config['DEFAULT']['READER_OUTPUT_DIR'] + ref + '.json'
             print(str(ref) + ', ' + str(name))
             print(parsed_ingredients)
             if os.path.exists(outfile):
                 if input(outfile + " already exists. Should I overwrite?: ") != 'y':
                     continue
             with open(outfile, 'w', encoding='utf-16') as outfile:
-                json.dump({'ref': ref, 'name':name, 'ingredients':parsed_ingredients}, outfile, indent=2, ensure_ascii=False)
+                json.dump({'ref': ref, 'name':name, 'ingredients':parsed_ingredients},\
+                          outfile, indent=2, ensure_ascii=False)
 
-
-pics2json('./BCrecipesPics/')
-# pics2json('./EBrecipesPics/')
+if __name__ == '__main__':
+    pics2json(config["DEFAULT"]["BC_PICS"])
