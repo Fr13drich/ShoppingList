@@ -1,5 +1,4 @@
-json/*
-tmp/*
-test/*
-done/*
-ingredient_files/*
+./data/json/*
+./data/done/*
+./tmp/*
+#ingredient_files/*
