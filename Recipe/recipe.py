@@ -1,16 +1,13 @@
-"""Create a shopping list"""
-import json
 import logging
-import math
+import json
 import configparser
 import spacy
 from Ingredient import Ingredient
 
-nlp = spacy.load("fr_core_news_md")
 config = configparser.ConfigParser()
 config.read('./config.cfg')
 logger = logging.getLogger(__name__)
-
+nlp = spacy.load("fr_core_news_md")
 
 class IngredientBill():
     """An ingredient with amount and unit"""
@@ -21,19 +18,40 @@ class IngredientBill():
         self.ingredient = ingredient
     def __str__(self):
         return str(self.ingredient.name) + ': ' + str(self.amount) + ' ' + str(self.unit)
-    # def can_add(self, i: Ingredient_bill):
-    #     return self.ingredient.name == i.ingredient.name
-
+    def serialize(self):
+        """produce a dictionary containing relevant attributes for JSON serialization."""
+        return dict({'amount': self.amount,\
+                     'unit': self.unit,\
+                     'jxt': self.jxt,\
+                     'ingredient': self.ingredient.name
+                    })
 class Recipe():
     """A cooking recipe"""
-    UNIT_LIST = ['millilitre', 'tour', 'tranche',  'l', 'pincée', 'brin', 'bâton', 'branche',\
- 'botte', 'kilogramme', 'gramme', 'tête', 'trait', 'gousse', 'pincee', 'feuille', 'grain', 'morceau']
+    UNIT_LIST = ['millilitre', 'tour', 'tranche',  'l', 'pincée', 'brin',\
+                 'bâton', 'branche', 'botte', 'kilogramme', 'gramme', 'tête',\
+                 'trait', 'gousse', 'pincee', 'feuille', 'grain', 'morceau']
     # juxtaposant_list = ['de', 'd\'', 'à']
 
     def __init__(self, ref: str, name: str, ingredients_bill):
         self.ref = ref
         self.name = name
         self.ingredients_bill = ingredients_bill
+
+    def serialize(self):
+        """produce a dictionary containing relevant attributes for JSON serialization."""
+        return dict({'ref': self.ref,\
+                     'name': self.name,\
+                     'ingredients_bill': [i.serialize() for i in self.ingredients_bill]
+                    })
+    def write_recipe_file(self):
+        """write an ingredient on disk in json"""
+        name = self.ref if self.ref else self.name
+        filename = name + '.json'
+        with open(config['DEFAULT']['RECIPES_DIR'] +\
+                  str(filename).encode('utf-16').decode('utf-16'),\
+                  'w', encoding='utf-16') as outfile:
+            json.dump(self.serialize(), outfile, indent=2, ensure_ascii=False)
+        logger.info('%s written', filename)
     @staticmethod
     def strategy01(d: str, text_list, lemma_list, pos_list, book_ref: str):
         other_recipe_ref = None
@@ -74,7 +92,6 @@ class Recipe():
             jxt = ''
             name = d[d.index(text_list[1]):]
         return (unit, jxt, name, lemma, other_recipe_ref)
-
     @staticmethod
     def strategy0135(d: str, text_list, lemma_list, pos_list, book_ref: str):
         other_recipe_ref = None
@@ -152,42 +169,8 @@ class Recipe():
                          pos_list=[token.pos_ for token in doc],\
                          book_ref = recipe_ref[0:recipe_ref.rindex('p')] if 'p' in recipe_ref else None)
             ingredients.append(IngredientBill(amount, unit, jxt,\
-                        Ingredient.add(name=name,lemma=lemma, recipe_ref=set([str(recipe_ref)]),\
+                        Ingredient.add(name=name,lemma=lemma, recipe_refs=set([str(recipe_ref)]),\
                                        other_recipe_ref=other_recipe_ref)))
         return ingredients
     def __str__(self):
         return f"{self.name} ({self.ref})"
-
-class Menu():
-    """A list of recipes"""
-    def __init__(self, season='None') -> None:
-        self.season = season
-        self.recipes = []
-
-    def add_recipe(self, recipe:Recipe, ratio=1):
-        """Append a recipe to the list"""
-        self.recipes.append((recipe, float(ratio)))
-
-    def merge_ingredients(self):
-        """Merge a list of ingredients bills to one ingredients bill."""
-        # il faudrait définir un opérateur pour additionner 2 elts
-        total_ingredients_bill = []
-        for (recipe, ratio) in self.recipes:
-            for ingredient_bill in recipe.ingredients_bill:
-                added = False
-                for total_ingredient_bill in total_ingredients_bill:
-                    if total_ingredient_bill.ingredient is ingredient_bill.ingredient\
-                        and total_ingredient_bill.unit == ingredient_bill.unit:
-                        total_ingredient_bill.amount +=\
-                                int(math.ceil(ingredient_bill.amount * float(ratio)))
-                        added = True
-                        break
-                if not added: #then append
-                    amount = int(math.ceil(ingredient_bill.amount * float(ratio)))
-                    total_ingredients_bill.append(IngredientBill(amount, ingredient_bill.unit,\
-                                                ingredient_bill.jxt, ingredient_bill.ingredient))
-        total_ingredients_bill.sort(key=lambda x: x.ingredient.name)
-        return total_ingredients_bill
-
-    def __str__(self) -> str:
-        pass

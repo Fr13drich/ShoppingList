@@ -13,14 +13,14 @@ logger = logging.getLogger(__name__)
 class Ingredient:
     """An ingredient for cooking"""
     knowkn_ingredients_list = []
-    def __init__(self, name: str, lemma: str, wiki_ref=None, category=None,\
-                 synonymes=None, recipe_ref=None, other_recipe_ref=None):
+    def __init__(self, name: str, lemma: str, recipe_refs: set, wiki_ref=None, category=None,\
+                 synonymes=None, other_recipe_ref=None):
         self.name = name
         self.lemma = lemma
         self.wiki_ref = wiki_ref #if wiki_ref else Ingredient.get_wiki_ref(name)
         self.category = category
         self.synonymes = synonymes if synonymes else set([name, lemma])
-        self.recipe_refs = recipe_ref if recipe_ref else set()
+        self.recipe_refs = set(recipe_refs) #if recipe_refs else set()
         self.other_recipe_ref = other_recipe_ref
         # prefered_unit
         # possible_units
@@ -39,29 +39,30 @@ class Ingredient:
 
     def __str__(self):
         return str('Ingredient: ' + str(self.name) + ' Wiki ref: ' + str(self.wiki_ref) +\
-                   ' Synonymes: '  + str(self.synonymes) + ' recipe_ref: '  + str(self.recipe_refs)\
+                   ' Synonymes: '  + str(self.synonymes) + ' recipe_refs: '  + str(self.recipe_refs)\
                    + ' lemma: '  + str(self.lemma)\
                   )
 
     @classmethod
-    def add(cls, name: str, lemma: str, wiki_ref=None, category=None,\
-            recipe_ref=None, other_recipe_ref=None):
-        """ add a new ingredient in the ingredients list if necessary
+    def add(cls, name: str, lemma: str, recipe_refs: set,\
+            wiki_ref=None, category=None, other_recipe_ref=None):
+        """ Add a new ingredient in the ingredients list if necessary
         otherwise update and return an existing ingredient"""
         # look for the name in all synonymes list
         for knowkn_ingredient in cls.knowkn_ingredients_list:
             if name in knowkn_ingredient.synonymes or\
                 (' '.join([token.lemma_ for token in nlp(name)]) == knowkn_ingredient.lemma):
                 knowkn_ingredient.synonymes.add(name)
-                if recipe_ref and (recipe_ref not in knowkn_ingredient.recipe_refs):
-                    knowkn_ingredient.recipe_refs = knowkn_ingredient.recipe_refs.union(recipe_ref)
-                    logger.info('ref added %s', recipe_ref)
+                if recipe_refs and not(set(recipe_refs).issubset(set(knowkn_ingredient.recipe_refs))):
+                    logger.info('Intersection: %s', set(recipe_refs).issubset(set(knowkn_ingredient.recipe_refs)))
+                    knowkn_ingredient.recipe_refs = knowkn_ingredient.recipe_refs.union(recipe_refs)
+                    # logger.info('ref added %s because not in %s', recipe_refs, knowkn_ingredient.recipe_refs)
                     Ingredient.write_ingredient_file(knowkn_ingredient)
                 return knowkn_ingredient
         new_ingredient = Ingredient(name=name, lemma=lemma, wiki_ref=wiki_ref, category=category,\
-                                    synonymes=set([name]), recipe_ref=recipe_ref,\
+                                    synonymes=set([name]), recipe_refs=recipe_refs,\
                                     other_recipe_ref=other_recipe_ref)
-        new_ingredient.write_ingredient_file()
+        # new_ingredient.write_ingredient_file()
         return new_ingredient
 
     @classmethod

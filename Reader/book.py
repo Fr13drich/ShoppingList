@@ -11,21 +11,18 @@ reader = easyocr.Reader(['fr'])
 
 class ReaderInterface(ABC):
     """Generic class to read text from a jpg picture."""
-
     allowed_books = []
     allowed_extensions = ['jpg']
     footpage_workfile = 'tmp/img_footpage.jpg'
     title_workfile = './tmp/img_recipe.jpg'
     ingredients_workfile = './tmp/img_ingredients.jpg'
     reader_result = None
-    left = True
+    left_page = True
 
     @classmethod
     def can_parse(cls, location, name) -> bool:
         """Can I parse the picture?."""
         ext = name.split('.')[-1]
-        # book = location in cls.allowed_books
-        # print(book, cls.allowed_books, book in cls.allowed_books)
         return location in cls.allowed_books and ext in cls.allowed_extensions
     @staticmethod
     def autocrop(jpg):
@@ -55,7 +52,6 @@ class ReaderInterface(ABC):
         """Return a dict(name, amount)"""
         result = {}
         for item in raw_list_of_ingredients:
-            # print(item)
             splitted_item = str(item).split(maxsplit=1)
             if str(splitted_item[0]).isnumeric():
                 amount = int(splitted_item[0])
@@ -81,7 +77,6 @@ class ReaderInterface(ABC):
     @abstractmethod
     def get_ref(cls, img):
         pass
-
 class BcReader(ReaderInterface):
     """Read pictures from 'Bien cuisiner'."""
     allowed_books = [config['DEFAULT']['BC_PICS']]
@@ -91,7 +86,7 @@ class BcReader(ReaderInterface):
         super().__init__()
         self.location = location
         self.name = name
-        self.left = True
+        self.left_page = True
     @classmethod
     def parse(cls, location: str, name: str):
         """Ingest the file."""
@@ -102,7 +97,7 @@ class BcReader(ReaderInterface):
         ref = cls.get_ref(img)
         title = cls.get_title(img)
         ingredients = cls.get_ingredients(img)
-        return ref, title, ingredients
+        return ref, title, cls.parse_ingredients(ingredients)
     @classmethod
     def get_ref(cls, img):
         img_footpage = img.crop((0, img.height * 0.98, img.width, img.height))
@@ -112,13 +107,13 @@ class BcReader(ReaderInterface):
         except ValueError():
             print('No text found')
         if max(reader_result, key=itemgetter(2))[0][0][0] < img_footpage.width/2:
-            cls.left = True
+            cls.left_page = True
         else:
-            cls.left = False
+            cls.left_page = False
         return 'BCp' + str(reader_result[0][1]).split(sep=' ', maxsplit=1)[0]
     @classmethod
     def get_title(cls, img):
-        if cls.left:
+        if cls.left_page:
             recipe_coordinates =  img.width/3, 0, img.width, img.height
         else:
             recipe_coordinates = 0, 0, 2 * img.width/3, img.height
@@ -127,7 +122,7 @@ class BcReader(ReaderInterface):
         cls.autocrop(cls.title_workfile)
         try:
             instructions = reader.readtext(image=cls.title_workfile, detail=1, paragraph=True,\
-                                           y_ths=.1, height_ths=0.2, min_size=50) #, x_ths=0.002, min_size=200
+                                           y_ths=.1, height_ths=0.2, min_size=50)
         except ValueError():
             print('No text found')
         for box in instructions:
@@ -137,7 +132,7 @@ class BcReader(ReaderInterface):
         return title
     @classmethod
     def get_ingredients(cls, img):
-        if cls.left:
+        if cls.left_page:
             ingredients_coordinates = 0, 0, img.width/3, img.height*.85
         else:
             ingredients_coordinates = 2 * img.width/3, 0, img.width, img.height*.85
@@ -176,7 +171,7 @@ class CgReader(ReaderInterface):
         ref = cls.get_ref(img)
         title = cls.get_title(img)
         ingredients = cls.get_ingredients(img)
-        return ref, title, ingredients
+        return ref, title, cls.parse_ingredients(ingredients)
     @classmethod
     def get_ref(cls, img):
         return 'CGp' + str(cls.reader_result[0][1]).split(sep=' ', maxsplit=1)[0]

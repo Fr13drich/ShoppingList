@@ -6,20 +6,19 @@ import tkinter.messagebox
 import tkinter.filedialog
 import customtkinter
 import load
-from classes import Menu#, Ingredient
+from Recipe import Menu
 from Ingredient import Ingredient
 
 config = configparser.ConfigParser()
 config.read('./config.cfg')
-# LOGFILE = 'shoppingList.log'
 logger = logging.getLogger(__name__)
 logging.basicConfig(filename=config['DEFAULT']['LOG_FILE'], level=logging.INFO, encoding='utf-16')
 print('Logfile: ' + config['DEFAULT']['LOG_FILE'])
 
-load.load_all_ingredient_files()
+# load.load_all_ingredient_files()
 all_recipes = load.load_all_recipe_files()
 logger.info('Total number of ingredients: %s', len(Ingredient.knowkn_ingredients_list))
-print(len(Ingredient.knowkn_ingredients_list))
+
 class RecipeFrame(customtkinter.CTkFrame):
     """A grid of reipe combobox + ratio slider."""
     def __init__(self, master):

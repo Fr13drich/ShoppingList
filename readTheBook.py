@@ -1,5 +1,6 @@
 """Extract ingredients bills from my cooking books."""
 import os
+import logging
 import json
 import configparser
 from Reader import Reader
@@ -7,42 +8,19 @@ from Reader import Reader
 config = configparser.ConfigParser()
 config.read('./config.cfg')
 
-def parse_ingredients(raw_list_of_ingredients: list):
-    """Return a dict(name, amount)"""
-    result = {}
-    for item in raw_list_of_ingredients:
-        # print(item)
-        splitted_item = str(item).split(maxsplit=1)
-        if str(splitted_item[0]).isnumeric():
-            amount = int(splitted_item[0])
-            name = str(splitted_item[1]).lower()
-        else:
-            amount = 1
-            name = str(item).lower()
-        result.update({name: amount})
-    return result
+logger = logging.getLogger(__name__)
+logging.basicConfig(filename=config['DEFAULT']['READER_LOG_FILE'],\
+                    level=logging.INFO, encoding='utf-16')
 
-
-# def choose_strategy(location):
-#     if location[2:4] == 'CG':
-#         return read_1_CGbook_recipe
-#     elif location[2:4] == 'BC':
-#         return read_1_BCbook_recipe
-#     elif location[2:4] == 'EB':
-#         return read_1_EBbook_recipe
-#     else:
-#         return None
 
 def pics2json(location):
-    # strategy = choose_strategy(location)
     for _root, _dirs, files in os.walk(location):
         for name in files:
             print('Reading ' + str(name) + ' from ' + location)
-            ref, name, ingredients = Reader.parse(location, name)
-            parsed_ingredients = parse_ingredients(ingredients)
+            ref, name, parsed_ingredients = Reader.parse(location, name)
             outfile = config['DEFAULT']['READER_OUTPUT_DIR'] + ref + '.json'
-            print(str(ref) + ', ' + str(name))
-            print(parsed_ingredients)
+            logger.info('%s, %s', ref, name)
+            logger.info('%s', parsed_ingredients)
             if os.path.exists(outfile):
                 if input(outfile + " already exists. Should I overwrite?: ") != 'y':
                     continue
