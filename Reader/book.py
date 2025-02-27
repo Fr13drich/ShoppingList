@@ -1,5 +1,6 @@
 """Extract title and ingredients from pictures"""
 import configparser
+import logging
 from abc import ABC, abstractmethod
 from operator import itemgetter
 from PIL import Image, ImageOps, ImageEnhance
@@ -8,6 +9,7 @@ import easyocr
 config = configparser.ConfigParser()
 config.read('./config.cfg')
 reader = easyocr.Reader(['fr'])
+logger = logging.getLogger(__name__)
 
 class ReaderInterface(ABC):
     """Generic class to read text from a jpg picture."""
@@ -28,7 +30,8 @@ class ReaderInterface(ABC):
     def autocrop(jpg):
         """Crop where there is no text."""
         results = reader.readtext(image=jpg, detail=1, paragraph=True, x_ths=2000, y_ths=.2,\
-                                  text_threshold=.1, height_ths=1000)
+                                  text_threshold=.1, height_ths=1000, min_size=50)
+        logger.info('%s', results)
         max_box = [10000, 10000, 0, 0]
         for box_coordinates in results:
             max_box[0] = min(max_box[0], int(box_coordinates[0][0][0]))
@@ -144,7 +147,7 @@ class BcReader(ReaderInterface):
         # img = Image.open(self.ingredients_workfile)
         try:
             ingredients = reader.readtext(image=cls.ingredients_workfile, detail=1,\
-                                          paragraph=True, y_ths=.5, height_ths=5)
+                                          paragraph=True, y_ths=.65, height_ths=5)
             ingredients = list(map(itemgetter(1), ingredients))
         except ValueError():
             print('No text found')

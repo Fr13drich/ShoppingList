@@ -44,7 +44,7 @@ class Recipe():
                      'ingredients_bill': [i.serialize() for i in self.ingredients_bill]
                     })
     def write_recipe_file(self):
-        """write an ingredient on disk in json"""
+        """write an recipe on disk in json"""
         name = self.ref if self.ref else self.name
         filename = name + '.json'
         with open(config['DEFAULT']['RECIPES_DIR'] +\
@@ -153,7 +153,7 @@ class Recipe():
     @classmethod
     def parse_ingredients_bill_dict(cls, ingredients_bill_dict: dict, recipe_ref: str):
         """Transform the json created by the ocr module
-            to a list of Ingredient_bill"""
+            to a list of ingredients"""
         ingredients = []
         for d , amount in ingredients_bill_dict.items():
             morphology = Recipe.load_morphology()
