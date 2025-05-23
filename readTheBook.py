@@ -38,19 +38,23 @@ def json2recipe(file):
     name: str,
         ingredients: {str: int, ...}
     """
-    if input(f"Create recipe from {file} ?: ") != 'y':
-        with open(file=file, mode='r', encoding='utf-16') as recipe_file:
-            recipe_dict = json.load(recipe_file)
-            logger.info(recipe_dict['ref'])
-            new = Recipe(ref=recipe_dict['ref'],\
-                        name=recipe_dict['name'],\
-                        ingredients_bill=Recipe.parse_ingredients_bill_dict(\
-                            ingredients_bill_dict=recipe_dict['ingredients'],\
-                            recipe_ref=recipe_dict['ref']))
-        new.write_recipe_file()
-        logger.info('Recipe written: %s %s', new.ref, new.name)
+    # if input(f"Create recipe from {file} ?: ") == 'y':
+    with open(file=file, mode='r', encoding='utf-16') as recipe_file:
+        recipe_dict = json.load(recipe_file)
+        logger.info(recipe_dict['ref'])
+        new = Recipe(ref=recipe_dict['ref'],\
+                    name=recipe_dict['name'],\
+                    ingredients_bill=Recipe.parse_ingredients_bill_dict(\
+                        ingredients_bill_dict=recipe_dict['ingredients'],\
+                        recipe_ref=recipe_dict['ref']))
+    new.write_recipe_file()
+    logger.info('Recipe written: %s %s', new.ref, new.name)
 
 if __name__ == '__main__':
     pics2json(location=config["DEFAULT"]["BC_PICS"])
-    # json2recipe(config['DEFAULT']['READER_OUTPUT_DIR'])
-
+    # for root, dirs, files in os.walk(config["DEFAULT"]["READER_OUTPUT_DIR"]):
+    #     for name in files:
+    #         print(root)
+    #         print(dirs)
+    #         print(name)
+    #         json2recipe(root + name)
