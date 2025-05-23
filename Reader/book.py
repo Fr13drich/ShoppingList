@@ -253,10 +253,11 @@ class EbReader(ReaderInterface):
     def get_ref(cls, img=None):
         """Build a reference base on the name of the book and the page number."""
         doc = nlp(cls.reader_result[-1][1])
-        print(cls.reader_result[-1][1])
+        # print(cls.reader_result[-1][1])
         for token in doc:
-            print(token.pos_)
+            # print(token.pos_)
             if token.pos_ in ['NUM', 'PRON']:
+                logger.info('ref: EBp%s', token.text)
                 return f"EBp{token.text}"
         raise ValueError
     @classmethod
@@ -269,6 +270,7 @@ class EbReader(ReaderInterface):
                         ))
         img.save(pic)
         title = reader.readtext(image=pic, detail=0, low_text=.21, paragraph=True)
+        logger.info('title: %s', ' '.join(title).capitalize())
         return ' '.join(title).capitalize()
     @classmethod
     def get_ingredients(cls, img):
@@ -277,11 +279,32 @@ class EbReader(ReaderInterface):
                 crop_coordinates = (box[0][0][0], box[0][0][1], box[0][2][0], box[0][2][1])
                 img = img.crop(crop_coordinates)
                 ingredients_stream = pytesseract.image_to_string(img, lang='fra')
-                ingredients_stream = ingredients_stream.replace('+ ', '')
+                # remove first line
+                ingredients_stream = ingredients_stream[ingredients_stream.find('\n')+2:]
                 ingredients_stream = ingredients_stream.replace('\n', ' ')
-                # ingredients_stream =  box[1]
+                ingredients_stream = ingredients_stream.replace(' + ', '\n')
+                ingredients_stream = ingredients_stream.replace(' - ', '\n')
+                ingredients_stream = ingredients_stream.replace(' * ', '\n')
+                # remove parenthesis
+                s = ''
+                parenthesis = False
+                for i in ingredients_stream:
+                    if i == '(':
+                        parenthesis = True
+                    elif i == ')':
+                        parenthesis = False
+                    elif not parenthesis:
+                        s += i
+                #remove double whistespace
+                ingredients_stream = s.replace('  ', ' ')
+                ingredients_list = str(ingredients_stream).split(sep='\n')
                 break
-        return parse_stream(ingredients_stream)
+        print(ingredients_list)
+        parsed_ingredients_list = [parse_stream(i.strip())[0] for i in ingredients_list]
+        print(parsed_ingredients_list)
+        # print(ingredients_stream)
+        return parsed_ingredients_list
+        # return parse_stream(ingredients_stream)
 
 class Reader(ReaderInterface):
     allowed_books = [config['DEFAULT']['CG_PICS'],\

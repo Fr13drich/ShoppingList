@@ -10,8 +10,9 @@ config = configparser.ConfigParser()
 config.read('./config.cfg')
 
 logger = logging.getLogger(__name__)
+FORMAT = '%(asctime)s %(message)s'
 logging.basicConfig(filename=config['DEFAULT']['READER_LOG_FILE'],\
-                    level=logging.INFO, encoding='utf-16')
+                    level=logging.INFO, encoding='utf-16', format=FORMAT)
 
 
 def pics2json(location):
@@ -51,7 +52,7 @@ def json2recipe(file):
     logger.info('Recipe written: %s %s', new.ref, new.name)
 
 if __name__ == '__main__':
-    pics2json(location=config["DEFAULT"]["BC_PICS"])
+    pics2json(location=config["DEFAULT"]["EB_PICS"])
     # for root, dirs, files in os.walk(config["DEFAULT"]["READER_OUTPUT_DIR"]):
     #     for name in files:
     #         print(root)

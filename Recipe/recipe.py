@@ -134,6 +134,22 @@ class Recipe():
         name = d[d.index(text_list[4]):]
         return (unit, '', name, lemma, other_recipe_ref)
     @staticmethod
+    def strategy34(d: str, text_list, lemma_list, pos_list, book_ref: str):
+        """Le jus de 1 citron -> 1 citron"""
+        other_recipe_ref = None
+        lemma = lemma_list[4]
+        unit = 'p'
+        jxt = ''
+        name = d[d.index(text_list[4]):]
+        return (unit, jxt, name, lemma, other_recipe_ref)
+    @staticmethod
+    def strategy_name_only(d: str, text_list, lemma_list, pos_list, book_ref: str):
+        lemma = ' '.join(lemma_list)
+        unit = 'p'
+        name = d
+        jxt = ''
+        return (unit, jxt, name, lemma, None)
+    @staticmethod
     def choose_strategy(s: str):
         if s == "strategy01":
             return Recipe.strategy01
@@ -145,6 +161,10 @@ class Recipe():
             return Recipe.strategy0156
         if s == "strategy04":
             return Recipe.strategy04
+        if s == "strategy34":
+            return Recipe.strategy34
+        if s == "strategy_name_only":
+            return Recipe.strategy_name_only
 
     @staticmethod
     def load_morphology(file=config['DEFAULT']['INGREDIENT_BILL_MORPHOLOGY_FILE']):
