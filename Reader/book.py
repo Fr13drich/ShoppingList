@@ -1,15 +1,19 @@
 """Extract title and ingredients from pictures"""
 import configparser
 import logging
+import spacy
+import pytesseract
 from abc import ABC, abstractmethod
 from operator import itemgetter
 from PIL import Image, ImageOps, ImageEnhance
 import easyocr
+from buildATree import parse_stream
 
 config = configparser.ConfigParser()
 config.read('./config.cfg')
 reader = easyocr.Reader(['fr'])
 logger = logging.getLogger(__name__)
+nlp = spacy.load("fr_core_news_md")
 
 class ReaderInterface(ABC):
     """Generic class to read text from a jpg picture."""
@@ -56,9 +60,14 @@ class ReaderInterface(ABC):
         result = {}
         for item in raw_list_of_ingredients:
             splitted_item = str(item).split(maxsplit=1)
-            if str(splitted_item[0]).isnumeric():
-                amount = int(splitted_item[0])
+            amount = str(splitted_item[0])
+            if amount.isnumeric():
+                amount = int(amount)
                 name = str(splitted_item[1]).lower()
+            elif ',' in amount:
+                amount = float('.'.join(amount.split(sep=',')))
+                name = str(splitted_item[1]).lower()
+
             else:
                 amount = 1
                 name = str(item).lower()
@@ -100,6 +109,7 @@ class BcReader(ReaderInterface):
         ref = cls.get_ref(img)
         title = cls.get_title(img)
         ingredients = cls.get_ingredients(img)
+        print(ingredients)
         return ref, title, cls.parse_ingredients(ingredients)
     @classmethod
     def get_ref(cls, img):
@@ -148,10 +158,30 @@ class BcReader(ReaderInterface):
         try:
             ingredients = reader.readtext(image=cls.ingredients_workfile, detail=1,\
                                           paragraph=True, y_ths=.65, height_ths=5)
-            ingredients = list(map(itemgetter(1), ingredients))
+            # ingredients = list(map(itemgetter(1), ingredients))
         except ValueError():
             print('No text found')
-        return ingredients
+        # remove annotations on the bottom
+        distance = 283
+        # print('distance')
+        # print(distance)
+        y = ingredients[0][0][0][1]
+        # print(ingredients)
+        for i, ingredient in enumerate(ingredients):
+            # print(f'{ingredient[0][0][1]} - {y} > 2 * {distance}')
+            if ingredient[0][0][1] - y > 2 * distance:
+                tmp_results = list(map(itemgetter(1), ingredients[:i]))
+                results = []
+                for item in tmp_results:
+                    results += parse_stream(item)
+                return results
+            y = ingredient[0][0][1]
+        # return ingredients
+        tmp_results =  list(map(itemgetter(1), ingredients))
+        results = []
+        for item in tmp_results:
+            results += parse_stream(item)
+        return results
 
 class CgReader(ReaderInterface):
     """Read pictures from 'Café gourmand'."""
@@ -196,8 +226,67 @@ class CgReader(ReaderInterface):
                                       ycenter_ths=.5, width_ths=.7, height_ths=1)
         return ingredients
 
+class EbReader(ReaderInterface):
+    """En bocal"""
+    allowed_books = [config['DEFAULT']['EB_PICS']]
+
+    def __init__(self, location: str, name: str) -> None:
+        """Construct."""
+        super().__init__()
+        self.location = location
+        self.name = name
+    
+    @classmethod
+    def parse(cls, location: str, name: str):
+        """Ingest the file."""
+        if not cls.can_parse(location, name):
+            raise ValueError('Cannot parse exception.')
+        pic = cls.image_preprocessing('./' + location + '/' + name)
+        cls.reader_result = reader.readtext(image=pic, detail=1, paragraph=True)
+        img = Image.open(pic)
+        ref = cls.get_ref(img)
+        title = cls.get_title(img)
+        ingredients = cls.get_ingredients(img)
+        return ref, title, cls.parse_ingredients(ingredients)
+    
+    @classmethod
+    def get_ref(cls, img=None):
+        """Build a reference base on the name of the book and the page number."""
+        doc = nlp(cls.reader_result[-1][1])
+        print(cls.reader_result[-1][1])
+        for token in doc:
+            print(token.pos_)
+            if token.pos_ in ['NUM', 'PRON']:
+                return f"EBp{token.text}"
+        raise ValueError
+    @classmethod
+    def get_title(cls, img):
+        pic = './tmp/title.jpg'
+        img = img.crop((cls.reader_result[1][0][0][0],\
+                        cls.reader_result[1][0][0][1],\
+                        cls.reader_result[1][0][2][0],\
+                        cls.reader_result[1][0][2][1]\
+                        ))
+        img.save(pic)
+        title = reader.readtext(image=pic, detail=0, low_text=.21, paragraph=True)
+        return ' '.join(title).capitalize()
+    @classmethod
+    def get_ingredients(cls, img):
+        for box in cls.reader_result[4:-1]:
+            if 'Ingrédients' in box[1] and box[1].index('Ingrédients') == 0:
+                crop_coordinates = (box[0][0][0], box[0][0][1], box[0][2][0], box[0][2][1])
+                img = img.crop(crop_coordinates)
+                ingredients_stream = pytesseract.image_to_string(img, lang='fra')
+                ingredients_stream = ingredients_stream.replace('+ ', '')
+                ingredients_stream = ingredients_stream.replace('\n', ' ')
+                # ingredients_stream =  box[1]
+                break
+        return parse_stream(ingredients_stream)
+
 class Reader(ReaderInterface):
-    allowed_books = [config['DEFAULT']['CG_PICS'], config['DEFAULT']['BC_PICS']]
+    allowed_books = [config['DEFAULT']['CG_PICS'],\
+                     config['DEFAULT']['BC_PICS'],\
+                     config['DEFAULT']['EB_PICS']]
 
     def __init__(self, location: str, name: str) -> None:
         """Construct."""
@@ -210,12 +299,14 @@ class Reader(ReaderInterface):
             book_reader = CgReader
         elif location == config['DEFAULT']['BC_PICS']:
             book_reader = BcReader
+        elif location == config['DEFAULT']['EB_PICS']:
+            book_reader = EbReader
         else:
             raise ValueError('Unsupported book: ' + location)
         return book_reader.parse(location=location, name=name)
 
 if __name__ == '__main__':
-    r, t, i = Reader.parse('./BCrecipesPics/', '20250131_142140.jpg')
+    r, t, i = Reader.parse(config['DEFAULT']['EB_PICS'], '20250116_133249.jpg')
     print(r)
     print(t)
     print(i)
