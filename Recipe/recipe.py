@@ -115,7 +115,8 @@ class Recipe():
             lemma_list = lemma_list[:-5]
             d = d[0:d.index(' (')] if d.find('(') else d
         lemma = ' '.join(lemma_list[6:])
-        unit = ' '.join(lemma_list[1:5])
+        # unit = ' '.join(lemma_list[1:5])
+        unit = d[d.index(text_list[1]):d.index(text_list[5])-1]
         jxt = str(text_list[5])
         name = d[d.index(text_list[6]):]
         return (unit, jxt, name, lemma, other_recipe_ref)
