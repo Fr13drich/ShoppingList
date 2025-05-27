@@ -137,10 +137,10 @@ class Recipe():
     def strategy34(d: str, text_list, lemma_list, pos_list, book_ref: str):
         """Le jus de 1 citron -> 1 citron"""
         other_recipe_ref = None
-        lemma = lemma_list[4]
+        lemma = lemma_list[-1]
         unit = 'p'
         jxt = ''
-        name = d[d.index(text_list[4]):]
+        name = d[d.index(text_list[-1]):]
         return (unit, jxt, name, lemma, other_recipe_ref)
     @staticmethod
     def strategy_name_only(d: str, text_list, lemma_list, pos_list, book_ref: str):

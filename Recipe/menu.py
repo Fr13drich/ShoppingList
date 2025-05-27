@@ -20,7 +20,7 @@ class Menu():
         for (recipe, ratio) in self.recipes:
             for ingredient_bill in recipe.ingredients_bill:
                 added = False
-                name = ingredient_bill['ingredient'] 
+                name = ingredient_bill['ingredient']
                 i = Ingredient.add(name=name,\
                                     lemma=' '.join([token.lemma_ for token in nlp(name)]),\
                                     recipe_refs=set([recipe.ref]))
