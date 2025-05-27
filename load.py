@@ -10,7 +10,7 @@ config.read('./config.cfg')
 logger = logging.getLogger(__name__)
 
 def load_all_recipe_files(location=config['DEFAULT']['RECIPES_DIR']):
-    
+    """Create Recipe objects from json files."""
     all_recipes_list = []
     for _root, _dirs, files in os.walk(location):
         for name in files:
