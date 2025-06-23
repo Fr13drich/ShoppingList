@@ -2,3 +2,8 @@
 ./data/done/*
 ./tmp/*
 ./venv/*
+.env/
+.venv/
+__pycache__/
+log/*
+
