@@ -11,6 +11,11 @@ config.read('./config.cfg')
 nlp = spacy.load("fr_core_news_md")
 logger = logging.getLogger(__name__)
 
+UNIT_LIST = ['millilitre', 'tour', 'tranche',  'l', 'pincée', 'brin',\
+                 'bâton', 'bille', 'branche', 'botte', 'kilogramme', 'gramme', 'tête',\
+                 'trait', 'gousse', 'pincee', 'feuille', 'grain', 'morceau']
+    # juxtaposant_list = ['de', 'd\'', 'à']
+
 def load_morphology(file=config['DEFAULT']['INGREDIENT_BILL_MORPHOLOGY_FILE']):
     with open(file, 'r', encoding='utf-8', ) as morphology_file:
         return json.load(morphology_file)
@@ -95,7 +100,7 @@ def strategy01(d: str, text_list, lemma_list, pos_list, book_ref: str):
         other_recipe_ref = book_ref + 'p' + str(text_list[-2])
         lemma_list = lemma_list[:-5]
         d = d[0:d.index(' (')] if d.find('(') else d
-    if lemma_list[1] in Recipe.UNIT_LIST:
+    if lemma_list[1] in UNIT_LIST:
         lemma = ' '.join(lemma_list[3:])
         unit = str(lemma_list[1])
         jxt = str(text_list[2])
@@ -116,7 +121,7 @@ def strategy013(d: str, text_list, lemma_list, pos_list, book_ref: str):
         lemma_list = lemma_list[:-5]
         d = d[0:d.index(' (')] if d.find('(') else d
     #check for a unit
-    if lemma_list[1] in Recipe.UNIT_LIST:
+    if lemma_list[1] in UNIT_LIST:
         lemma = ' '.join(lemma_list[3:])
         unit = str(lemma_list[1])
         jxt = str(text_list[2])

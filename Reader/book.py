@@ -331,7 +331,7 @@ class Reader(ReaderInterface):
         return book_reader.read(location=location, name=name)
 
 if __name__ == '__main__':
-    r, t, i = Reader.read(config['DEFAULT']['EB_PICS'], '20250116_133249.jpg')
+    r, t, ing = Reader.read(config['DEFAULT']['EB_PICS'], '20250116_133249.jpg')
     print(r)
     print(t)
-    print(i)
+    print(ing)
