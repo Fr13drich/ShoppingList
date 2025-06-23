@@ -4,6 +4,7 @@ import logging
 import json
 import configparser
 from Reader import Reader
+from Reader import parse_ingredients_bill_dict
 from Recipe import Recipe
 
 config = configparser.ConfigParser()
@@ -19,7 +20,7 @@ def pics2json(location):
     for _root, _dirs, files in os.walk(location):
         for name in files:
             print('Reading ' + str(name) + ' from ' + location)
-            ref, name, parsed_ingredients = Reader.parse(location, name)
+            ref, name, parsed_ingredients = Reader.read(location, name)
             outfile = config['DEFAULT']['READER_OUTPUT_DIR'] + ref + '.json'
             logger.info('%s, %s', ref, name)
             logger.info('%s', parsed_ingredients)
@@ -45,7 +46,7 @@ def json2recipe(file):
         logger.info(recipe_dict['ref'])
         new = Recipe(ref=recipe_dict['ref'],\
                     name=recipe_dict['name'],\
-                    ingredients_bill=Recipe.parse_ingredients_bill_dict(\
+                    ingredients_bill=parse_ingredients_bill_dict(\
                         ingredients_bill_dict=recipe_dict['ingredients'],\
                         recipe_ref=recipe_dict['ref']))
     new.write_recipe_file()

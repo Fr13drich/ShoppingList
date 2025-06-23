@@ -7,7 +7,7 @@ from abc import ABC, abstractmethod
 from operator import itemgetter
 from PIL import Image, ImageOps, ImageEnhance
 import easyocr
-from buildATree import parse_stream
+from Reader import parser
 
 config = configparser.ConfigParser()
 config.read('./config.cfg')
@@ -26,8 +26,8 @@ class ReaderInterface(ABC):
     left_page = True
 
     @classmethod
-    def can_parse(cls, location, name) -> bool:
-        """Can I parse the picture?."""
+    def can_read(cls, location, name) -> bool:
+        """Can I read that picture from that book?."""
         ext = name.split('.')[-1]
         return location in cls.allowed_books and ext in cls.allowed_extensions
     @staticmethod
@@ -35,7 +35,7 @@ class ReaderInterface(ABC):
         """Crop where there is no text."""
         results = reader.readtext(image=jpg, detail=1, paragraph=True, x_ths=2000, y_ths=.2,\
                                   text_threshold=.1, height_ths=1000, min_size=50)
-        logger.info('%s', results)
+        # logger.info('before crop results of %s : %s', jpg, results)
         max_box = [10000, 10000, 0, 0]
         for box_coordinates in results:
             max_box[0] = min(max_box[0], int(box_coordinates[0][0][0]))
@@ -45,6 +45,9 @@ class ReaderInterface(ABC):
         img = Image.open(jpg)
         img = img.crop(tuple(max_box))
         img.save(jpg)
+        results = reader.readtext(image=jpg, detail=1, paragraph=True, x_ths=2000, y_ths=.2,\
+                                  text_threshold=.1, height_ths=1000, min_size=50)
+        # logger.info('after crop results of %s : %s', jpg, results)
 
     @classmethod
     def image_preprocessing(cls, pic):
@@ -59,14 +62,14 @@ class ReaderInterface(ABC):
         """Return a dict(name, amount)"""
         result = {}
         for item in raw_list_of_ingredients:
-            splitted_item = str(item).split(maxsplit=1)
-            amount = str(splitted_item[0])
+            split_item = str(item).split(maxsplit=1)
+            amount = str(split_item[0])
             if amount.isnumeric():
                 amount = int(amount)
-                name = str(splitted_item[1]).lower()
+                name = str(split_item[1]).lower()
             elif ',' in amount:
                 amount = float('.'.join(amount.split(sep=',')))
-                name = str(splitted_item[1]).lower()
+                name = str(split_item[1]).lower()
 
             else:
                 amount = 1
@@ -75,7 +78,7 @@ class ReaderInterface(ABC):
         return result
     @classmethod
     @abstractmethod
-    def parse(cls, location, name):
+    def read(cls, location, name):
         pass
     @classmethod
     @abstractmethod
@@ -100,9 +103,9 @@ class BcReader(ReaderInterface):
         self.name = name
         self.left_page = True
     @classmethod
-    def parse(cls, location: str, name: str):
+    def read(cls, location: str, name: str):
         """Ingest the file."""
-        if not cls.can_parse(location, name):
+        if not cls.can_read(location, name):
             raise ValueError('Cannot parse exception.')
         pic = cls.image_preprocessing('./' + location + '/' + name)
         img = Image.open(pic)
@@ -150,37 +153,38 @@ class BcReader(ReaderInterface):
         else:
             ingredients_coordinates = 2 * img.width/3, 0, img.width, img.height*.85
         img_ingredients = img.crop(ingredients_coordinates)
-        enhancer = ImageEnhance.Contrast(img_ingredients)
-        img_ingredients = enhancer.enhance(1)
+        # enhancer = ImageEnhance.Contrast(img_ingredients)
+        # img_ingredients = enhancer.enhance(1)
         img_ingredients.save(cls.ingredients_workfile)
-        cls.autocrop(cls.ingredients_workfile)
+        # cls.autocrop(cls.ingredients_workfile)
         # img = Image.open(self.ingredients_workfile)
         try:
             ingredients = reader.readtext(image=cls.ingredients_workfile, detail=1,\
-                                          paragraph=True, y_ths=.65, height_ths=5)
+                                          paragraph=True, y_ths=.3, height_ths=5)
             # ingredients = list(map(itemgetter(1), ingredients))
         except ValueError():
             print('No text found')
         # remove annotations on the bottom
-        distance = 283
-        # print('distance')
-        # print(distance)
+        # by checking the vertical distance between lines
+        distance = ingredients[1][0][0][1] - ingredients[0][0][0][1]
+        print(f'distance: {distance}')
         y = ingredients[0][0][0][1]
-        # print(ingredients)
+        print(ingredients)
         for i, ingredient in enumerate(ingredients):
             # print(f'{ingredient[0][0][1]} - {y} > 2 * {distance}')
+            # if the distance is above the threshold it means it is a comment
             if ingredient[0][0][1] - y > 2 * distance:
                 tmp_results = list(map(itemgetter(1), ingredients[:i]))
                 results = []
                 for item in tmp_results:
-                    results += parse_stream(item)
+                    results += parser.parse_stream(item)
                 return results
             y = ingredient[0][0][1]
         # return ingredients
         tmp_results =  list(map(itemgetter(1), ingredients))
         results = []
         for item in tmp_results:
-            results += parse_stream(item)
+            results += parser.parse_stream(item)
         return results
 
 class CgReader(ReaderInterface):
@@ -194,9 +198,9 @@ class CgReader(ReaderInterface):
         self.location = location
         self.name = name
     @classmethod
-    def parse(cls, location: str, name: str):
+    def read(cls, location: str, name: str):
         """Ingest the file."""
-        if not cls.can_parse(location, name):
+        if not cls.can_read(location, name):
             raise ValueError('Cannot parse exception.')
         pic = cls.image_preprocessing('./' + location + '/' + name)
         cls.reader_result = reader.readtext(image=pic, detail=1, paragraph=True)
@@ -237,9 +241,9 @@ class EbReader(ReaderInterface):
         self.name = name
     
     @classmethod
-    def parse(cls, location: str, name: str):
+    def read(cls, location: str, name: str):
         """Ingest the file."""
-        if not cls.can_parse(location, name):
+        if not cls.can_read(location, name):
             raise ValueError('Cannot parse exception.')
         pic = cls.image_preprocessing('./' + location + '/' + name)
         cls.reader_result = reader.readtext(image=pic, detail=1, paragraph=True)
@@ -274,7 +278,7 @@ class EbReader(ReaderInterface):
         return ' '.join(title).capitalize()
     @classmethod
     def get_ingredients(cls, img):
-        for box in cls.reader_result[4:-1]:
+        for box in cls.reader_result[3:-1]:
             if 'Ingrédients' in box[1] and box[1].index('Ingrédients') == 0:
                 crop_coordinates = (box[0][0][0], box[0][0][1], box[0][2][0], box[0][2][1])
                 img = img.crop(crop_coordinates)
@@ -299,12 +303,10 @@ class EbReader(ReaderInterface):
                 ingredients_stream = s.replace('  ', ' ')
                 ingredients_list = str(ingredients_stream).split(sep='\n')
                 break
-        print(ingredients_list)
-        parsed_ingredients_list = [parse_stream(i.strip())[0] for i in ingredients_list]
-        print(parsed_ingredients_list)
-        # print(ingredients_stream)
+        # print(ingredients_list)
+        parsed_ingredients_list = [parser.parse_stream(i.strip())[0] for i in ingredients_list]
+        # print(parsed_ingredients_list)
         return parsed_ingredients_list
-        # return parse_stream(ingredients_stream)
 
 class Reader(ReaderInterface):
     allowed_books = [config['DEFAULT']['CG_PICS'],\
@@ -317,7 +319,7 @@ class Reader(ReaderInterface):
         self.location = location
         self.name = name
     @classmethod
-    def parse(cls, location: str, name: str):
+    def read(cls, location: str, name: str):
         if location == config['DEFAULT']['CG_PICS']:
             book_reader = CgReader
         elif location == config['DEFAULT']['BC_PICS']:
@@ -326,10 +328,10 @@ class Reader(ReaderInterface):
             book_reader = EbReader
         else:
             raise ValueError('Unsupported book: ' + location)
-        return book_reader.parse(location=location, name=name)
+        return book_reader.read(location=location, name=name)
 
 if __name__ == '__main__':
-    r, t, i = Reader.parse(config['DEFAULT']['EB_PICS'], '20250116_133249.jpg')
+    r, t, i = Reader.read(config['DEFAULT']['EB_PICS'], '20250116_133249.jpg')
     print(r)
     print(t)
     print(i)
