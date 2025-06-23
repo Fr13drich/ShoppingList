@@ -3,6 +3,7 @@ import json
 import configparser
 import spacy
 from Ingredient import Ingredient
+from buildATree import get_strategy
 
 config = configparser.ConfigParser()
 config.read('./config.cfg')
@@ -28,7 +29,7 @@ class IngredientBill():
 class Recipe():
     """A cooking recipe"""
     UNIT_LIST = ['millilitre', 'tour', 'tranche',  'l', 'pincée', 'brin',\
-                 'bâton', 'branche', 'botte', 'kilogramme', 'gramme', 'tête',\
+                 'bâton', 'bille', 'branche', 'botte', 'kilogramme', 'gramme', 'tête',\
                  'trait', 'gousse', 'pincee', 'feuille', 'grain', 'morceau']
     # juxtaposant_list = ['de', 'd\'', 'à']
 
@@ -177,11 +178,12 @@ class Recipe():
             to a list of ingredients"""
         ingredients = []
         for d , amount in ingredients_bill_dict.items():
-            morphology = Recipe.load_morphology()
+            # morphology = Recipe.load_morphology()
             doc = nlp(' '.join([str(amount), d]))
             ingredient_bill_morphology = ' '.join([token.pos_ for token in doc])
             try:
-                strategy = Recipe.choose_strategy(morphology[ingredient_bill_morphology])
+                # strategy = Recipe.choose_strategy(morphology[ingredient_bill_morphology])
+                strategy = Recipe.choose_strategy(get_strategy(' '.join([str(amount), d])))
             except KeyError:
                 logger.warning('Key error on %s %s', d, ingredient_bill_morphology)
             unit, jxt, name, lemma, other_recipe_ref =\

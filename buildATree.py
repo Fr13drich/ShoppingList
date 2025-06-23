@@ -27,39 +27,64 @@ def build_tree():
         json.dump(root, f, indent=2)
 
 def parse_stream(ingredient_stream: str):
+    """Split a str containing potentialy multiple ingredients
+       Return a list of str
+       '1 pincée de sel, 1 pincée de poivre' returns ['1 pincée de sel', '1 pincée de poivre']
+    """
     with open(file='./parse_tree.json', mode='r', encoding='utf-16', ) as strategy_dict:
         root = json.load(strategy_dict)
     doc = nlp(ingredient_stream)
     ingredient_list = []
     cursor = root
     i = j = 0
-    print(ingredient_stream)
-    print([token.pos_ for token in doc])
+    strategy = ingredient_str = None
+    # print(ingredient_stream)
+    # print([token.pos_ for token in doc])
     for token in doc:
+        print(token.pos_)
+        if cursor.get('strategy'):
+            strategy = cursor['strategy']
+            # print(f'potential strategy: {strategy}')
+            ingredient_str = ingredient_stream[i:j]
+            # print(f'tmp ingredient_str: {ingredient_str}')
         if cursor.get(token.pos_):
-            # print(token.pos_)
             cursor = cursor[token.pos_]
             j += len(token.text_with_ws)
-        elif cursor.get('strategy'):
-            ingredient_list.append(ingredient_stream[i:j])
-            strategy = cursor['strategy']
-            i = j
-            j += len(token.text_with_ws)
-            cursor = root[token.pos_] if root.get(token.pos_) else root
-            print(ingredient_list[-1] + ' ' + strategy)
+            # print(f'current {ingredient_stream[i:j]}')
         else:
+            if strategy:
+                ingredient_list.append(ingredient_str)
+                strategy = None
+
             j += len(token.text_with_ws)
             i = j
             cursor = root
-            print('skipped: ' + token.text)
-    ingredient_list.append(ingredient_stream[i:j])
-    strategy = cursor['strategy']
-    print(ingredient_list[-1] + ' ' + strategy)
+            # print('skipped: ' + token.text)
+    if i != j:
+        ingredient_list.append(ingredient_stream[i:j])
+    # if cursor.get('strategy'):
+    #     strategy = cursor['strategy']
+    # strategy = cursor['strategy']
+    print(ingredient_list)
     return ingredient_list
-#         break
-# print(cursor['strategy'])
+
+def get_strategy(ingredient_line: str):
+    with open(file='./parse_tree.json', mode='r', encoding='utf-16', ) as strategy_dict:
+        root = json.load(strategy_dict)
+    doc = nlp(ingredient_line)
+    cursor = root
+    strategy = None # maybe to be replaced with a default strategy
+    for token in doc:
+        if cursor.get(token.pos_):
+            cursor = cursor[token.pos_]
+            if cursor.get('strategy'):
+                strategy = cursor['strategy']
+        else:
+            break
+    return strategy #if strategy else None
 
 if __name__ == '__main__':
-    # stream = "Huile d'olive"
-    # parse_stream(stream)
-    build_tree()
+    stream = "1 l de sauce béchamel, fluide (voir p. 156) 1 l de lait"
+    parse_stream(stream)
+    # build_tree()
+    # print(get_strategy("1 l de sauce béchamel, fluide (voir p. 156)"))
