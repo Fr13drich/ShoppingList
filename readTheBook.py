@@ -52,7 +52,7 @@ def json2recipe(file):
     logger.info('Recipe written: %s %s', new.ref, new.name)
 
 if __name__ == '__main__':
-    pics2json(location=config["DEFAULT"]["EB_PICS"])
+    pics2json(location=config["DEFAULT"]["BC_PICS"])
     # for root, dirs, files in os.walk(config["DEFAULT"]["READER_OUTPUT_DIR"]):
     #     for name in files:
     #         print(root)
