@@ -23,7 +23,7 @@ jobs:
             . venv/bin/activate
             pip install -r requirements.txt
       - save_cache: # ** special step to save dependency cache **
-          key: build
+          key: *deps1-cache
           paths:
             - "venv"
   lint:
