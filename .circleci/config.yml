@@ -35,6 +35,9 @@ jobs:
           key: &deps1-cache deps1-{{ .Branch }}-{{ checksum "requirements.txt" }}
       # - python/install-packages:
       #     pkg-manager: pip
+      - run: # install and activate virtual environment with pip
+          command: |
+            . venv/bin/activate
       - run:
           name: "install pylint"
           command: "pip install pylint"
