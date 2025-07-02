@@ -1,11 +1,11 @@
 """Extract title and ingredients from pictures"""
 import configparser
 import logging
+from operator import itemgetter
+from abc import ABC, abstractmethod
 import spacy
 import pytesseract
-from abc import ABC, abstractmethod
-from operator import itemgetter
-from PIL import Image, ImageOps, ImageEnhance
+from PIL import Image, ImageOps
 import easyocr
 from Reader import parser
 
@@ -239,7 +239,7 @@ class EbReader(ReaderInterface):
         super().__init__()
         self.location = location
         self.name = name
-    
+
     @classmethod
     def read(cls, location: str, name: str):
         """Ingest the file."""
@@ -252,7 +252,7 @@ class EbReader(ReaderInterface):
         title = cls.get_title(img)
         ingredients = cls.get_ingredients(img)
         return ref, title, cls.parse_ingredients(ingredients)
-    
+
     @classmethod
     def get_ref(cls, img=None):
         """Build a reference base on the name of the book and the page number."""

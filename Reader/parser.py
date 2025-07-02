@@ -219,7 +219,7 @@ def parse_ingredients_bill_dict(ingredients_bill_dict: dict, recipe_ref: str):
             strategy(d, text_list=[token.text for token in doc],
                         lemma_list=[token.lemma_ for token in doc],
                         pos_list=[token.pos_ for token in doc],
-                        book_ref = recipe_ref[0:recipe_ref.rindex('p')] 
+                        book_ref = recipe_ref[0:recipe_ref.rindex('p')]
                             if 'p' in recipe_ref else None)
         ingredients.append(IngredientBill(amount, unit, jxt,\
                     Ingredient.add(name=name,lemma=lemma, recipe_refs=set([str(recipe_ref)]),\
