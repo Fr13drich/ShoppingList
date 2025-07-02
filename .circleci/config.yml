@@ -27,11 +27,11 @@ jobs:
     steps:
       - checkout
       - run:
-          name: "install Pycodestyle"
-          command: "pip install pycodestyle"
+          name: "install pylint"
+          command: "pip install pylint"
       - run:
           name: "Pycodestyle all"
-          command: "find . -name '*.py' | xargs pycodestyle"
+          command: "find . -name '*.py' | xargs pylint"
 
 
 # Orchestrate jobs using workflows
