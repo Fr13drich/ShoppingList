@@ -11,24 +11,22 @@ jobs:
       # Specify the version you desire here
       # See: https://circleci.com/developer/images/image/cimg/base
       - image: cimg/python:3.13.5
-
     # Add steps to the job
     # See: https://circleci.com/docs/jobs-steps/#steps-overview & https://circleci.com/docs/configuration-reference/#steps
     steps:
-      # Checkout the code as the first step.
       - checkout
       - python/install-packages:
           pkg-manager: pip
-      - run:
-          name: "Install dependencies"
-          command: "pip install -r requirements.txt"
+      # - run:
+      #     name: "Install dependencies"
+      #     command: "pip install -r requirements.txt"
   lint:
     docker:
       - image: cimg/python:3.13.5
     steps:
       - checkout
-      - restore_cache:
-          keys: [build]
+      - python/install-packages:
+          pkg-manager: pip
       - run:
           name: "install pylint"
           command: "pip install pylint"
