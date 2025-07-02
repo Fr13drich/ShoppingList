@@ -47,6 +47,6 @@ workflows:
   default:
     jobs:
       - build
-      - lint
+      - lint:
           requires: 
             - build
