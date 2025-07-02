@@ -1,2 +1,2 @@
-from .recipe import Recipe, IngredientBill
+# from .recipe import Recipe, IngredientBill
 from .menu import Menu

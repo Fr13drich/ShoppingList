@@ -17,15 +17,15 @@ jobs:
       - checkout
       - restore_cache:
           keys: [build]
-      - python/install-packages:
-          pkg-manager: pip
-      - save_cache:
+      - run: # install and activate virtual environment with pip
+          command: |
+            python3 -m venv venv
+            . venv/bin/activate
+            pip install -r requirements.txt
+      - save_cache: # ** special step to save dependency cache **
           key: build
           paths:
-            - "."
-      # - run:
-      #     name: "Install dependencies"
-      #     command: "pip install -r requirements.txt"
+            - "venv"
   lint:
     docker:
       - image: cimg/python:3.13.5
