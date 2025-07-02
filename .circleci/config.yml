@@ -31,13 +31,14 @@ jobs:
       - image: cimg/python:3.13.5
     steps:
       - checkout
-      - restore_cache:
-          key: &deps1-cache deps1-{{ .Branch }}-{{ checksum "requirements.txt" }}
-      # - python/install-packages:
-      #     pkg-manager: pip
-      - run: # install and activate virtual environment with pip
-          command: |
-            . venv/bin/activate
+      # - restore_cache:
+      #     key: &deps1-cache deps1-{{ .Branch }}-{{ checksum "requirements.txt" }}
+      - python/install-packages:
+          pkg-manager: pip
+      # - run: 
+      #     command: |
+      #       ls
+      #       . venv/bin/activate
       - run:
           name: "install pylint"
           command: "pip install pylint"
