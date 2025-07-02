@@ -53,7 +53,7 @@ class Ingredient:
             if name in knowkn_ingredient.synonymes or\
                 (' '.join([token.lemma_ for token in nlp(name)]) == knowkn_ingredient.lemma):
                 knowkn_ingredient.synonymes.add(name)
-                if recipe_refs and not(set(recipe_refs).issubset(set(knowkn_ingredient.recipe_refs))):
+                if recipe_refs and not set(recipe_refs).issubset(set(knowkn_ingredient.recipe_refs)):
                     logger.info('Intersection: %s', set(recipe_refs).issubset(set(knowkn_ingredient.recipe_refs)))
                     knowkn_ingredient.recipe_refs = knowkn_ingredient.recipe_refs.union(recipe_refs)
                     # logger.info('ref added %s because not in %s', recipe_refs, knowkn_ingredient.recipe_refs)
@@ -142,11 +142,11 @@ class Ingredient:
 
     def serialize(self):
         """produce a dictionary containing relevant attributes for JSON serialization."""
-        return dict({'name': self.name,\
-                     'lemma': self.lemma,\
-                     'wiki_ref': self.wiki_ref if self.wiki_ref else "",\
-                     'category': self.category,\
-                     'synonymes': list(self.synonymes),\
-                     'recipe_refs': list(self.recipe_refs),\
-                     'other_recipe_ref': self.other_recipe_ref if self.other_recipe_ref else ""\
+        return dict({'name': self.name,
+                     'lemma': self.lemma,
+                     'wiki_ref': self.wiki_ref if self.wiki_ref else "",
+                     'category': self.category,
+                     'synonymes': list(self.synonymes),
+                     'recipe_refs': list(self.recipe_refs),
+                     'other_recipe_ref': self.other_recipe_ref if self.other_recipe_ref else ""
                     })
