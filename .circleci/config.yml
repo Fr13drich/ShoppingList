@@ -15,17 +15,19 @@ jobs:
     # See: https://circleci.com/docs/jobs-steps/#steps-overview & https://circleci.com/docs/configuration-reference/#steps
     steps:
       - checkout
-      - restore_cache:
-          key: &deps1-cache deps1-{{ .Branch }}-{{ checksum "requirements.txt" }}
-      - run: # install and activate virtual environment with pip
-          command: |
-            python3 -m venv venv
-            . venv/bin/activate
-            pip install -r requirements.txt
-      - save_cache: # ** special step to save dependency cache **
-          key: *deps1-cache
-          paths:
-            - "venv"
+      - python/install-packages:
+          pkg-manager: pip
+      # - restore_cache:
+      #     key: &deps1-cache deps1-{{ .Branch }}-{{ checksum "requirements.txt" }}
+      # - run: # install and activate virtual environment with pip
+      #     command: |
+      #       python3 -m venv venv
+      #       . venv/bin/activate
+      #       pip install -r requirements.txt
+      # - save_cache: # ** special step to save dependency cache **
+      #     key: *deps1-cache
+      #     paths:
+      #       - "venv"
   lint:
     docker:
       - image: cimg/python:3.13.5
