@@ -15,8 +15,14 @@ jobs:
     # See: https://circleci.com/docs/jobs-steps/#steps-overview & https://circleci.com/docs/configuration-reference/#steps
     steps:
       - checkout
+      - restore_cache:
+          keys: [build]
       - python/install-packages:
           pkg-manager: pip
+      - save_cache:
+          key: build
+          paths:
+            - "."
       # - run:
       #     name: "Install dependencies"
       #     command: "pip install -r requirements.txt"
@@ -25,8 +31,10 @@ jobs:
       - image: cimg/python:3.13.5
     steps:
       - checkout
-      - python/install-packages:
-          pkg-manager: pip
+      - restore_cache:
+          keys: [build]
+      # - python/install-packages:
+      #     pkg-manager: pip
       - run:
           name: "install pylint"
           command: "pip install pylint"
