@@ -38,9 +38,11 @@ class Ingredient:
         logger.info('%s written', filename)
 
     def __str__(self):
-        return str('Ingredient: ' + str(self.name) + ' Wiki ref: ' + str(self.wiki_ref) +\
-                   ' Synonymes: '  + str(self.synonymes) + ' recipe_refs: '  + str(self.recipe_refs)\
-                   + ' lemma: '  + str(self.lemma)\
+        return str('Ingredient: ' + str(self.name)
+                   + ' Wiki ref: ' + str(self.wiki_ref)
+                   + ' Synonymes: '  + str(self.synonymes)
+                   + ' recipe_refs: '  + str(self.recipe_refs)
+                   + ' lemma: '  + str(self.lemma)
                   )
 
     @classmethod

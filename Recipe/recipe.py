@@ -1,14 +1,11 @@
 import logging
 import json
 import configparser
-import spacy
 from Ingredient import Ingredient
-# from Reader.parser import get_strategy
 
 config = configparser.ConfigParser()
 config.read('./config.cfg')
 logger = logging.getLogger(__name__)
-nlp = spacy.load("fr_core_news_md")
 
 class IngredientBill():
     """An ingredient with amount and unit"""
@@ -28,10 +25,6 @@ class IngredientBill():
                     })
 class Recipe():
     """A cooking recipe"""
-    UNIT_LIST = ['millilitre', 'tour', 'tranche',  'l', 'pincée', 'brin',\
-                 'bâton', 'bille', 'branche', 'botte', 'kilogramme', 'gramme', 'tête',\
-                 'trait', 'gousse', 'pincee', 'feuille', 'grain', 'morceau']
-    # juxtaposant_list = ['de', 'd\'', 'à']
 
     def __init__(self, ref: str, name: str, ingredients_bill):
         self.ref = ref

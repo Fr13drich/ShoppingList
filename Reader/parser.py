@@ -3,7 +3,6 @@ import json
 import configparser
 import logging
 import spacy
-from Recipe import Recipe
 from Recipe import IngredientBill
 from Ingredient import Ingredient
 config = configparser.ConfigParser()
@@ -22,13 +21,13 @@ def load_morphology(file=config['DEFAULT']['INGREDIENT_BILL_MORPHOLOGY_FILE']):
 
 def build_tree():
     shape = load_morphology()
-    root = cursor = dict()
+    root = cursor = {}
     for k, v in shape.items():
         cursor = root
         tokens = str(k).split()
         for token in tokens:
             if not cursor.get(token):
-                cursor[token] = dict()
+                cursor[token] = {}
             cursor = cursor[token]
         cursor['strategy'] = v
     print(root)
@@ -217,10 +216,11 @@ def parse_ingredients_bill_dict(ingredients_bill_dict: dict, recipe_ref: str):
         except KeyError:
             logger.warning('Key error on %s', d)
         unit, jxt, name, lemma, other_recipe_ref =\
-            strategy(d, text_list=[token.text for token in doc],\
-                        lemma_list=[token.lemma_ for token in doc],\
-                        pos_list=[token.pos_ for token in doc],\
-                        book_ref = recipe_ref[0:recipe_ref.rindex('p')] if 'p' in recipe_ref else None)
+            strategy(d, text_list=[token.text for token in doc],
+                        lemma_list=[token.lemma_ for token in doc],
+                        pos_list=[token.pos_ for token in doc],
+                        book_ref = recipe_ref[0:recipe_ref.rindex('p')] 
+                            if 'p' in recipe_ref else None)
         ingredients.append(IngredientBill(amount, unit, jxt,\
                     Ingredient.add(name=name,lemma=lemma, recipe_refs=set([str(recipe_ref)]),\
                                     other_recipe_ref=other_recipe_ref)))
