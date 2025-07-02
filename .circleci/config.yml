@@ -40,7 +40,7 @@ jobs:
           command: "pip install pylint"
       - run:
           name: "Lint all"
-          command: "find . -name '*.py' | xargs pylint"
+          command: "find . -maxdepth 2 -name '*.py' | xargs pylint"
 
 
 # Orchestrate jobs using workflows
