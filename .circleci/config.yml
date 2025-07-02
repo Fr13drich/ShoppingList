@@ -21,11 +21,20 @@ jobs:
       - run:
           name: "Install dependencies"
           command: "pip install -r requirements.txt"
+  lint:
+    docker:
+      - image: cimg/python:3.13.5
+    steps:
+      - checkout
+      - run:
+          name: "Pycodestyle all"
+          command: "find . -name *.py | xargs pycodestyle"
+
 
 # Orchestrate jobs using workflows
 # See: https://circleci.com/docs/workflows/ & https://circleci.com/docs/configuration-reference/#workflows
 workflows:
-  say-hello-workflow: # This is the name of the workflow, feel free to change it to better match your workflow.
-    # Inside the workflow, you define the jobs you want to run.
+  default:
     jobs:
-      - build # python.exe -m pip install --upgrade pip
+      - build
+      - lint
