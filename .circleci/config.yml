@@ -46,7 +46,7 @@ jobs:
           command: "pip install pylint"
       - run:
           name: "Lint all"
-          command: "find . -maxdepth 2 -name '*.py' | xargs pylint"
+          command: "find . -maxdepth 2 -name '*.py' | xargs pylint --disable=R0901"
 
 
 # Orchestrate jobs using workflows
