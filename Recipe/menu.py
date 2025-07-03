@@ -16,6 +16,9 @@ class Menu():
         """Append a recipe to the list"""
         self.recipes.append((recipe, float(ratio)))
     def merge_ingredients(self):
+        """merge ingredients that have the same lemma
+        sum the amounts if possible
+        """
         total_ingredients_bill = []
         for (recipe, ratio) in self.recipes:
             for ingredient_bill in recipe.ingredients_bill:

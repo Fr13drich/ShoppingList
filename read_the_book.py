@@ -17,6 +17,7 @@ logging.basicConfig(filename=config['DEFAULT']['READER_LOG_FILE'],\
 
 
 def pics2json(location):
+    """main loop of read_the_book"""
     for _root, _dirs, files in os.walk(location):
         for name in files:
             print('Reading ' + str(name) + ' from ' + location)
