@@ -1,3 +1,4 @@
+"""Generate a shopping list from a set of recipes"""
 import logging
 import json
 import configparser
@@ -108,6 +109,7 @@ class RecipesFrame(customtkinter.CTkFrame):
         self.master.ingredients_frame.merged_ingredients.delete("0.0", "end")
 
     def generate_shopping_list(self):
+        """Collect ant scale the recipes then display the shopping list"""
         menu = Menu('Hiver')
         for j in range(RecipesFrame.nb_of_week):
             if self.disable_button_list[j].get():

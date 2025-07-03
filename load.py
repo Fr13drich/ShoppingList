@@ -1,3 +1,4 @@
+"""Functions used by the gui"""
 import configparser
 import json
 import os
@@ -17,13 +18,14 @@ def load_all_recipe_files(location=config['DEFAULT']['RECIPES_DIR']):
             with open(location + name, 'r', encoding='utf-16') as recipe_file:
                 recipe_dict = json.load(recipe_file)
                 logger.info(recipe_dict['ref'])
-                all_recipes_list.append(\
-                        Recipe(ref=recipe_dict['ref'],\
-                               name=recipe_dict['name'],\
+                all_recipes_list.append(
+                        Recipe(ref=recipe_dict['ref'],
+                               name=recipe_dict['name'],
                                ingredients_bill=recipe_dict['ingredients_bill']))
     return all_recipes_list
 
 def load_all_ingredient_files(location=config['DEFAULT']['INGREDIENTS_DIR']):
+    """not used anymore"""
     for _root, _dirs, files in os.walk(location):
         for name in files:
             with open(location + name, 'r', encoding='utf-16') as ingredient_file:

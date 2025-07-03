@@ -1,3 +1,4 @@
+"""Describe the class Ingredient"""
 from urllib.parse import unquote
 import configparser
 import logging
@@ -55,10 +56,11 @@ class Ingredient:
             if name in knowkn_ingredient.synonymes or\
                 (' '.join([token.lemma_ for token in nlp(name)]) == knowkn_ingredient.lemma):
                 knowkn_ingredient.synonymes.add(name)
-                if recipe_refs and not set(recipe_refs).issubset(set(knowkn_ingredient.recipe_refs)):
-                    logger.info('Intersection: %s', set(recipe_refs).issubset(set(knowkn_ingredient.recipe_refs)))
+                if recipe_refs\
+                and not set(recipe_refs).issubset(set(knowkn_ingredient.recipe_refs)):
+                    logger.info('Intersection: %s',
+                                set(recipe_refs).issubset(set(knowkn_ingredient.recipe_refs)))
                     knowkn_ingredient.recipe_refs = knowkn_ingredient.recipe_refs.union(recipe_refs)
-                    # logger.info('ref added %s because not in %s', recipe_refs, knowkn_ingredient.recipe_refs)
                     Ingredient.write_ingredient_file(knowkn_ingredient)
                 return knowkn_ingredient
         new_ingredient = Ingredient(name=name, lemma=lemma, wiki_ref=wiki_ref, category=category,\

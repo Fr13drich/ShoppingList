@@ -16,10 +16,12 @@ UNIT_LIST = ['millilitre', 'tour', 'tranche',  'l', 'pincée', 'brin',\
     # juxtaposant_list = ['de', 'd\'', 'à']
 
 def load_morphology(file=config['DEFAULT']['INGREDIENT_BILL_MORPHOLOGY_FILE']):
+    """load a list of ingredient lines lexical morphology"""
     with open(file, 'r', encoding='utf-8', ) as morphology_file:
         return json.load(morphology_file)
 
 def build_tree():
+    """create a tree from à nested list"""
     shape = load_morphology()
     root = cursor = {}
     for k, v in shape.items():
@@ -78,6 +80,7 @@ def parse_stream(ingredient_stream: str):
     return ingredient_list
 
 def get_strategy(ingredient_line: str):
+    """search the tree for a strategy"""
     with open(file='./parse_tree.json', mode='r', encoding='utf-16', ) as strategy_dict:
         root = json.load(strategy_dict)
     doc = nlp(ingredient_line)
@@ -93,6 +96,7 @@ def get_strategy(ingredient_line: str):
     return strategy
 
 def strategy01(d: str, text_list, lemma_list, pos_list, book_ref: str):
+    """quantity in first position the the ingredient name"""
     other_recipe_ref = None
     #check for a ref to another recipe
     if pos_list[-5:] == ["PUNCT", "VERB", "NOUN", "NUM", "PUNCT"]:
@@ -113,6 +117,7 @@ def strategy01(d: str, text_list, lemma_list, pos_list, book_ref: str):
     return (unit, jxt, name, lemma, other_recipe_ref)
 
 def strategy013(d: str, text_list, lemma_list, pos_list, book_ref: str):
+    """shape is: amount unit jxt name"""
     other_recipe_ref = None
     #check for a ref
     if pos_list[-5:] == ["PUNCT", "VERB", "NOUN", "NUM", "PUNCT"]:
@@ -133,6 +138,7 @@ def strategy013(d: str, text_list, lemma_list, pos_list, book_ref: str):
     return (unit, jxt, name, lemma, other_recipe_ref)
 
 def strategy0135(d: str, text_list, lemma_list, pos_list, book_ref: str):
+    """name from position 3 to 5"""
     other_recipe_ref = None
     #check for a ref
     if pos_list[-5:] == ["PUNCT", "VERB", "NOUN", "NUM", "PUNCT"]:
@@ -146,6 +152,7 @@ def strategy0135(d: str, text_list, lemma_list, pos_list, book_ref: str):
     return (unit, jxt, name, lemma, other_recipe_ref)
 
 def strategy0156(d: str, text_list, lemma_list, pos_list, book_ref: str):
+    """name from position until the end (without ref to sub recipe)"""
     other_recipe_ref = None
     #check for a ref
     if pos_list[-5:] == ["PUNCT", "VERB", "NOUN", "NUM", "PUNCT"]:
@@ -163,7 +170,7 @@ def strategy0156(d: str, text_list, lemma_list, pos_list, book_ref: str):
 def strategy04(d: str, text_list, lemma_list, pos_list, book_ref: str):
     """Ingredient name in position 4. No unit nor jxt."""
     other_recipe_ref = None
-    #check for a ref
+    #check for a reference to another recipe
     if pos_list[-5:] == ["PUNCT", "VERB", "NOUN", "NUM", "PUNCT"]:
         other_recipe_ref = book_ref + 'p' + str(text_list[-2])
         lemma_list = lemma_list[:-5]
@@ -173,16 +180,17 @@ def strategy04(d: str, text_list, lemma_list, pos_list, book_ref: str):
     name = d[d.index(text_list[4]):]
     return (unit, '', name, lemma, other_recipe_ref)
 
-def strategy34(d: str, text_list, lemma_list, pos_list, book_ref: str):
+def strategy34(d: str, text_list, lemma_list, _pos_list, book_ref=None):
     """Le jus de 1 citron -> 1 citron"""
-    other_recipe_ref = None
+    other_recipe_ref = book_ref
     lemma = lemma_list[-1]
     unit = 'p'
     jxt = ''
     name = d[d.index(text_list[-1]):]
     return (unit, jxt, name, lemma, other_recipe_ref)
 
-def strategy_name_only(d: str, text_list, lemma_list, pos_list, book_ref: str):
+def strategy_name_only(d: str, _text_list, lemma_list, _pos_list, _book_ref: str):
+    """Sel"""
     lemma = ' '.join(lemma_list)
     unit = 'p'
     name = d
@@ -190,6 +198,7 @@ def strategy_name_only(d: str, text_list, lemma_list, pos_list, book_ref: str):
     return (unit, jxt, name, lemma, None)
 
 def choose_strategy(s: str):
+    """Return the right parsing function"""
     if s == "strategy01":
         return strategy01
     if s == "strategy013":
@@ -227,7 +236,6 @@ def parse_ingredients_bill_dict(ingredients_bill_dict: dict, recipe_ref: str):
     return ingredients
 
 if __name__ == '__main__':
-    stream = "1 l de sauce béchamel, fluide (voir p. 156) 1 l de lait"
-    parse_stream(stream)
+    parse_stream("1 l de sauce béchamel, fluide (voir p. 156) 1 l de lait")
     # build_tree()
     # print(get_strategy("1 l de sauce béchamel, fluide (voir p. 156)"))
