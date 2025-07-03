@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 class Ingredient:
     """An ingredient for cooking"""
     knowkn_ingredients_list = []
-    def __init__(self, name: str, lemma: str, recipe_refs: set, wiki_ref=None, category=None,\
+    def __init__(self, *, name: str, lemma: str, recipe_refs: set, wiki_ref=None, category=None,\
                  synonymes=None, other_recipe_ref=None):
         self.name = name
         self.lemma = lemma
@@ -47,7 +47,7 @@ class Ingredient:
                   )
 
     @classmethod
-    def add(cls, name: str, lemma: str, recipe_refs: set,\
+    def add(cls, *, name: str, lemma: str, recipe_refs: set,\
             wiki_ref=None, category=None, other_recipe_ref=None):
         """ Add a new ingredient in the ingredients list if necessary
         otherwise update and return an existing ingredient"""
