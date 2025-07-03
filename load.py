@@ -3,7 +3,7 @@ import configparser
 import json
 import os
 import logging
-from Recipe import Recipe
+from recipe import Recipe
 from ingredient import Ingredient
 
 config = configparser.ConfigParser()

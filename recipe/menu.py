@@ -1,7 +1,7 @@
 """Create a shopping list"""
 import math
 import spacy
-from Recipe import Recipe, IngredientBill
+from recipe import Recipe, IngredientBill
 from ingredient import Ingredient
 
 nlp = spacy.load("fr_core_news_md")

@@ -5,7 +5,7 @@ import json
 import configparser
 from reader import Reader
 from reader import parse_ingredients_bill_dict
-from Recipe import Recipe
+from recipe import Recipe
 
 config = configparser.ConfigParser()
 config.read('./config.cfg')

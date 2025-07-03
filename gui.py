@@ -7,7 +7,7 @@ import tkinter.messagebox
 import tkinter.filedialog
 import customtkinter
 import load
-from Recipe import Menu
+from recipe import Menu
 from ingredient import Ingredient
 
 config = configparser.ConfigParser()

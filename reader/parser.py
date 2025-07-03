@@ -3,7 +3,7 @@ import json
 import configparser
 import logging
 import spacy
-from Recipe import IngredientBill
+from recipe import IngredientBill
 from ingredient import Ingredient
 config = configparser.ConfigParser()
 config.read('./config.cfg')
