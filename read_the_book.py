@@ -3,8 +3,8 @@ import os
 import logging
 import json
 import configparser
-from Reader import Reader
-from Reader import parse_ingredients_bill_dict
+from reader import Reader
+from reader import parse_ingredients_bill_dict
 from Recipe import Recipe
 
 config = configparser.ConfigParser()

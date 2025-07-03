@@ -7,7 +7,7 @@ import spacy
 import pytesseract
 from PIL import Image, ImageOps
 import easyocr
-from Reader import parser
+from reader import parser
 
 config = configparser.ConfigParser()
 config.read('./config.cfg')
