@@ -18,7 +18,7 @@ class Ingredient:
                  synonymes=None, other_recipe_ref=None):
         self.name = name
         self.lemma = lemma
-        self.wiki_ref = wiki_ref #if wiki_ref else Ingredient.get_wiki_ref(name)
+        self.wiki_ref = wiki_ref # if wiki_ref else Ingredient.get_wiki_ref(name)
         self.category = category
         self.synonymes = synonymes if synonymes else set([name, lemma])
         self.recipe_refs = set(recipe_refs) #if recipe_refs else set()
