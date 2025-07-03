@@ -51,6 +51,7 @@ class ReaderInterface(ABC):
 
     @classmethod
     def image_preprocessing(cls, pic):
+        """"grayscaled and cropped pic"""
         img = Image.open(pic)
         img = ImageOps.exif_transpose(img)
         img = ImageOps.grayscale(img)
@@ -79,19 +80,19 @@ class ReaderInterface(ABC):
     @classmethod
     @abstractmethod
     def read(cls, location, name):
-        pass
+        """Ingest the picture."""
     @classmethod
     @abstractmethod
     def get_title(cls, img):
-        pass
+        """OCR and retrieve title"""
     @classmethod
     @abstractmethod
     def get_ingredients(cls, img):
-        pass
+        """OCR and retrieve ingredients"""
     @classmethod
     @abstractmethod
     def get_ref(cls, img):
-        pass
+        """OCR and build a reference base on the name of the book and the page number."""
 class BcReader(ReaderInterface):
     """Read pictures from 'Bien cuisiner'."""
     allowed_books = [config['DEFAULT']['BC_PICS']]
@@ -255,7 +256,6 @@ class EbReader(ReaderInterface):
 
     @classmethod
     def get_ref(cls, img=None):
-        """Build a reference base on the name of the book and the page number."""
         doc = nlp(cls.reader_result[-1][1])
         # print(cls.reader_result[-1][1])
         for token in doc:
@@ -309,6 +309,7 @@ class EbReader(ReaderInterface):
         return parsed_ingredients_list
 
 class Reader(ReaderInterface):
+    """pick the right reader as per file location"""
     allowed_books = [config['DEFAULT']['CG_PICS'],\
                      config['DEFAULT']['BC_PICS'],\
                      config['DEFAULT']['EB_PICS']]

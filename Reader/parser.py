@@ -197,22 +197,22 @@ def strategy_name_only(d: str, _text_list, lemma_list, _pos_list, _book_ref: str
     jxt = ''
     return (unit, jxt, name, lemma, None)
 
-def choose_strategy(s: str):
-    """Return the right parsing function"""
-    if s == "strategy01":
-        return strategy01
-    if s == "strategy013":
-        return strategy013
-    if s == "strategy0135":
-        return strategy0135
-    if s == "strategy0156":
-        return strategy0156
-    if s == "strategy04":
-        return strategy04
-    if s == "strategy34":
-        return strategy34
-    if s == "strategy_name_only":
-        return strategy_name_only
+# def choose_strategy(s: str):
+#     """Return the right parsing function"""
+#     if s == "strategy01":
+#         return strategy01
+#     if s == "strategy013":
+#         return strategy013
+#     if s == "strategy0135":
+#         return strategy0135
+#     if s == "strategy0156":
+#         return strategy0156
+#     if s == "strategy04":
+#         return strategy04
+#     if s == "strategy34":
+#         return strategy34
+#     if s == "strategy_name_only":
+#         return strategy_name_only
 
 def parse_ingredients_bill_dict(ingredients_bill_dict: dict, recipe_ref: str):
     """Transform the json created by the ocr module
@@ -221,7 +221,8 @@ def parse_ingredients_bill_dict(ingredients_bill_dict: dict, recipe_ref: str):
     for d , amount in ingredients_bill_dict.items():
         doc = nlp(' '.join([str(amount), d]))
         try:
-            strategy = choose_strategy(get_strategy(' '.join([str(amount), d])))
+            # strategy = choose_strategy(get_strategy(' '.join([str(amount), d])))
+            strategy = get_strategy(' '.join([str(amount), d]))
         except KeyError:
             logger.warning('Key error on %s', d)
         unit, jxt, name, lemma, other_recipe_ref =\
