@@ -24,13 +24,13 @@ def load_all_recipe_files(location=config['DEFAULT']['RECIPES_DIR']):
                                ingredients_bill=recipe_dict['ingredients_bill']))
     return all_recipes_list
 
-def load_all_ingredient_files(location=config['DEFAULT']['INGREDIENTS_DIR']):
-    """not used anymore"""
-    for _root, _dirs, files in os.walk(location):
-        for name in files:
-            with open(location + name, 'r', encoding='utf-16') as ingredient_file:
-                ingredient = json.load(ingredient_file)
-                Ingredient.add(name=ingredient['name'], lemma=ingredient['lemma'],\
-                    recipe_refs=ingredient['recipe_refs'],\
-                    wiki_ref=ingredient['wiki_ref'], category=ingredient['category'],\
-                    other_recipe_ref=ingredient['other_recipe_ref'])
+# def load_all_ingredient_files(location=config['DEFAULT']['INGREDIENTS_DIR']):
+#     """not used anymore"""
+#     for _root, _dirs, files in os.walk(location):
+#         for name in files:
+#             with open(location + name, 'r', encoding='utf-16') as ingredient_file:
+#                 ingredient = json.load(ingredient_file)
+#                 Ingredient.add(name=ingredient['name'], lemma=ingredient['lemma'],\
+#                     recipe_refs=ingredient['recipe_refs'],\
+#                     wiki_ref=ingredient['wiki_ref'], category=ingredient['category'],\
+#                     other_recipe_ref=ingredient['other_recipe_ref'])

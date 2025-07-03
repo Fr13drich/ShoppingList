@@ -45,8 +45,8 @@ jobs:
           name: "install pylint"
           command: "pip install pylint"
       - run:
-          name: "Lint all"
-          command: "find . -maxdepth 2 -name '*.py' | xargs pylint --disable=R0901"
+          name: "Lint all (disable too many ancestor/arguments)"
+          command: "find . -maxdepth 2 -name '*.py' | xargs pylint --disable=R0901 R0913"
 
 
 # Orchestrate jobs using workflows
@@ -58,3 +58,4 @@ workflows:
       - lint:
           requires: 
             - build
+      

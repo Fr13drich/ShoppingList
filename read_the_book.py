@@ -1,4 +1,5 @@
-"""Extract ingredients bills from my cooking books."""
+"""main function of the module
+Extract the name of the recipe along with the ingredients bill from my cooking books."""
 import os
 import logging
 import json
