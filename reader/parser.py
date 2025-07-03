@@ -4,7 +4,7 @@ import configparser
 import logging
 import spacy
 from Recipe import IngredientBill
-from Ingredient import Ingredient
+from ingredient import Ingredient
 config = configparser.ConfigParser()
 config.read('./config.cfg')
 nlp = spacy.load("fr_core_news_md")
