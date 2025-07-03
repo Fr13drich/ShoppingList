@@ -4,7 +4,7 @@ import json
 import os
 import logging
 from recipe import Recipe
-from ingredient import Ingredient
+# from ingredient import Ingredient
 
 config = configparser.ConfigParser()
 config.read('./config.cfg')
