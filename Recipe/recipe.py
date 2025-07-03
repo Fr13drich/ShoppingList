@@ -1,7 +1,8 @@
+"""Recipe"""
 import logging
 import json
 import configparser
-from Ingredient import Ingredient
+from ingredient import Ingredient
 
 config = configparser.ConfigParser()
 config.read('./config.cfg')
