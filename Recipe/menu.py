@@ -2,7 +2,7 @@
 import math
 import spacy
 from Recipe import Recipe, IngredientBill
-from Ingredient import Ingredient
+from ingredient import Ingredient
 
 nlp = spacy.load("fr_core_news_md")
 
