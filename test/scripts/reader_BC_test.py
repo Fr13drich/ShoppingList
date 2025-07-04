@@ -1,7 +1,9 @@
-"""test the ouput of read_the_book.py on one BC recipe"""
+"""test the ouput of read_the_book.py on one recipe"""
+import os
 import subprocess
+EXT = '.exe' if os.name == 'nt' else '3'
 #BCp384
-p = subprocess.run('python.exe ./read_the_book.py ./test/',
+p = subprocess.run('python' + EXT + ' ./read_the_book.py ./test/',
                            stdout=subprocess.PIPE, check=True)
 
 def test_answer():
