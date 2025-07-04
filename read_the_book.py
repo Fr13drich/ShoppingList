@@ -1,6 +1,7 @@
 """main function of the module
 Extract the name of the recipe along with the ingredients bill from my cooking books."""
 import os
+import sys
 import logging
 import json
 import configparser
@@ -17,7 +18,7 @@ logging.basicConfig(filename=config['DEFAULT']['READER_LOG_FILE'],\
                     level=logging.INFO, encoding='utf-16', format=FORMAT)
 
 
-def pics2json(location):
+def pics2json(location, output_dir=None):
     """main loop of read_the_book"""
     for _root, _dirs, files in os.walk(location):
         for name in files:
@@ -26,16 +27,16 @@ def pics2json(location):
             outfile = config['DEFAULT']['READER_OUTPUT_DIR'] + ref + '.json'
             logger.info('%s, %s', ref, name)
             logger.info('%s', parsed_ingredients)
-            if os.path.exists(outfile):
-                if input(outfile + " already exists. Should I overwrite?: ") != 'y':
-                    continue
+            # if os.path.exists(outfile):
+            #     if input(outfile + " already exists. Should I overwrite?: ") != 'y':
+            #         continue
             with open(outfile, 'w', encoding='utf-16') as raw_dict:
                 json.dump({'ref': ref, 'name':name, 'ingredients':parsed_ingredients},\
                             raw_dict, indent=2, ensure_ascii=False)
             logger.info('Written: %s', outfile)
-            json2recipe(outfile)
+            json2recipe(outfile, output_dir)
 
-def json2recipe(file):
+def json2recipe(file, output_dir=None):
     """
     File layout:
     ref: str,
@@ -51,12 +52,23 @@ def json2recipe(file):
                     ingredients_bill=parse_ingredients_bill_dict(\
                         ingredients_bill_dict=recipe_dict['ingredients'],\
                         recipe_ref=recipe_dict['ref']))
-    new.write_recipe_file()
+    new.write_recipe_file(output_dir)
     logger.info('Recipe written: %s %s', new.ref, new.name)
 
 if __name__ == '__main__':
-    pics2json(location=config["DEFAULT"]["BC_PICS"])
-    # for root, dirs, files in os.walk(config["DEFAULT"]["READER_OUTPUT_DIR"]):
+    try:
+        OUTPUT_DIR = sys.argv[1] if os.path.exists(sys.argv[1]) else None
+    except IndexError:
+        OUTPUT_DIR = None
+
+    pics2json(location=config["DEFAULT"]["BC_PICS"], output_dir=OUTPUT_DIR)
+    # if sys.argv[1]:
+    #     print(sys.argv[1])
+    #     if os.path.exists(sys.argv[1]):
+    #         pics2json(location=sys.argv[1])
+    #     else:
+    #         pics2json(location=config["DEFAULT"]["BC_PICS"])
+    # # for root, dirs, files in os.walk(config["DEFAULT"]["READER_OUTPUT_DIR"]):
     #     for name in files:
     #         print(root)
     #         print(dirs)

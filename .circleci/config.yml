@@ -47,7 +47,20 @@ jobs:
       - run:
           name: "Lint all (disable too many ancestor/arguments)"
           command: "find . -maxdepth 2 -name '*.py' | xargs pylint --disable='R0901, R0913'"
-
+  test:
+    docker:
+      - image: cimg/python:3.13.5
+    steps:
+      - checkout
+      - python/install-packages:
+          pkg-manager: pip
+      - run:
+          name: "install pytest"
+          command: "pip install pytest"
+      - run:
+          name: "run test"
+          command: "pytest ./test/"
+      
 
 # Orchestrate jobs using workflows
 # See: https://circleci.com/docs/workflows/ & https://circleci.com/docs/configuration-reference/#workflows

@@ -222,7 +222,7 @@ def parse_ingredients_bill_dict(ingredients_bill_dict: dict, recipe_ref: str):
         doc = nlp(' '.join([str(amount), d]))
         try:
             # strategy = choose_strategy(get_strategy(' '.join([str(amount), d])))
-            strategy = get_strategy(' '.join([str(amount), d]))
+            strategy = globals()[get_strategy(' '.join([str(amount), d]))]
         except KeyError:
             logger.warning('Key error on %s', d)
         unit, jxt, name, lemma, other_recipe_ref =\

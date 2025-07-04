@@ -41,12 +41,11 @@ class Recipe():
                      'name': self.name,\
                      'ingredients_bill': [i.serialize() for i in self.ingredients_bill]
                     })
-    def write_recipe_file(self):
+    def write_recipe_file(self, location=config['DEFAULT']['RECIPES_DIR']):
         """write an recipe on disk in json"""
         name = self.ref if self.ref else self.name
         filename = name + '.json'
-        with open(config['DEFAULT']['RECIPES_DIR'] +\
-                  str(filename).encode('utf-16').decode('utf-16'),\
+        with open(str(location) + str(filename).encode('utf-16').decode('utf-16'),
                   'w', encoding='utf-16') as outfile:
             json.dump(self.serialize(), outfile, indent=2, ensure_ascii=False)
         logger.info('%s written', filename)
