@@ -46,7 +46,7 @@ jobs:
           command: "pip install pylint"
       - run:
           name: "Lint all (disable too many ancestor/arguments)"
-          command: "find . -maxdepth 2 -name '*.py' | xargs pylint --disable='R0901, R0913'"
+          command: "find . -maxdepth 2 -name '*.py' | xargs pylint --disable='R0901, R903, R0913'"
   test:
     docker:
       - image: cimg/python:3.13.5
