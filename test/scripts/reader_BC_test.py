@@ -2,14 +2,18 @@
 import os
 import subprocess
 EXT = '.exe' if os.name == 'nt' else '3'
+TEST_RESULTS_DIR = './test/test_results/'
+RECIPE_DIR = './data/recipe_files/'
 #BCp384
-p = subprocess.run(['python' + EXT,  './read_the_book.py', './test/test_results/'],
+p = subprocess.run(['python' + EXT,  './read_the_book.py', TEST_RESULTS_DIR],
                            stdout=subprocess.PIPE, check=True)
 # p = subprocess.run('pwd',stdout=subprocess.PIPE, check=True, shell=True)
 # print(p.stdout)
 
 def test_answer():
     """test the ouput of read_the_book.py on one BC recipe"""
-    with open(file='./data/recipe_files/BCp384.json', mode='r', encoding='utf-16') as recipe_file:
-        with open(file='./test/BCp384.json', mode='r', encoding='utf-16') as test_result:
-            assert recipe_file.read() == test_result.read()
+    for _root, _dirs, files in os.walk(TEST_RESULTS_DIR):
+        for name in files:
+            with open(file=TEST_RESULTS_DIR + name, mode='r', encoding='utf-16') as test_result:
+                with open(file=RECIPE_DIR + name, mode='r', encoding='utf-16') as recipe_file:
+                    assert recipe_file.read() == test_result.read()
