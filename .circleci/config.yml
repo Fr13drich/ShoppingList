@@ -60,7 +60,8 @@ jobs:
       - run:
           name: "run test"
           command: |
-              ls /usr/bin/
+              pwd
+              ls
               pytest ./test/
       
 

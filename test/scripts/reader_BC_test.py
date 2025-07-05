@@ -1,10 +1,12 @@
 """test the ouput of read_the_book.py on one recipe"""
 import os
 import subprocess
-EXT = '.exe' if os.name == 'nt' else ''
+EXT = '.exe' if os.name == 'nt' else '3'
 #BCp384
-p = subprocess.run('python' + EXT + ' ./read_the_book.py ./test/',
+p = subprocess.run(['python' + EXT,  './read_the_book.py', './test/'],
                            stdout=subprocess.PIPE, check=True)
+# p = subprocess.run('pwd',stdout=subprocess.PIPE, check=True, shell=True)
+# print(p.stdout)
 
 def test_answer():
     """test the ouput of read_the_book.py on one BC recipe"""
