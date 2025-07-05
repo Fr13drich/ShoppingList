@@ -227,9 +227,12 @@ class CgReader(ReaderInterface):
             cls.reader_result[2][0][2][0], cls.reader_result[2][0][2][1]
         img_ingredients = img.crop(ingredients_coordinates)
         img_ingredients.save(cls.ingredients_workfile)
-        ingredients = reader.readtext(image=cls.ingredients_workfile, detail=0,\
+        ingredients_list = reader.readtext(image=cls.ingredients_workfile, detail=0,
                                       ycenter_ths=.5, width_ths=.7, height_ths=1)
-        return ingredients
+        ingredients_str = ' '.join(ingredients_list)
+        parsed_ingredients_list = parser.parse_stream(ingredients_str)
+        logger.info('the list: %s', parsed_ingredients_list)
+        return parsed_ingredients_list
 
 class EbReader(ReaderInterface):
     """En bocal"""
@@ -253,7 +256,6 @@ class EbReader(ReaderInterface):
         title = cls.get_title(img)
         ingredients = cls.get_ingredients(img)
         return ref, title, cls.parse_ingredients(ingredients)
-
     @classmethod
     def get_ref(cls, img=None):
         doc = nlp(cls.reader_result[-1][1])

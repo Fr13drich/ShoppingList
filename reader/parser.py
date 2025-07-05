@@ -55,8 +55,10 @@ def parse_stream(ingredient_stream: str):
         print(token.pos_)
         if cursor.get('strategy'):
             strategy = cursor['strategy']
+            logger.info('potential strategy: %s', strategy)
             # print(f'potential strategy: {strategy}')
             ingredient_str = ingredient_stream[i:j]
+            logger.info('tmp ingredient_str: %s', ingredient_str)
             # print(f'tmp ingredient_str: {ingredient_str}')
         if cursor.get(token.pos_):
             cursor = cursor[token.pos_]
@@ -66,10 +68,17 @@ def parse_stream(ingredient_stream: str):
             if strategy:
                 ingredient_list.append(ingredient_str)
                 strategy = None
-
-            j += len(token.text_with_ws)
-            i = j
             cursor = root
+            if cursor.get(token.pos_):
+                logger.info('new ingredient item: %s', token.text)
+                cursor = cursor[token.pos_]
+                i = j
+                j += len(token.text_with_ws)
+                ingredient_str = ingredient_stream[i:j]
+            else:
+                j += len(token.text_with_ws)
+                i = j
+                logger.info('skipped: %s', token.text)
             # print('skipped: ' + token.text)
     if i != j:
         ingredient_list.append(ingredient_stream[i:j])
@@ -77,6 +86,7 @@ def parse_stream(ingredient_stream: str):
     #     strategy = cursor['strategy']
     # strategy = cursor['strategy']
     print(ingredient_list)
+    logger.info('ingredient_list: %s', ingredient_list)
     return ingredient_list
 
 def get_strategy(ingredient_line: str):

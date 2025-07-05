@@ -20,10 +20,10 @@ logging.basicConfig(filename=config['DEFAULT']['READER_LOG_FILE'],\
 
 def pics2json(location, output_dir=None):
     """main loop of read_the_book"""
-    for _root, _dirs, files in os.walk(location):
+    for root, _dirs, files in os.walk(location):
         for name in files:
-            print('Reading ' + str(name) + ' from ' + location)
-            ref, name, parsed_ingredients = Reader.read(location, name)
+            print('Reading ' + str(name) + ' from ' + root)
+            ref, name, parsed_ingredients = Reader.read(str(root) + '/', name)
             outfile = config['DEFAULT']['READER_OUTPUT_DIR'] + ref + '.json'
             logger.info('%s, %s', ref, name)
             logger.info('%s', parsed_ingredients)
@@ -60,8 +60,8 @@ if __name__ == '__main__':
         OUTPUT_DIR = sys.argv[1] if os.path.exists(sys.argv[1]) else None
     except IndexError:
         OUTPUT_DIR = None
-
-    pics2json(location=config["DEFAULT"]["BC_PICS"], output_dir=OUTPUT_DIR)
+    pics2json(location='./data/pics/', output_dir=OUTPUT_DIR)
+    # pics2json(location=config["DEFAULT"]["BC_PICS"], output_dir=OUTPUT_DIR)
     # if sys.argv[1]:
     #     print(sys.argv[1])
     #     if os.path.exists(sys.argv[1]):
