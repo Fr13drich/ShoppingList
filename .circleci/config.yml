@@ -59,7 +59,9 @@ jobs:
           command: "pip install pytest"
       - run:
           name: "run test"
-          command: "pytest ./test/"
+          command: |
+              ls /usr/bin/
+              pytest ./test/
       
 
 # Orchestrate jobs using workflows
