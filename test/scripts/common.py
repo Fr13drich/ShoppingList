@@ -17,6 +17,3 @@ def run_reader(input_dir: str):
 def compare(recipe_file, test_result):
     """test the ouput of read_the_book.py"""
     return recipe_file.read() == test_result.read()
-
-if __name__ == '__main__':
-    print(compare())
