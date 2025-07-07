@@ -41,7 +41,7 @@ def pics2json(location, output_dir=None):
     for root, _dirs, files in os.walk(location):
         for name in files:
             print('Reading ' + str(name) + ' from ' + root)
-            ref, name, parsed_ingredients = Reader.read(str(root) + os.sep, name)
+            ref, name, parsed_ingredients = Reader.read(str(root) + '/', name)
             outfile = config['DEFAULT']['READER_OUTPUT_DIR'] + ref + '.json'
             logger.info('%s, %s', ref, name)
             logger.info('%s', parsed_ingredients)

@@ -105,14 +105,11 @@ workflows:
             - build
       - test_bc:
           requires:
-            - build
             - lint
       - test_cg:
           requires:
-            - build
             - lint
       - test_eb:
           requires:
-            - build
             - lint
       
