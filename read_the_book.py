@@ -1,7 +1,6 @@
 """main function of the module
 Extract the name of the recipe along with the ingredients bill from my cooking books."""
 import os
-import sys
 import logging
 import json
 import configparser
