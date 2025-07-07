@@ -88,7 +88,7 @@ jobs:
           name: "install pytest"
           command: "pip install pytest"
       - run:
-          name: "run test 'Bien cuisiner'"
+          name: "run test 'En bocal'"
           command: |
               python -m spacy download fr_core_news_md
               pytest ./test/scripts/reader_eb_test.py
