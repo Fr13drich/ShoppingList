@@ -75,25 +75,6 @@ def json2recipe(file, output_dir=None):
     logger.info('Recipe written: %s %s', new.ref, new.name)
 
 if __name__ == '__main__':
-    # try:
-    #     OUTPUT_DIR = sys.argv[1] if os.path.exists(sys.argv[1]) else None
-    # except IndexError:
-    #     OUTPUT_DIR = None
-    # pics2json(location='./data/pics/', output_dir=OUTPUT_DIR)
-
-    # pics2json(location=config["DEFAULT"]["BC_PICS"], output_dir=OUTPUT_DIR)
-    # if sys.argv[1]:
-    #     print(sys.argv[1])
-    #     if os.path.exists(sys.argv[1]):
-    #         pics2json(location=sys.argv[1])
-    #     else:
-    #         pics2json(location=config["DEFAULT"]["BC_PICS"])
-    # # for root, dirs, files in os.walk(config["DEFAULT"]["READER_OUTPUT_DIR"]):
-    #     for name in files:
-    #         print(root)
-    #         print(dirs)
-    #         print(name)
-    #         json2recipe(root + name)
-    parser = make_parser()
-    args = parser.parse_args()
+    read_the_book_parser = make_parser()
+    args = read_the_book_parser.parse_args()
     pics2json(location=args.input_dir, output_dir=args.output_dir)
