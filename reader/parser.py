@@ -226,4 +226,3 @@ def parse_ingredients_bill_dict(ingredients_bill_dict: dict, recipe_ref: str):
                     Ingredient.add(name=name,lemma=lemma, recipe_refs=set([str(recipe_ref)]),\
                                     other_recipe_ref=other_recipe_ref)))
     return ingredients
-
