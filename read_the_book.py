@@ -5,6 +5,8 @@ import sys
 import logging
 import json
 import configparser
+import argparse
+import pathlib
 from reader import Reader
 from reader import parse_ingredients_bill_dict
 from recipe import Recipe
@@ -17,13 +19,30 @@ FORMAT = '%(asctime)s %(message)s'
 logging.basicConfig(filename=config['DEFAULT']['READER_LOG_FILE'],\
                     level=logging.INFO, encoding='utf-16', format=FORMAT)
 
+def make_parser():
+    """Create an ArgumentParser for this script.
+
+    :return: A parser.
+    """
+    parser = argparse.ArgumentParser(
+        description="Scan (OCR) pictures from cooking books."
+    )
+
+    # Add arguments for custom data files.
+    parser.add_argument('--input_dir', default=config['DEFAULT']['BC_PICS'],
+                        type=pathlib.Path,
+                        help="Path pictures.")
+    parser.add_argument('--output_dir', default=config['DEFAULT']['RECIPES_DIR'],
+                        type=pathlib.Path,
+                        help="Path to output for JSON files.")
+    return parser
 
 def pics2json(location, output_dir=None):
     """main loop of read_the_book"""
     for root, _dirs, files in os.walk(location):
         for name in files:
             print('Reading ' + str(name) + ' from ' + root)
-            ref, name, parsed_ingredients = Reader.read(str(root) + '/', name)
+            ref, name, parsed_ingredients = Reader.read(str(root) + os.sep, name)
             outfile = config['DEFAULT']['READER_OUTPUT_DIR'] + ref + '.json'
             logger.info('%s, %s', ref, name)
             logger.info('%s', parsed_ingredients)
@@ -56,11 +75,12 @@ def json2recipe(file, output_dir=None):
     logger.info('Recipe written: %s %s', new.ref, new.name)
 
 if __name__ == '__main__':
-    try:
-        OUTPUT_DIR = sys.argv[1] if os.path.exists(sys.argv[1]) else None
-    except IndexError:
-        OUTPUT_DIR = None
-    pics2json(location='./data/pics/', output_dir=OUTPUT_DIR)
+    # try:
+    #     OUTPUT_DIR = sys.argv[1] if os.path.exists(sys.argv[1]) else None
+    # except IndexError:
+    #     OUTPUT_DIR = None
+    # pics2json(location='./data/pics/', output_dir=OUTPUT_DIR)
+
     # pics2json(location=config["DEFAULT"]["BC_PICS"], output_dir=OUTPUT_DIR)
     # if sys.argv[1]:
     #     print(sys.argv[1])
@@ -74,3 +94,6 @@ if __name__ == '__main__':
     #         print(dirs)
     #         print(name)
     #         json2recipe(root + name)
+    parser = make_parser()
+    args = parser.parse_args()
+    pics2json(location=args.input_dir, output_dir=args.output_dir)

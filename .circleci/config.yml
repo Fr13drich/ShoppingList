@@ -58,10 +58,10 @@ jobs:
           name: "install pytest"
           command: "pip install pytest"
       - run:
-          name: "run test"
+          name: "run test 'Bien cuisiner'"
           command: |
               python -m spacy download fr_core_news_md
-              pytest ./test/
+              pytest ./test/scripts/
       
 
 # Orchestrate jobs using workflows

@@ -26,10 +26,10 @@ class ReaderInterface(ABC):
     left_page = True
 
     @classmethod
-    def can_read(cls, location, name) -> bool:
+    def can_read(cls, _location, name) -> bool:
         """Can I read that picture from that book?."""
         ext = name.split('.')[-1]
-        return location in cls.allowed_books and ext in cls.allowed_extensions
+        return ext in cls.allowed_extensions #location in cls.allowed_books and
     @staticmethod
     def autocrop(jpg):
         """Crop where there is no text."""
@@ -323,11 +323,11 @@ class Reader(ReaderInterface):
         self.name = name
     @classmethod
     def read(cls, location: str, name: str):
-        if location == config['DEFAULT']['CG_PICS']:
+        if 'CG' in location: #== config['DEFAULT']['CG_PICS']:
             book_reader = CgReader
-        elif location == config['DEFAULT']['BC_PICS']:
+        elif 'BC' in location: #== config['DEFAULT']['BC_PICS']:
             book_reader = BcReader
-        elif location == config['DEFAULT']['EB_PICS']:
+        elif 'EB' in location: #== config['DEFAULT']['EB_PICS']:
             book_reader = EbReader
         else:
             raise ValueError('Unsupported book: ' + location)

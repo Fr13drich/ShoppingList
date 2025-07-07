@@ -66,7 +66,7 @@ def parse_stream(ingredient_stream: str):
             # print(f'current {ingredient_stream[i:j]}')
         else:
             if strategy:
-                ingredient_list.append(ingredient_str)
+                ingredient_list.append(ingredient_str.strip())
                 strategy = None
             cursor = root
             if cursor.get(token.pos_):
@@ -81,7 +81,7 @@ def parse_stream(ingredient_stream: str):
                 logger.info('skipped: %s', token.text)
             # print('skipped: ' + token.text)
     if i != j:
-        ingredient_list.append(ingredient_stream[i:j])
+        ingredient_list.append(ingredient_stream[i:j].strip())
     # if cursor.get('strategy'):
     #     strategy = cursor['strategy']
     # strategy = cursor['strategy']
