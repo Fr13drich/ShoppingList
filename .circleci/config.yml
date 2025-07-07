@@ -92,7 +92,6 @@ jobs:
       - run:
           name: "run test 'En bocal'"
           command: |
-              sudo apt install tesseract
               python -m spacy download fr_core_news_md
               mkdir ./test/test_results
               pytest ./test/scripts/reader_eb_test.py
