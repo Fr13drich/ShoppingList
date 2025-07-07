@@ -61,6 +61,7 @@ jobs:
           name: "run test 'Bien cuisiner'"
           command: |
               python -m spacy download fr_core_news_md
+              mkdir ./test/test_results
               pytest ./test/scripts/reader_bc_test.py
   test_cg:
     docker:
@@ -76,6 +77,7 @@ jobs:
           name: "run test 'Café gourmand'"
           command: |
               python -m spacy download fr_core_news_md
+              mkdir ./test/test_results
               pytest ./test/scripts/reader_cg_test.py
   test_eb:
     docker:
@@ -91,6 +93,7 @@ jobs:
           name: "run test 'En bocal'"
           command: |
               python -m spacy download fr_core_news_md
+              mkdir ./test/test_results
               pytest ./test/scripts/reader_eb_test.py
       
 
