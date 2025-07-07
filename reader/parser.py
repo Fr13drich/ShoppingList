@@ -15,27 +15,6 @@ UNIT_LIST = ['millilitre', 'tour', 'tranche',  'l', 'pincée', 'brin',\
                  'trait', 'gousse', 'pincee', 'feuille', 'grain', 'morceau']
     # juxtaposant_list = ['de', 'd\'', 'à']
 
-def load_morphology(file=config['DEFAULT']['INGREDIENT_BILL_MORPHOLOGY_FILE']):
-    """load a list of ingredient lines lexical morphology"""
-    with open(file, 'r', encoding='utf-8', ) as morphology_file:
-        return json.load(morphology_file)
-
-def build_tree():
-    """create a tree from à nested list"""
-    shape = load_morphology()
-    root = cursor = {}
-    for k, v in shape.items():
-        cursor = root
-        tokens = str(k).split()
-        for token in tokens:
-            if not cursor.get(token):
-                cursor[token] = {}
-            cursor = cursor[token]
-        cursor['strategy'] = v
-    print(root)
-
-    with open(file='./parse_tree.json', mode='w', encoding='utf-16') as f:
-        json.dump(root, f, indent=2)
 
 def parse_stream(ingredient_stream: str):
     """Split a str containing potentialy multiple ingredients
@@ -44,6 +23,7 @@ def parse_stream(ingredient_stream: str):
     """
     with open(file='./parse_tree.json', mode='r', encoding='utf-16', ) as strategy_dict:
         root = json.load(strategy_dict)
+    logger.info('raw ingredient stream befor parsing: %s', ingredient_stream)
     doc = nlp(ingredient_stream)
     ingredient_list = []
     cursor = root
@@ -190,8 +170,9 @@ def strategy04(d: str, text_list, lemma_list, pos_list, book_ref: str):
     name = d[d.index(text_list[4]):]
     return (unit, '', name, lemma, other_recipe_ref)
 
-def strategy34(d: str, text_list, lemma_list, _pos_list, book_ref=None):
+def strategy34(d: str, text_list, lemma_list, pos_list, book_ref=None):
     """Le jus de 1 citron -> 1 citron"""
+    print(pos_list)
     other_recipe_ref = book_ref
     lemma = lemma_list[-1]
     unit = 'p'
@@ -246,7 +227,3 @@ def parse_ingredients_bill_dict(ingredients_bill_dict: dict, recipe_ref: str):
                                     other_recipe_ref=other_recipe_ref)))
     return ingredients
 
-if __name__ == '__main__':
-    parse_stream("1 l de sauce béchamel, fluide (voir p. 156) 1 l de lait")
-    # build_tree()
-    # print(get_strategy("1 l de sauce béchamel, fluide (voir p. 156)"))
