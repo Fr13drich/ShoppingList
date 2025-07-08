@@ -179,6 +179,13 @@ def strategy34(d: str, text_list, lemma_list, pos_list, book_ref=None):
     jxt = ''
     name = d[d.index(text_list[-1]):]
     return (unit, jxt, name, lemma, other_recipe_ref)
+def strategy0146(d: str, text_list, lemma_list, pos_list, book_ref=None):
+    """'NUM', 'PROPN', 'PUNCT', 'ADP', 'NOUN', 'ADP', 'NOUN'"""
+    lemma = ' '.join(lemma_list[4:])
+    name = d[d.index(text_list[4]):]
+    unit = text_list[1]
+    jxt = text_list[3]
+    return (unit, jxt, name, lemma, None)
 
 def strategy_name_only(d: str, _text_list, lemma_list, _pos_list, _book_ref: str):
     """Sel"""

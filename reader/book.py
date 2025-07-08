@@ -313,6 +313,9 @@ class EbReader(ReaderInterface):
                 ingredients_stream = ingredients_stream.replace(' + ', '\n')
                 ingredients_stream = ingredients_stream.replace(' - ', '\n')
                 ingredients_stream = ingredients_stream.replace(' * ', '\n')
+                ingredients_stream = ingredients_stream.replace(' ° ', '\n')
+                ingredients_stream = ingredients_stream.replace(' « ', '\n')
+                logging.info('ingredients_stream: %s', ingredients_stream)
                 # remove parenthesis
                 s = ''
                 parenthesis = False
