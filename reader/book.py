@@ -71,7 +71,6 @@ class ReaderInterface(ABC):
             elif ',' in amount:
                 amount = float('.'.join(amount.split(sep=',')))
                 name = str(split_item[1]).lower()
-
             else:
                 amount = 1
                 name = str(item).lower()
