@@ -106,7 +106,15 @@ jobs:
               echo 'raw json'
               cat ./data/json/EBp80.json
               echo 'recipe_files'
-              cat ./data/recipe_files/EBp80.json    
+              cat ./data/recipe_files/EBp80.json
+              mkdir ./test/test_results
+              python3 ./read_the_book.py --input_dir=./test/EB_pics/ --output_dir=./test/test_results/
+              echo 'raw json after'
+              cat ./data/json/EBp80.json
+              echo 'recipe_files after'
+              cat ./data/recipe_files/EBp80.json
+              echo 'test ouput'
+              cat ./test/test_results/EBp80.json
       - run:
           name: "run test 'En bocal'"
           command: |
@@ -114,7 +122,6 @@ jobs:
               sudo apt install tesseract-ocr
               sudo apt install libtesseract-dev
               sudo cp ./data/fra.traineddata /usr/share/tesseract-ocr/4.00/tessdata/
-              mkdir ./test/test_results
               pytest ./test/scripts/reader_eb_test.py
       
 
