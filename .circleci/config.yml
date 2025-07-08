@@ -105,8 +105,8 @@ jobs:
           command: |
               echo 'raw json'
               cat ./data/json/EBp80.json
-              echo 'recipe_file'
-              cat ./data/recipe_file/EBp80.json    
+              echo 'recipe_files'
+              cat ./data/recipe_files/EBp80.json    
       - run:
           name: "run test 'En bocal'"
           command: |
