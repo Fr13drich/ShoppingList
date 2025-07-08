@@ -98,9 +98,18 @@ jobs:
           name: "install pytest"
           command: "pip install pytest"
       - run:
+          name: "install spacy fr"
+          command: "python3 -m spacy download fr_core_news_md"
+      - run:
+          name: 'debug'
+          command: |
+              echo 'raw json'
+              cat ./data/json/EBp80.json
+              echo 'recipe_file'
+              cat ./data/recipe_file/EBp80.json    
+      - run:
           name: "run test 'En bocal'"
           command: |
-              python3 -m spacy download fr_core_news_md
               sudo apt update
               sudo apt install tesseract-ocr
               sudo apt install libtesseract-dev
