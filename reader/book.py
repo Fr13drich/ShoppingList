@@ -268,16 +268,29 @@ class EbReader(ReaderInterface):
         raise ValueError
     @classmethod
     def get_title(cls, img):
-        pic = './tmp/title.jpg'
-        img = img.crop((cls.reader_result[1][0][0][0],\
-                        cls.reader_result[1][0][0][1],\
-                        cls.reader_result[1][0][2][0],\
-                        cls.reader_result[1][0][2][1]\
-                        ))
-        img.save(pic)
-        title = reader.readtext(image=pic, detail=0, low_text=.21, paragraph=True)
-        logger.info('title: %s', ' '.join(title).capitalize())
-        return ' '.join(title).capitalize()
+        pic = './tmp/img.jpg'
+        title = ""
+        s = pytesseract.image_to_string(pic, lang='fra')
+        empty_line = s.find('\n\n')
+        if empty_line > 0:
+            s = s[empty_line+2:]
+            empty_line = s.find('\n\n')
+            if empty_line > 0:
+                s = s[:empty_line]
+                title = str(s).replace('\n', ' ').capitalize()
+                print(f'title found by tesseract: {title}')
+        if not title:
+            pic = './tmp/title.jpg'
+            img = img.crop((cls.reader_result[1][0][0][0],\
+                            cls.reader_result[1][0][0][1],\
+                            cls.reader_result[1][0][2][0],\
+                            cls.reader_result[1][0][2][1]\
+                            ))
+            img.save(pic)
+            title = reader.readtext(image=pic, detail=0, low_text=.21, paragraph=True)
+            title = ' '.join(title).capitalize()
+        logger.info('title: %s', title)
+        return title
     @classmethod
     def get_ingredients(cls, img):
         pic = './tmp/ingredients.jpg'
