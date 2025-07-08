@@ -95,6 +95,9 @@ jobs:
               uname -a
               python3 -m spacy download fr_core_news_md
               pip freeze
+              sudo apt update
+              sudo apt install tesseract-ocr
+              sudo apt install libtesseract-dev
               find . -name tesseract
               mkdir ./test/test_results
               pytest ./test/scripts/reader_eb_test.py
