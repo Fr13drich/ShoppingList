@@ -172,7 +172,6 @@ class BcReader(ReaderInterface):
         y = ingredients[0][0][0][1]
         print(ingredients)
         for i, ingredient in enumerate(ingredients):
-            # print(f'{ingredient[0][0][1]} - {y} > 2 * {distance}')
             # if the distance is above the threshold it means it is a comment
             if ingredient[0][0][1] - y > 2 * distance:
                 tmp_results = list(map(itemgetter(1), ingredients[:i]))
@@ -251,6 +250,7 @@ class EbReader(ReaderInterface):
             raise ValueError('Cannot parse exception.')
         pic = cls.image_preprocessing('./' + location + '/' + name)
         cls.reader_result = reader.readtext(image=pic, detail=1, paragraph=True)
+        # print(cls.reader_result)
         img = Image.open(pic)
         ref = cls.get_ref(img)
         title = cls.get_title(img)
@@ -280,11 +280,17 @@ class EbReader(ReaderInterface):
         return ' '.join(title).capitalize()
     @classmethod
     def get_ingredients(cls, img):
+        pic = './tmp/ingredients.jpg'
         for box in cls.reader_result[3:-1]:
             if 'Ingrédients' in box[1] and box[1].index('Ingrédients') == 0:
                 crop_coordinates = (box[0][0][0], box[0][0][1], box[0][2][0], box[0][2][1])
                 img = img.crop(crop_coordinates)
+                img.save(pic)
+                print('---- easy ocr ----')
+                print(reader.readtext(image=pic, detail=0))
                 ingredients_stream = pytesseract.image_to_string(img, lang='fra')
+                print('---- easy pytesseract ----')
+                print(ingredients_stream)
                 # remove first line
                 ingredients_stream = ingredients_stream[ingredients_stream.find('\n')+2:]
                 ingredients_stream = ingredients_stream.replace('\n', ' ')
@@ -305,9 +311,7 @@ class EbReader(ReaderInterface):
                 ingredients_stream = s.replace('  ', ' ')
                 ingredients_list = str(ingredients_stream).split(sep='\n')
                 break
-        # print(ingredients_list)
         parsed_ingredients_list = [parser.parse_stream(i.strip())[0] for i in ingredients_list]
-        # print(parsed_ingredients_list)
         return parsed_ingredients_list
 
 class Reader(ReaderInterface):
