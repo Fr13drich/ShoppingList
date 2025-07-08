@@ -100,13 +100,11 @@ jobs:
       - run:
           name: "run test 'En bocal'"
           command: |
-              uname -a
               python3 -m spacy download fr_core_news_md
               sudo apt update
               sudo apt install tesseract-ocr
               sudo apt install libtesseract-dev
               sudo cp ./data/fra.traineddata /usr/share/tesseract-ocr/4.00/tessdata/
-              find . -name tesseract
               mkdir ./test/test_results
               pytest ./test/scripts/reader_eb_test.py
       
