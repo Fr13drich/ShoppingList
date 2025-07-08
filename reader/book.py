@@ -274,10 +274,13 @@ class EbReader(ReaderInterface):
         empty_line = s.find('\n\n')
         if empty_line > 0:
             s = s[empty_line+2:]
-            empty_line = s.find('\n\n')
+            empty_line = s.find('Préparation')
             if empty_line > 0:
                 s = s[:empty_line]
-                title = str(s).replace('\n', ' ').capitalize()
+                title = str(s).replace('\n', ' ')\
+                              .replace('  ', ' ')\
+                              .capitalize()\
+                              .strip()
                 print(f'title found by tesseract: {title}')
         if not title:
             pic = './tmp/title.jpg'
