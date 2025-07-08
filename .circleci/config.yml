@@ -97,7 +97,7 @@ jobs:
               sudo apt update
               sudo apt install tesseract-ocr
               sudo apt install libtesseract-dev
-              sudo wget -O /usr/share/tesseract-ocr/4.00/tessdata/fra.traineddata https://github.com/tesseract-ocr/tessdata/blob/main/fra.traineddata
+              sudo cp ./data/fra.traineddata /usr/share/tesseract-ocr/4.00/tessdata/
               find . -name tesseract
               mkdir ./test/test_results
               pytest ./test/scripts/reader_eb_test.py
