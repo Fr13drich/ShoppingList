@@ -83,7 +83,7 @@ jobs:
           name: "run test 'Café gourmand'"
           command: |
               mkdir ./test/test_results
-              echo > .log/reader.log
+              echo > ./log/reader.log
               pytest ./test/scripts/reader_cg_test.py
   test_eb:
     docker:
