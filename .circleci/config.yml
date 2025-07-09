@@ -83,6 +83,7 @@ jobs:
           name: "run test 'Café gourmand'"
           command: |
               mkdir ./test/test_results
+              echo > .log/reader.log
               pytest ./test/scripts/reader_cg_test.py
   test_eb:
     docker:
@@ -110,9 +111,11 @@ jobs:
               echo 'raw json'
               cat ./data/json/EBp80.json
               echo 'recipe_files'
+              ls -la ./data/recipe_files/EBp80.json
               cat ./data/recipe_files/EBp80.json
               mkdir ./test/test_results
               rm ./data/json/*
+              echo > .log/reader.log
               python3 ./read_the_book.py --input_dir=./test/EB_pics/ --output_dir=./test/test_results/
               echo 'raw json after'
               cat ./data/json/EBp80.json
@@ -126,7 +129,7 @@ jobs:
           name: "run test 'En bocal'"
           command: |
               rm ./data/json/*
-              rm ./test/test_results
+              rm ./test/test_results/*
               pytest ./test/scripts/reader_eb_test.py
       
 
