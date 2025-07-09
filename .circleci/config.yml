@@ -119,6 +119,8 @@ jobs:
               cat ./data/recipe_files/EBp80.json
               echo 'test ouput'
               cat ./test/test_results/EBp80.json
+              echo '--- log ---'
+              cat ./log/reader.log
       - run:
           name: "run test 'En bocal'"
           command: |

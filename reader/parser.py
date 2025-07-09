@@ -184,8 +184,8 @@ def strategy0146(d: str, text_list, lemma_list, pos_list, book_ref=None):
     print(pos_list)
     lemma = ' '.join(lemma_list[4:])
     name = d[d.index(text_list[4]):]
-    unit = text_list[1]
-    jxt = text_list[3]
+    unit = str(text_list[1])
+    jxt = str(text_list[3])
     return (unit, jxt, name, lemma, book_ref)
 
 def strategy_name_only(d: str, _text_list, lemma_list, _pos_list, _book_ref: str):
