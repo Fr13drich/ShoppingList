@@ -116,7 +116,7 @@ jobs:
               cat ./data/recipe_files/EBp80.json
               mkdir ./test/test_results
               rm ./data/json/*
-              echo > .log/reader.log
+              echo > ./log/reader.log
               python3 ./read_the_book.py --input_dir=./test/EB_pics/ --output_dir=./test/test_results/
               echo 'raw json after'
               cat ./data/json/EBp80.json
