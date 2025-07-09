@@ -50,7 +50,7 @@ def pics2json(location, output_dir=None):
             #         continue
             with open(outfile, 'w', encoding='utf-16') as raw_dict:
                 print('just before json dump raw file')
-                print(raw_dict)
+                print(parsed_ingredients)
                 json.dump({'ref': ref, 'name':name, 'ingredients':parsed_ingredients},\
                             raw_dict, indent=2, ensure_ascii=False)
             logger.info('Written: %s', outfile)
