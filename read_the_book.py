@@ -48,7 +48,7 @@ def pics2json(location, output_dir=None):
             # if os.path.exists(outfile):
             #     if input(outfile + " already exists. Should I overwrite?: ") != 'y':
             #         continue
-            with open(outfile, 'w', encoding='utf-16') as raw_dict:
+            with open(outfile, 'w', encoding='utf-8') as raw_dict:
                 print('just before json dump raw file')
                 print(parsed_ingredients)
                 json.dump({'ref': ref, 'name':name, 'ingredients':parsed_ingredients},\
@@ -64,7 +64,7 @@ def json2recipe(file, output_dir=None):
         ingredients: {str: int, ...}
     """
     # if input(f"Create recipe from {file} ?: ") == 'y':
-    with open(file=file, mode='r', encoding='utf-16') as recipe_file:
+    with open(file=file, mode='r', encoding='utf-8') as recipe_file:
         recipe_dict = json.load(recipe_file)
         logger.info(recipe_dict['ref'])
         new = Recipe(ref=recipe_dict['ref'],\

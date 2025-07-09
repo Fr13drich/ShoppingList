@@ -306,14 +306,20 @@ class EbReader(ReaderInterface):
                 ingredients_stream = pytesseract.image_to_string(img, lang='fra')
                 print('---- easy pytesseract ----')
                 print(ingredients_stream)
-                # remove first line
+                # remove first line x = lambda a, b : a * b
                 ingredients_stream = ingredients_stream[ingredients_stream.find('\n')+2:]
+                # put the stream in one line
                 ingredients_stream = ingredients_stream.replace('\n', ' ')
-                ingredients_stream = ingredients_stream.replace(' + ', '\n')
-                ingredients_stream = ingredients_stream.replace(' - ', '\n')
-                ingredients_stream = ingredients_stream.replace(' * ', '\n')
-                ingredients_stream = ingredients_stream.replace(' ° ', '\n')
-                ingredients_stream = ingredients_stream.replace(' « ', '\n')
+                # split
+                ingredient_sep_list = '+-*°«e'
+                for sep in ingredient_sep_list:
+                    ingredients_stream = ingredients_stream.replace(' ' + sep + ' ', '\n')    
+                # ingredients_stream = ingredients_stream.replace(' + ', '\n')
+                # ingredients_stream = ingredients_stream.replace(' - ', '\n')
+                # ingredients_stream = ingredients_stream.replace(' * ', '\n')
+                # ingredients_stream = ingredients_stream.replace(' ° ', '\n')
+                # ingredients_stream = ingredients_stream.replace(' « ', '\n')
+                # ingredients_stream = ingredients_stream.replace(' e ', '\n')
                 logging.info('ingredients_stream: %s', ingredients_stream)
                 # remove parenthesis
                 s = ''
