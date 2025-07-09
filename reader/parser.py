@@ -12,7 +12,8 @@ logger = logging.getLogger(__name__)
 
 UNIT_LIST = ['millilitre', 'tour', 'tranche',  'l', 'pincée', 'brin',\
                  'bâton', 'bille', 'branche', 'botte', 'kilogramme', 'gramme', 'tête',\
-                 'trait', 'gousse', 'pincee', 'feuille', 'grain', 'morceau']
+                 'trait', 'gousse', 'pincee', 'feuille', 'grain', 'morceau',\
+                 'c. à s.']
     # juxtaposant_list = ['de', 'd\'', 'à']
 
 
@@ -188,11 +189,20 @@ def strategy0146(d: str, text_list, lemma_list, pos_list, book_ref=None):
     jxt = str(text_list[3])
     return (unit, jxt, name, lemma, book_ref)
 def strategy01357(d: str, text_list, lemma_list, pos_list, book_ref=None):
-    print(pos_list)
-    lemma = ' '.join(lemma_list[-3:])
-    name = d[d.index(text_list[-3]):]
-    unit = ' '.join(text_list[1:4])
-    jxt = text_list[4]
+    """'NUM', 'NOUN', 'ADP', 'NOUN', 'ADP', 'NOUN', 'ADP', 'NOUN'"""
+    if ' '.join(text_list[1:4]) in UNIT_LIST:
+        lemma = ' '.join(lemma_list[-3:])
+        name = d[d.index(text_list[-3]):]
+        unit = ' '.join(text_list[1:4])
+        jxt = text_list[4]
+    elif lemma_list[1] in UNIT_LIST:
+        lemma = ' '.join(lemma_list[3:])
+        name = d[d.index(text_list[3]):]
+        unit = lemma_list[1]
+        jxt = text_list[2]
+    else:
+        print(pos_list)
+        raise ValueError('A very specific bad thing happened.')
     return (unit, jxt, name, lemma, book_ref)
 
 def strategy_name_only(d: str, _text_list, lemma_list, _pos_list, _book_ref: str):
