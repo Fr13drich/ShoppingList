@@ -67,7 +67,7 @@ def json2recipe(file, output_dir=None):
         ingredients: {str: int, ...}
     """
     # if input(f"Create recipe from {file} ?: ") == 'y':
-    with open(file=str(file) + 'utf-8',  mode='r', encoding='utf-8') as recipe_file:
+    with open(file=file,  mode='r', encoding='utf-16') as recipe_file:
         recipe_dict = json.load(recipe_file)
         logger.info(recipe_dict['ref'])
         new = Recipe(ref=recipe_dict['ref'],\
@@ -78,7 +78,27 @@ def json2recipe(file, output_dir=None):
     new.write_recipe_file(output_dir)
     logger.info('Recipe written: %s %s', new.ref, new.name)
 
+def pics2recipe(input_dir, output_dir):
+    assert input_dir[-1] == '/'
+    assert output_dir[-1] == '/'
+    for root, _dirs, files in os.walk(input_dir):
+        for name in files:
+            print('Reading ' + str(name) + ' from ' + root)
+            ref, name, parsed_ingredients = Reader.read(str(root) + '/', name)
+            logger.info('%s, %s', ref, name)
+            logger.info('%s', parsed_ingredients)
+            recipe_dict = {'ref': ref, 'name':name, 'ingredients':parsed_ingredients}
+            logger.info(recipe_dict['ref'])
+            new = Recipe(ref=recipe_dict['ref'],
+                         name=recipe_dict['name'],
+                         ingredients_bill=parse_ingredients_bill_dict(
+                            ingredients_bill_dict=recipe_dict['ingredients'],
+                            recipe_ref=recipe_dict['ref']))
+            new.write_recipe_file(output_dir)
+            logger.info('Recipe written: %s %s', new.ref, new.name)
+
+
 if __name__ == '__main__':
     read_the_book_parser = make_parser()
     args = read_the_book_parser.parse_args()
-    pics2json(location=args.input_dir, output_dir=args.output_dir)
+    pics2recipe(location=args.input_dir, output_dir=args.output_dir)

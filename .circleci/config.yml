@@ -109,8 +109,6 @@ jobs:
       - run:
           name: 'debug'
           command: |
-              echo 'raw json'
-              cat ./data/json/EBp80.json
               echo 'recipe_files'
               ls -la ./data/recipe_files/EBp80.json
               cat ./data/recipe_files/EBp80.json
@@ -118,16 +116,14 @@ jobs:
               rm ./data/json/*
               echo > ./log/reader.log
               python3 ./read_the_book.py --input_dir=./test/EB_pics/ --output_dir=./test/test_results/
-              echo 'raw json after'
-              cat ./data/json/EBp80.json
               echo 'recipe_files after utf16'
               cat ./data/recipe_files/EBp80.json
               echo 'recipe_files after utf8'
-              cat ./data/recipe_files/EBp80-utf8.json
+              cat ./data/recipe_files/utf8-EBp80.json
               echo 'test output utf16'
               cat ./test/test_results/EBp80.json
               echo 'test output utf8'
-              cat ./test/test_results/EBp80-utf8.json
+              cat ./test/test_results/utf8-EBp80.json
               echo '--- log ---'
               cat ./log/reader.log
       # - run:
