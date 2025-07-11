@@ -1,7 +1,6 @@
 """main function of the module
 Extract the name of the recipe along with the ingredients bill from my cooking books."""
 import os
-import pathlib
 import logging
 import json
 import configparser
@@ -31,10 +30,10 @@ def make_parser():
     # Add arguments for custom data files.
     parser.add_argument('--input_dir', default=config['DEFAULT']['BC_PICS'],
                         type=pathlib.Path,
-                        help="Path pictures.")
+                        help="Path to pictures.")
     parser.add_argument('--output_dir', default=config['DEFAULT']['RECIPES_DIR'],
                         type=pathlib.Path,
-                        help="Path to output for JSON files.")
+                        help="Path to output for recipe files.")
     return parser
 
 def pics2json(location, output_dir=None):
