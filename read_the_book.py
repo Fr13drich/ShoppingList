@@ -67,7 +67,7 @@ def json2recipe(file, output_dir=None):
         ingredients: {str: int, ...}
     """
     # if input(f"Create recipe from {file} ?: ") == 'y':
-    with open(file=file, mode='r', encoding='utf-8') as recipe_file:
+    with open(file=str(file) + 'utf-8',  mode='r', encoding='utf-8') as recipe_file:
         recipe_dict = json.load(recipe_file)
         logger.info(recipe_dict['ref'])
         new = Recipe(ref=recipe_dict['ref'],\
