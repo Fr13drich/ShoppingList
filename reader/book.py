@@ -314,12 +314,7 @@ class EbReader(ReaderInterface):
                 ingredient_sep_list = '+-*°«e'
                 for sep in ingredient_sep_list:
                     ingredients_stream = ingredients_stream.replace(' ' + sep + ' ', '\n')
-                # ingredients_stream = ingredients_stream.replace(' + ', '\n')
-                # ingredients_stream = ingredients_stream.replace(' - ', '\n')
-                # ingredients_stream = ingredients_stream.replace(' * ', '\n')
-                # ingredients_stream = ingredients_stream.replace(' ° ', '\n')
-                # ingredients_stream = ingredients_stream.replace(' « ', '\n')
-                # ingredients_stream = ingredients_stream.replace(' e ', '\n')
+                ingredients_stream = ingredients_stream.replace("’", "'")
                 logging.info('ingredients_stream: %s', ingredients_stream)
                 # remove parenthesis
                 s = ''

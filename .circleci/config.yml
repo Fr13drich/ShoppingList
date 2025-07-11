@@ -52,6 +52,7 @@ jobs:
       - image: cimg/python:3.13.5
     steps:
       - checkout
+      - run: git fetch
       - python/install-packages:
           pkg-manager: pip
       - run: 

@@ -13,6 +13,6 @@ def test_compare():
         print(files)
         for name in files:
             with open(file=common.TEST_RESULTS_DIR + name, mode='r', encoding='utf-8') as test_result:
-                with open(file=common.RECIPE_DIR + name, mode='r', encoding='utf-16') as recipe_file:
+                with open(file=common.RECIPE_DIR + name, mode='r', encoding='utf-8') as recipe_file:
                     print(name)
                     assert recipe_file.read() == test_result.read()
