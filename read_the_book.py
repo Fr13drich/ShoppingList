@@ -79,6 +79,7 @@ def json2recipe(file, output_dir=None):
     logger.info('Recipe written: %s %s', new.ref, new.name)
 
 def pics2recipe(input_dir, output_dir):
+    """main function. scan, parse and write to disk"""
     assert input_dir[-1] == '/'
     assert output_dir[-1] == '/'
     for root, _dirs, files in os.walk(input_dir):
@@ -101,4 +102,4 @@ def pics2recipe(input_dir, output_dir):
 if __name__ == '__main__':
     read_the_book_parser = make_parser()
     args = read_the_book_parser.parse_args()
-    pics2recipe(location=args.input_dir, output_dir=args.output_dir)
+    pics2recipe(input_dir=args.input_dir, output_dir=args.output_dir)
