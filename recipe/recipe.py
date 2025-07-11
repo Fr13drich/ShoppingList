@@ -45,10 +45,10 @@ class Recipe():
         """write an recipe on disk in json"""
         name = self.ref if self.ref else self.name
         filename = name + '.json'
-        with open(str(location) + '/' + str(filename).encode('utf-16').decode('utf-16'),
-                  'w', encoding='utf-16') as outfile:
-            json.dump(self.serialize(), outfile, indent=2, ensure_ascii=False)
-        with open(str(location) + '/' + 'utf8-' + str(filename),
+        # with open(str(location) + '/' + str(filename).encode('utf-16').decode('utf-16'),
+        #           'w', encoding='utf-16') as outfile:
+        #     json.dump(self.serialize(), outfile, indent=2, ensure_ascii=False)
+        with open(str(location) + '/' + str(filename),
                   'w', encoding='utf-8') as outfile:
             json.dump(self.serialize(), outfile, indent=2, ensure_ascii=False)
         logger.info('%s written', filename)

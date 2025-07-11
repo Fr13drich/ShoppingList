@@ -15,7 +15,7 @@ def load_all_recipe_files(location=config['DEFAULT']['RECIPES_DIR']):
     all_recipes_list = []
     for _root, _dirs, files in os.walk(location):
         for name in files:
-            with open(location + name, 'r', encoding='utf-16') as recipe_file:
+            with open(location + name, 'r', encoding='utf-8') as recipe_file:
                 recipe_dict = json.load(recipe_file)
                 logger.info(recipe_dict['ref'])
                 all_recipes_list.append(

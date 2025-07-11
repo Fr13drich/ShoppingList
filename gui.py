@@ -13,7 +13,7 @@ from ingredient import Ingredient
 config = configparser.ConfigParser()
 config.read('./config.cfg')
 logger = logging.getLogger(__name__)
-logging.basicConfig(filename=config['DEFAULT']['LOG_FILE'], level=logging.INFO, encoding='utf-16')
+logging.basicConfig(filename=config['DEFAULT']['LOG_FILE'], level=logging.INFO, encoding='utf-8')
 print('Logfile: ' + config['DEFAULT']['LOG_FILE'])
 
 # load.load_all_ingredient_files()
