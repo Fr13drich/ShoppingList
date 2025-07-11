@@ -91,6 +91,7 @@ jobs:
     steps:
       - checkout
       - run: git fetch
+      - run: git pull
       - python/install-packages:
           pkg-manager: pip
       - run: 

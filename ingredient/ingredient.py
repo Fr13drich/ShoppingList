@@ -146,7 +146,7 @@ class Ingredient:
 
     def serialize(self):
         """produce a dictionary containing relevant attributes for JSON serialization."""
-        return dict({'name': self.name,
+        return dict({'name': self.name.encode('utf-16').decode('utf-16'),
                      'lemma': self.lemma,
                      'wiki_ref': self.wiki_ref if self.wiki_ref else "",
                      'category': self.category,
