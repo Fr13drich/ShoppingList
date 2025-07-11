@@ -17,6 +17,12 @@ jobs:
       - checkout
       - python/install-packages:
           pkg-manager: pip
+      - run:
+          name: "install tesseract"
+          command: |
+              sudo apt update
+              sudo apt install tesseract-ocr
+              sudo apt install libtesseract-dev
       # - restore_cache:
       #     key: &deps1-cache deps1-{{ .Branch }}-{{ checksum "requirements.txt" }}
       # - run: # install and activate virtual environment with pip
@@ -109,25 +115,9 @@ jobs:
               sudo apt install libtesseract-dev
               sudo cp ./data/fra.traineddata /usr/share/tesseract-ocr/4.00/tessdata/
       - run : mkdir ./test/test_results
-      # - run:
-      #     name: 'debug'
-      #     command: |
-      #         echo 'recipe_files'
-      #         ls -la ./data/recipe_files/EBp80.json
-      #         cat ./data/recipe_files/EBp80.json
-      #         echo > ./log/reader.log
-      #         python3 ./read_the_book.py --input_dir='./test/EB_pics/' --output_dir='./test/test_results/'
-      #         echo 'test output'
-      #         ls ./test/test_results/
-      #         cat ./test/test_results/EBp80.json
-      #         echo '--- log ---'
-      #         cat ./log/reader.log
-      #         echo '--- diff ---'
-      #         diff ./test/test_results/EBp80.json ./data/recipe_files/EBp80.json
       - run:
           name: "run test 'En bocal'"
           command: |
-              rm ./test/test_results/*
               pytest ./test/scripts/reader_eb_test.py
       
 
