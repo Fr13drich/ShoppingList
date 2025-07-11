@@ -1,6 +1,7 @@
 """main function of the module
 Extract the name of the recipe along with the ingredients bill from my cooking books."""
 import os
+import pathlib
 import logging
 import json
 import configparser
@@ -80,10 +81,11 @@ def json2recipe(file, output_dir=None):
 
 def pics2recipe(input_dir, output_dir):
     """main function. scan, parse and write to disk"""
-    assert input_dir[-1] == '/'
-    assert output_dir[-1] == '/'
+    assert pathlib.Path(input_dir).is_dir()
+    assert pathlib.Path(output_dir).is_dir()
     for root, _dirs, files in os.walk(input_dir):
         for name in files:
+            assert pathlib.PurePosixPath(name).suffix == '.jpg'
             print('Reading ' + str(name) + ' from ' + root)
             ref, name, parsed_ingredients = Reader.read(str(root) + '/', name)
             logger.info('%s, %s', ref, name)

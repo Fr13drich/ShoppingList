@@ -48,7 +48,7 @@ class Recipe():
         with open(str(location) + '/' + str(filename).encode('utf-16').decode('utf-16'),
                   'w', encoding='utf-16') as outfile:
             json.dump(self.serialize(), outfile, indent=2, ensure_ascii=False)
-        with open(str(location) + '/' + str(filename) + '-utf8',
+        with open(str(location) + '/' + 'utf8-' + str(filename),
                   'w', encoding='utf-8') as outfile:
             json.dump(self.serialize(), outfile, indent=2, ensure_ascii=False)
         logger.info('%s written', filename)
