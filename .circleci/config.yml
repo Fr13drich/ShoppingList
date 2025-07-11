@@ -119,8 +119,7 @@ jobs:
               echo 'recipe_files after utf16'
               cat ./data/recipe_files/EBp80.json
               echo 'recipe_files after utf8'
-              cat ./data/recipe_files/utf8-EBp80.json
-              echo 'test output utf16'
+              ls ./test/test_results/
               cat ./test/test_results/EBp80.json
               echo 'test output utf8'
               cat ./test/test_results/utf8-EBp80.json
