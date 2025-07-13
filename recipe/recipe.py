@@ -61,7 +61,6 @@ class Menu():
     def __init__(self, season='None') -> None:
         self.season = season
         self.recipes = []
-
     def add_recipe(self, recipe:Recipe, ratio=1):
         """Append a recipe to the list"""
         self.recipes.append((recipe, float(ratio)))

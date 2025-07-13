@@ -15,7 +15,7 @@ config.read('./config.cfg')
 logger = logging.getLogger(__name__)
 FORMAT = '%(asctime)s %(message)s'
 logging.basicConfig(filename=config['DEFAULT']['READER_LOG_FILE'],\
-                    level=logging.INFO, encoding='utf-16', format=FORMAT)
+                    level=logging.INFO, encoding='utf-8', format=FORMAT)
 
 def make_parser():
     """Create an ArgumentParser for this script.

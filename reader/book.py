@@ -64,6 +64,7 @@ class ReaderInterface(ABC):
         result = {}
         for item in raw_list_of_ingredients:
             split_item = str(item).split(maxsplit=1)
+            print(split_item)
             amount = str(split_item[0])
             if amount.isnumeric():
                 amount = int(amount)
@@ -126,7 +127,9 @@ class BcReader(ReaderInterface):
             cls.left_page = True
         else:
             cls.left_page = False
-        return 'BCp' + str(reader_result[0][1]).split(sep=' ', maxsplit=1)[0]
+        ref = 'BCp' + str(reader_result[0][1]).split(sep=' ', maxsplit=1)[0]
+        logger.info('ref: %s', ref)
+        return ref
     @classmethod
     def get_title(cls, img):
         if cls.left_page:
@@ -145,6 +148,7 @@ class BcReader(ReaderInterface):
             if box[0][0][0] < 100:
                 title = box[1]
                 break
+        logger.info('title: %s', title)
         return title
     @classmethod
     def get_ingredients(cls, img):
@@ -159,8 +163,9 @@ class BcReader(ReaderInterface):
         # cls.autocrop(cls.ingredients_workfile)
         # img = Image.open(self.ingredients_workfile)
         try:
-            ingredients = reader.readtext(image=cls.ingredients_workfile, detail=1,\
-                                          paragraph=True, y_ths=.3, height_ths=5)
+            ingredients = reader.readtext(image=cls.ingredients_workfile, detail=1,
+                                          text_threshold=0.5, paragraph=True,
+                                          y_ths=.3, height_ths=5)
             # ingredients = list(map(itemgetter(1), ingredients))
         except ValueError():
             print('No text found')
@@ -210,7 +215,9 @@ class CgReader(ReaderInterface):
         return ref, title, cls.parse_ingredients(ingredients)
     @classmethod
     def get_ref(cls, img):
-        return 'CGp' + str(cls.reader_result[0][1]).split(sep=' ', maxsplit=1)[0]
+        ref = 'CGp' + str(cls.reader_result[0][1]).split(sep=' ', maxsplit=1)[0]
+        logger.info('ref: %s', ref)
+        return ref
     @classmethod
     def get_title(cls, img):
         title_coordinates = cls.reader_result[1][0][0][0], cls.reader_result[1][0][0][1],\
@@ -218,6 +225,7 @@ class CgReader(ReaderInterface):
         img_title = img.crop(title_coordinates)
         img_title.save(cls.title_workfile)
         title = reader.readtext(image=cls.title_workfile, detail=1)[0][1]
+        logger.info('title: %s', title)
         return title
     @classmethod
     def get_ingredients(cls, img):

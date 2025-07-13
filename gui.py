@@ -88,12 +88,13 @@ class RecipesFrame(customtkinter.CTkFrame):
                                   for a in self.recipe_frame_list[j]])
             json.dump(save_list, outfile, indent=2, ensure_ascii=False)
 
-    def load_menu(self):
+    def load_menu(self, filename=None):
         """load a list of recipe name and ratio from a json file"""
-        f = tkinter.filedialog.askopenfile(mode='r')
-        if f is None: # asksaveasfile return `None` if dialog closed with "cancel".
+        if not filename:
+            filename = tkinter.filedialog.askopenfile(mode='r').name
+        if not filename: # asksaveasfile return `None` if dialog closed with "cancel".
             return
-        with open(f.name, 'r', encoding='utf-16') as recipes_file:
+        with open(filename, 'r', encoding='utf-16') as recipes_file:
             text = json.load(recipes_file)
             for j in range(RecipesFrame.nb_of_week):
                 for i in range(RecipesFrame.nb_of_combo):
@@ -154,4 +155,5 @@ class App(customtkinter.CTk):
         self.ingredients_frame.grid(row=0, column=1, padx=10, pady=(10, 0), sticky="e")
 
 app = App()
-app.mainloop()
+if __name__ == '__main__':
+    app.mainloop()

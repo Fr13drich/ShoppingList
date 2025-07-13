@@ -62,7 +62,11 @@ def parse_stream(ingredient_stream: str):
                 logger.info('skipped: %s', token.text)
             # print('skipped: ' + token.text)
     if i != j:
-        ingredient_list.append(ingredient_stream[i:j].strip())
+        if strategy:
+            ingredient_list.append(ingredient_stream[i:j].strip())
+        else:
+            ingredient_list[-1] += ' ' + ingredient_stream[i:j].strip()
+
     # if cursor.get('strategy'):
     #     strategy = cursor['strategy']
     # strategy = cursor['strategy']
@@ -115,6 +119,8 @@ def strategy013(d: str, text_list, lemma_list, pos_list, book_ref: str):
         other_recipe_ref = book_ref + 'p' + str(text_list[-2])
         lemma_list = lemma_list[:-5]
         d = d[0:d.index(' (')] if d.find('(') else d
+    if "PUNCT" in pos_list:
+        d= d[0:d.index(text_list[pos_list.index("PUNCT")])] #remove all after punct
     #check for a unit
     if lemma_list[1] in UNIT_LIST:
         lemma = ' '.join(lemma_list[3:])
