@@ -6,9 +6,10 @@ import tkinter
 import tkinter.messagebox
 import tkinter.filedialog
 import customtkinter
-import load
-from recipe import Menu
+
 from ingredient import Ingredient
+from recipe import Menu
+from .load import load_all_recipe_files
 
 config = configparser.ConfigParser()
 config.read('./config.cfg')
@@ -17,7 +18,7 @@ logging.basicConfig(filename=config['DEFAULT']['LOG_FILE'], level=logging.INFO, 
 print('Logfile: ' + config['DEFAULT']['LOG_FILE'])
 
 # load.load_all_ingredient_files()
-all_recipes = load.load_all_recipe_files()
+all_recipes = load_all_recipe_files()
 logger.info('Total number of ingredients: %s', len(Ingredient.knowkn_ingredients_list))
 
 class RecipeFrame(customtkinter.CTkFrame):
@@ -76,13 +77,14 @@ class RecipesFrame(customtkinter.CTkFrame):
                                               command=self.generate_shopping_list)
         self.button.grid(row=RecipesFrame.nb_of_combo+2, column=3, padx=20, pady=20, columnspan=2)
 
-    def save_menu(self):
+    def save_menu(self, filename=None):
         """Write a list of recipe along with their ratio on disk in json format."""
-        f = tkinter.filedialog.asksaveasfile(mode='w', defaultextension=".json", )
-        if f is None: # asksaveasfile return `None` if dialog closed with "cancel".
+        if not filename:
+            filename = tkinter.filedialog.asksaveasfile(mode='w', defaultextension=".json").name
+        if not filename: # asksaveasfile return `None` if dialog closed with "cancel".
             return
         save_list = []
-        with open(f.name, 'w', encoding='utf-16') as outfile:
+        with open(filename, 'w', encoding='utf-8') as outfile:
             for j in range(RecipesFrame.nb_of_week):
                 save_list.append([(a.recipe_picker.get(), a.ratio.get())\
                                   for a in self.recipe_frame_list[j]])
@@ -94,7 +96,7 @@ class RecipesFrame(customtkinter.CTkFrame):
             filename = tkinter.filedialog.askopenfile(mode='r').name
         if not filename: # asksaveasfile return `None` if dialog closed with "cancel".
             return
-        with open(filename, 'r', encoding='utf-16') as recipes_file:
+        with open(filename, 'r', encoding='utf-8') as recipes_file:
             text = json.load(recipes_file)
             for j in range(RecipesFrame.nb_of_week):
                 for i in range(RecipesFrame.nb_of_combo):

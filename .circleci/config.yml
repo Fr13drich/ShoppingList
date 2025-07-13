@@ -97,16 +97,11 @@ jobs:
       - image: cimg/python:3.13.5
     steps:
       - checkout
-      # - run: git fetch
-      # - run: git pull
       - python/install-packages:
           pkg-manager: pip
       - run: 
           name: "download fr_core_news_md"
           command: "python3 -m spacy download fr_core_news_md"
-      - run:
-          name: "install pytest"
-          command: "pip install pytest"
       - run:
           name: "install tesseract"
           command: |
@@ -119,7 +114,15 @@ jobs:
           name: "run test 'En bocal'"
           command: |
               pytest ./test/scripts/reader_eb_test.py
-      
+  test_gui:
+    docker:
+      - image: cimg/python:3.13.5
+    steps:
+      - checkout
+      - run:
+          name: "test gui"
+          command: |
+              pytest ./gui_test.py
 
 # Orchestrate jobs using workflows
 # See: https://circleci.com/docs/workflows/ & https://circleci.com/docs/configuration-reference/#workflows
@@ -137,6 +140,9 @@ workflows:
           requires:
             - lint
       - test_eb:
+          requires:
+            - lint
+      - test_gui:
           requires:
             - lint
       
