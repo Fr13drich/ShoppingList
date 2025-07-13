@@ -73,6 +73,7 @@ jobs:
               python3 -m spacy download fr_core_news_md
               mkdir ./test/test_results
               pytest ./test/scripts/reader_bc_test.py
+          no_output_timeout: 20m
   test_cg:
     docker:
       - image: cimg/python:3.13.5
