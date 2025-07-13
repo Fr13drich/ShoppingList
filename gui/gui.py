@@ -156,6 +156,7 @@ class App(customtkinter.CTk):
         self.ingredients_frame = IngredientsFrame(self)
         self.ingredients_frame.grid(row=0, column=1, padx=10, pady=(10, 0), sticky="e")
 
-app = App()
+
 if __name__ == '__main__':
+    app = App()
     app.mainloop()
