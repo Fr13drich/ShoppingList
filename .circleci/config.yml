@@ -122,6 +122,8 @@ jobs:
       - image: cimg/python:3.13.5
     steps:
       - checkout
+      - python/install-packages:
+          pkg-manager: pip
       - run:
           name: "install pytest"
           command: "pip install pytest"
