@@ -109,6 +109,9 @@ jobs:
               sudo apt install tesseract-ocr
               sudo apt install libtesseract-dev
               sudo cp ./data/fra.traineddata /usr/share/tesseract-ocr/4.00/tessdata/
+      - run:
+          name: "install pytest"
+          command: "pip install pytest"
       - run : mkdir ./test/test_results
       - run:
           name: "run test 'En bocal'"
@@ -119,6 +122,9 @@ jobs:
       - image: cimg/python:3.13.5
     steps:
       - checkout
+      - run:
+          name: "install pytest"
+          command: "pip install pytest"
       - run:
           name: "test gui"
           command: |
