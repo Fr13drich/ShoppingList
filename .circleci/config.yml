@@ -112,6 +112,9 @@ jobs:
       - run:
           name: "install pytest"
           command: "pip install pytest"
+      - run: 
+          name: "download fr_core_news_md"
+          command: "python3 -m spacy download fr_core_news_md"
       - run : mkdir ./test/test_results
       - run:
           name: "run test 'En bocal'"
