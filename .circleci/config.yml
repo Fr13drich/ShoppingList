@@ -131,6 +131,12 @@ jobs:
           name: "download fr_core_news_md"
           command: "python3 -m spacy download fr_core_news_md"
       - run:
+          name: "route display to /dev/null"
+          command: |
+              env | grep DISPLAY
+              export DISPLAY='/dev/null'
+              env | grep DISPLAY
+      - run:
           name: "test gui"
           command: |
               pytest ./gui_test.py

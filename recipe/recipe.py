@@ -20,6 +20,8 @@ class IngredientBill():
         self.ingredient = ingredient
     def __str__(self):
         return str(self.ingredient.name) + ': ' + str(self.amount) + ' ' + str(self.unit)
+    def __add__(self, ingredient_bill):
+        pass
     def serialize(self):
         """produce a dictionary containing relevant attributes for JSON serialization."""
         return dict({'amount': self.amount,\
