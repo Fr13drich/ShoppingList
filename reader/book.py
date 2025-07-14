@@ -3,7 +3,6 @@ import configparser
 import logging
 from operator import itemgetter
 from abc import ABC, abstractmethod
-import re
 import spacy
 import pytesseract
 from PIL import Image, ImageOps
