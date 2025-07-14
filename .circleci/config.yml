@@ -93,6 +93,7 @@ jobs:
               mkdir ./test/test_results
               echo > ./log/reader.log
               pytest ./test/scripts/reader_cg_test.py
+          no_output_timeout: 20m
   test_eb:
     docker:
       - image: cimg/python:3.13.5
@@ -118,6 +119,7 @@ jobs:
           name: "run test 'En bocal'"
           command: |
               pytest ./test/scripts/reader_eb_test.py
+          no_output_timeout: 20m
   test_gui:
     docker:
       - image: cimg/python:3.13.5

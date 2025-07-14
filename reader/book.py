@@ -3,6 +3,7 @@ import configparser
 import logging
 from operator import itemgetter
 from abc import ABC, abstractmethod
+import re
 import spacy
 import pytesseract
 from PIL import Image, ImageOps
@@ -141,7 +142,7 @@ class BcReader(ReaderInterface):
         cls.autocrop(cls.title_workfile)
         try:
             instructions = reader.readtext(image=cls.title_workfile, detail=1, paragraph=True,\
-                                           y_ths=.1, height_ths=0.2, min_size=50)
+                                           y_ths=.2, height_ths=0.2, min_size=100)
         except ValueError():
             print('No text found')
         for box in instructions:
@@ -173,7 +174,8 @@ class BcReader(ReaderInterface):
         # by checking the vertical distance between lines
         distance = ingredients[1][0][0][1] - ingredients[0][0][0][1]
         print(f'distance: {distance}')
-        y = ingredients[0][0][0][1]
+        # y = ingredients[0][0][0][1]
+        y = ingredients[0][0][2][1]
         print(ingredients)
         for i, ingredient in enumerate(ingredients):
             # if the distance is above the threshold it means it is a comment
@@ -183,7 +185,8 @@ class BcReader(ReaderInterface):
                 for item in tmp_results:
                     results += parser.parse_stream(item)
                 return results
-            y = ingredient[0][0][1]
+            # y = ingredient[0][0][1]
+            y = ingredient[0][2][1]
         # return ingredients
         tmp_results =  list(map(itemgetter(1), ingredients))
         results = []
@@ -277,19 +280,29 @@ class EbReader(ReaderInterface):
     def get_title(cls, img):
         pic = './tmp/img.jpg'
         title = ""
-        s = pytesseract.image_to_string(pic, lang='fra')
-        empty_line = s.find('\n\n')
-        if empty_line > 0:
-            s = s[empty_line+2:]
-            empty_line = s.find('Préparation')
-            if empty_line > 0:
-                s = s[:empty_line]
-                title = str(s).replace('\n', ' ')\
-                              .replace('  ', ' ')\
-                              .capitalize()\
-                              .strip()
-                print(f'title found by tesseract: {title}')
-        if not title:
+        d = pytesseract.image_to_data(pic, lang='fra')
+        lines = d.rsplit(sep='\n')[1:]
+        for line in lines:
+            values = line.rsplit()
+            print(values)
+            if len(values) == 12 and float(values[10]) > 50.0: # confidence above 50%
+                if str(values[11]) == 'Préparation':
+                    break
+                title += ' ' + str(values[11])
+        title = title.strip().capitalize()
+        # s = pytesseract.image_to_string(pic, lang='fra')
+        # empty_line = s.find('\n\n')
+        # if empty_line > 0:
+        #     s = s[empty_line+2:]
+        #     empty_line = s.find('Préparation')
+        #     if empty_line > 0:
+        #         s = s[:empty_line]
+        #         title = str(s).replace('\n', ' ')\
+        #                       .replace('  ', ' ')\
+        #                       .capitalize()\
+        #                       .strip()
+        print(f'title found by tesseract: {title}')
+        if not title: # then try with easyocr results
             pic = './tmp/title.jpg'
             img = img.crop((cls.reader_result[1][0][0][0],\
                             cls.reader_result[1][0][0][1],\
@@ -312,12 +325,13 @@ class EbReader(ReaderInterface):
                 print('---- easy ocr ----')
                 print(reader.readtext(image=pic, detail=0))
                 ingredients_stream = pytesseract.image_to_string(img, lang='fra')
-                print('---- easy pytesseract ----')
+                print('---- pytesseract ----')
                 print(ingredients_stream)
-                # remove first line x = lambda a, b : a * b
-                ingredients_stream = ingredients_stream[ingredients_stream.find('\n')+2:]
+                # remove first line and put the rest in one line
+                ingredients_stream = ' '.join(ingredients_stream.split(sep='\n')[1:])
+                # ingredients_stream = ingredients_stream[ingredients_stream.find('\n')+2:]
                 # put the stream in one line
-                ingredients_stream = ingredients_stream.replace('\n', ' ')
+                # ingredients_stream = ingredients_stream.replace('\n', ' ')
                 # split
                 ingredient_sep_list = '+-*°«e'
                 for sep in ingredient_sep_list:

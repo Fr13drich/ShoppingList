@@ -30,10 +30,8 @@ def parse_stream(ingredient_stream: str):
     cursor = root
     i = j = 0
     strategy = ingredient_str = None
-    # print(ingredient_stream)
-    # print([token.pos_ for token in doc])
     for token in doc:
-        print(token.pos_)
+        # print(token.pos_)
         if cursor.get('strategy'):
             strategy = cursor['strategy']
             logger.info('potential strategy: %s', strategy)
@@ -43,6 +41,7 @@ def parse_stream(ingredient_stream: str):
             # print(f'tmp ingredient_str: {ingredient_str}')
         if cursor.get(token.pos_):
             cursor = cursor[token.pos_]
+            strategy = cursor['strategy'] if cursor.get('strategy') else strategy
             j += len(token.text_with_ws)
             # print(f'current {ingredient_stream[i:j]}')
         else:
@@ -66,10 +65,6 @@ def parse_stream(ingredient_stream: str):
             ingredient_list.append(ingredient_stream[i:j].strip())
         else:
             ingredient_list[-1] += ' ' + ingredient_stream[i:j].strip()
-
-    # if cursor.get('strategy'):
-    #     strategy = cursor['strategy']
-    # strategy = cursor['strategy']
     print(ingredient_list)
     logger.info('ingredient_list: %s', ingredient_list)
     return ingredient_list
