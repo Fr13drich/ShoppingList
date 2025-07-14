@@ -89,20 +89,20 @@ def strategy01(d: str, text_list, lemma_list, pos_list, book_ref: str):
     """quantity in first position the the ingredient name"""
     other_recipe_ref = None
     #check for a ref to another recipe
-    if pos_list[-5:] == ["PUNCT", "VERB", "NOUN", "NUM", "PUNCT"]:
-        other_recipe_ref = book_ref + 'p' + str(text_list[-2])
-        lemma_list = lemma_list[:-5]
-        d = d[0:d.index(' (')] if d.find('(') else d
-    if lemma_list[1] in UNIT_LIST:
-        lemma = ' '.join(lemma_list[3:])
-        unit = str(lemma_list[1])
-        jxt = str(text_list[2])
-        name = d[d.index(text_list[3]):]  #' '.join(text_list[3:])
-    else:
-        lemma = lemma_list[1]
-        unit = 'p'
-        jxt = ''
-        name = d[d.index(text_list[1]):]
+    # if pos_list[-5:] == ["PUNCT", "VERB", "NOUN", "NUM", "PUNCT"]:
+    #     other_recipe_ref = book_ref + 'p' + str(text_list[-2])
+    #     lemma_list = lemma_list[:-5]
+    #     d = d[0:d.index(' (')] if d.find('(') else d
+    # if lemma_list[1] in UNIT_LIST:
+    #     lemma = ' '.join(lemma_list[3:])
+    #     unit = str(lemma_list[1])
+    #     jxt = str(text_list[2])
+    #     name = d[d.index(text_list[3]):]  #' '.join(text_list[3:])
+    # else:
+    lemma = lemma_list[1]
+    unit = 'p'
+    jxt = ''
+    name = d[d.index(text_list[1]):]
     # lemma = ' '.join(lemma_list[1:])
     return (unit, jxt, name, lemma, other_recipe_ref)
 
