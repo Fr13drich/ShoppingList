@@ -87,7 +87,7 @@ def get_strategy(ingredient_line: str):
 
 def strategy01(d: str, text_list, lemma_list, pos_list, book_ref: str):
     """quantity in first position the the ingredient name"""
-    other_recipe_ref = None
+    logger.info('strategy01 %s %s', book_ref, pos_list)
     #check for a ref to another recipe
     # if pos_list[-5:] == ["PUNCT", "VERB", "NOUN", "NUM", "PUNCT"]:
     #     other_recipe_ref = book_ref + 'p' + str(text_list[-2])
@@ -104,7 +104,7 @@ def strategy01(d: str, text_list, lemma_list, pos_list, book_ref: str):
     jxt = ''
     name = d[d.index(text_list[1]):]
     # lemma = ' '.join(lemma_list[1:])
-    return (unit, jxt, name, lemma, other_recipe_ref)
+    return (unit, jxt, name, lemma, None)
 
 def strategy013(d: str, text_list, lemma_list, pos_list, book_ref: str):
     """shape is: amount unit jxt name"""
