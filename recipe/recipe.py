@@ -1,4 +1,9 @@
-"""Recipe"""
+"""Recipe management module.
+
+Defines classes for representing ingredients, recipes, and menus.
+Handles serialization and file writing for recipes and ingredients.
+"""
+
 import os
 import pathlib 
 import logging
@@ -14,25 +19,57 @@ config.read('./config.cfg')
 logger = logging.getLogger(__name__)
 
 class IngredientBill():
-    """An ingredient with amount and unit"""
+    """Represents an ingredient with its amount, unit, and additional context.
+
+    Attributes:
+        amount (float): Quantity of the ingredient.
+        unit (str): Unit of measurement.
+        jxt (str): Juxtaposant (e.g., 'de', 'à').
+        ingredient (Ingredient): Ingredient object.
+    """
+
     def __init__(self, amount: float, unit: str, jxt: str, ingredient: Ingredient):
         self.amount = amount
         self.unit = unit
         self.jxt = jxt
         self.ingredient = ingredient
+
     def __str__(self):
-        return str(self.ingredient.name) + ': ' + str(self.amount) + ' ' + str(self.unit)
+        """Return a human-readable string representation of the ingredient bill."""
+        return f"{self.ingredient.name}: {self.amount} {self.unit}"
+
     def __add__(self, ingredient_bill):
+        """Add two IngredientBill objects if they refer to the same ingredient and unit.
+
+        Args:
+            ingredient_bill (IngredientBill): Another ingredient bill to add.
+
+        Returns:
+            IngredientBill: New IngredientBill with summed amount, or NotImplemented if incompatible.
+        """
         pass
+
     def serialize(self):
-        """produce a dictionary containing relevant attributes for JSON serialization."""
-        return dict({'amount': self.amount,\
-                     'unit': self.unit,\
-                     'jxt': self.jxt,\
-                     'ingredient': self.ingredient.name
-                    })
+        """Convert the ingredient bill to a dictionary for JSON serialization.
+
+        Returns:
+            dict: Dictionary of relevant attributes.
+        """
+        return {
+            'amount': self.amount,
+            'unit': self.unit,
+            'jxt': self.jxt,
+            'ingredient': self.ingredient.name
+        }
+
 class Recipe():
-    """A cooking recipe"""
+    """Represents a cooking recipe.
+
+    Attributes:
+        ref (str): Reference code for the recipe.
+        name (str): Name of the recipe.
+        ingredients_bill (list): List of IngredientBill objects.
+    """
 
     def __init__(self, ref: str, name: str, ingredients_bill):
         self.ref = ref
@@ -40,58 +77,80 @@ class Recipe():
         self.ingredients_bill = ingredients_bill
 
     def serialize(self):
-        """produce a dictionary containing relevant attributes for JSON serialization."""
-        return dict({'ref': self.ref,\
-                     'name': self.name,\
-                     'ingredients_bill': [i.serialize() for i in self.ingredients_bill]
-                    })
+        """Convert the recipe to a dictionary for JSON serialization.
+
+        Returns:
+            dict: Dictionary of relevant attributes.
+        """
+        return {
+            'ref': self.ref,
+            'name': self.name,
+            'ingredients_bill': [i.serialize() for i in self.ingredients_bill]
+        }
+
     def write_recipe_file(self, location=config['DEFAULT']['RECIPES_DIR']):
-        """write an recipe on disk in json"""
+        """Write the recipe to disk as a JSON file.
+
+        Args:
+            location (str): Directory to save the recipe file.
+        """
         name = self.ref if self.ref else self.name
         filename = name + '.json'
-        # with open(str(location) + '/' + str(filename).encode('utf-16').decode('utf-16'),
-        #           'w', encoding='utf-16') as outfile:
-        #     json.dump(self.serialize(), outfile, indent=2, ensure_ascii=False)
-        with open(os.path.join(location, filename),
-                  'w', encoding='utf-8') as outfile:
+        with open(os.path.join(location, filename), 'w', encoding='utf-8') as outfile:
             json.dump(self.serialize(), outfile, indent=2, ensure_ascii=False)
         logger.info('%s written', filename)
 
     def __str__(self):
+        """Return a human-readable string representation of the recipe."""
         return f"{self.name} ({self.ref})"
 
 class Menu():
-    """A list of recipes"""
+    """Represents a menu consisting of multiple recipes.
+
+    Attributes:
+        season (str): Season for the menu.
+        recipes (list): List of tuples (Recipe, ratio).
+    """
+
     def __init__(self, season='None') -> None:
         self.season = season
         self.recipes = []
+
     def add_recipe(self, recipe:Recipe, ratio=1):
-        """Append a recipe to the list"""
+        """Add a recipe to the menu.
+
+        Args:
+            recipe (Recipe): Recipe to add.
+            ratio (float): Scaling factor for the recipe.
+        """
         self.recipes.append((recipe, float(ratio)))
+
     def merge_ingredients(self):
-        """merge ingredients that have the same lemma
-        sum the amounts if possible
+        """Merge ingredients from all recipes, summing amounts for identical ingredients.
+
+        Returns:
+            list: Sorted list of merged IngredientBill objects.
         """
         total_ingredients_bill = []
         for (recipe, ratio) in self.recipes:
             for ingredient_bill in recipe.ingredients_bill:
                 added = False
                 name = ingredient_bill['ingredient']
-                i = Ingredient.add(name=name,\
-                                    lemma=' '.join([token.lemma_ for token in nlp(name)]),\
-                                    recipe_refs=set([recipe.ref]))
+                i = Ingredient.add(
+                    name=name,
+                    lemma=' '.join([token.lemma_ for token in nlp(name)]),
+                    recipe_refs=set([recipe.ref])
+                )
                 for total_ingredient_bill in total_ingredients_bill:
-                    if total_ingredient_bill.ingredient is i\
-                        and total_ingredient_bill.unit == ingredient_bill['unit']:
-                        total_ingredient_bill.amount +=\
-                                int(math.ceil(ingredient_bill['amount'] * float(ratio)))
+                    if total_ingredient_bill.ingredient is i and total_ingredient_bill.unit == ingredient_bill['unit']:
+                        total_ingredient_bill.amount += int(math.ceil(ingredient_bill['amount'] * float(ratio)))
                         added = True
                         break
-                if not added: #then append
+                if not added:
                     amount = int(math.ceil(ingredient_bill['amount'] * float(ratio)))
-                    # name = ingredient_bill['ingredient']
-                    total_ingredients_bill.append(\
-                        IngredientBill(amount=amount, unit=ingredient_bill['unit'],\
-                                       jxt=ingredient_bill['jxt'], ingredient=i))
+                    total_ingredients_bill.append(
+                        IngredientBill(amount=amount, unit=ingredient_bill['unit'],
+                                       jxt=ingredient_bill['jxt'], ingredient=i)
+                    )
         total_ingredients_bill.sort(key=lambda x: x.ingredient.name)
         return total_ingredients_bill
