@@ -86,7 +86,7 @@ def get_strategy(ingredient_line: str):
     return strategy
 
 def strategy01(d: str, text_list, lemma_list, pos_list, book_ref: str):
-    """quantity in first position the the ingredient name"""
+    """quantity in first position then the ingredient name"""
     logger.info('strategy01 %s %s', book_ref, pos_list)
     #check for a ref to another recipe
     # if pos_list[-5:] == ["PUNCT", "VERB", "NOUN", "NUM", "PUNCT"]:
@@ -105,7 +105,6 @@ def strategy01(d: str, text_list, lemma_list, pos_list, book_ref: str):
     name = d[d.index(text_list[1]):]
     # lemma = ' '.join(lemma_list[1:])
     return (unit, jxt, name, lemma, None)
-
 def strategy013(d: str, text_list, lemma_list, pos_list, book_ref: str):
     """shape is: amount unit jxt name"""
     other_recipe_ref = None
@@ -128,7 +127,6 @@ def strategy013(d: str, text_list, lemma_list, pos_list, book_ref: str):
         jxt = ''
         name = d[d.index(text_list[1]):]
     return (unit, jxt, name, lemma, other_recipe_ref)
-
 def strategy0135(d: str, text_list, lemma_list, pos_list, book_ref: str):
     """name from position 3 to 5"""
     other_recipe_ref = None
@@ -142,7 +140,6 @@ def strategy0135(d: str, text_list, lemma_list, pos_list, book_ref: str):
     jxt = str(text_list[2])
     name = d[d.index(text_list[3]):d.index(text_list[4])+len(text_list[4])]
     return (unit, jxt, name, lemma, other_recipe_ref)
-
 def strategy0156(d: str, text_list, lemma_list, pos_list, book_ref: str):
     """name from position until the end (without ref to sub recipe)"""
     other_recipe_ref = None
@@ -158,7 +155,6 @@ def strategy0156(d: str, text_list, lemma_list, pos_list, book_ref: str):
     jxt = str(text_list[5])
     name = d[d.index(text_list[6]):]
     return (unit, jxt, name, lemma, other_recipe_ref)
-
 def strategy04(d: str, text_list, lemma_list, pos_list, book_ref: str):
     """Ingredient name in position 4. No unit nor jxt."""
     other_recipe_ref = None
@@ -171,7 +167,6 @@ def strategy04(d: str, text_list, lemma_list, pos_list, book_ref: str):
     unit = 'p'
     name = d[d.index(text_list[4]):]
     return (unit, '', name, lemma, other_recipe_ref)
-
 def strategy34(d: str, text_list, lemma_list, pos_list, book_ref=None):
     """Le jus de 1 citron -> 1 citron"""
     print(pos_list)

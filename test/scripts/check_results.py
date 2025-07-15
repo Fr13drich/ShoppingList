@@ -13,8 +13,8 @@ def test_answer():
     for _root, _dirs, files in os.walk(TEST_RESULTS_DIR):
         print(files)
         for name in files:
-            with open(file=TEST_RESULTS_DIR + name, mode='r', encoding='utf-16') as test_result:
-                with open(file=RECIPE_DIR + name, mode='r', encoding='utf-16') as recipe_file:
+            with open(file=os.path.join(TEST_RESULTS_DIR, name), mode='r', encoding='utf-16') as test_result:
+                with open(file=os.path.join(RECIPE_DIR, name), mode='r', encoding='utf-16') as recipe_file:
                     print(name)
                     assert common.compare(recipe_file, test_result)
 

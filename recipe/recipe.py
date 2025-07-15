@@ -1,4 +1,6 @@
 """Recipe"""
+import os
+import pathlib 
 import logging
 import json
 import configparser
@@ -50,7 +52,7 @@ class Recipe():
         # with open(str(location) + '/' + str(filename).encode('utf-16').decode('utf-16'),
         #           'w', encoding='utf-16') as outfile:
         #     json.dump(self.serialize(), outfile, indent=2, ensure_ascii=False)
-        with open(str(location) + '/' + str(filename),
+        with open(os.path.join(location, filename),
                   'w', encoding='utf-8') as outfile:
             json.dump(self.serialize(), outfile, indent=2, ensure_ascii=False)
         logger.info('%s written', filename)

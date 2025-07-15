@@ -121,7 +121,7 @@ class BcReader(ReaderInterface):
         img_footpage.save(cls.footpage_workfile)
         try:
             reader_result = reader.readtext(image=cls.footpage_workfile, text_threshold=.1)
-        except ValueError():
+        except ValueError:
             print('No text found')
         if max(reader_result, key=itemgetter(2))[0][0][0] < img_footpage.width/2:
             cls.left_page = True
@@ -142,7 +142,7 @@ class BcReader(ReaderInterface):
         try:
             instructions = reader.readtext(image=cls.title_workfile, detail=1, paragraph=True,\
                                            y_ths=.2, height_ths=0.2, min_size=100)
-        except ValueError():
+        except ValueError:
             print('No text found')
         for box in instructions:
             if box[0][0][0] < 100:
@@ -167,7 +167,7 @@ class BcReader(ReaderInterface):
                                           text_threshold=0.5, paragraph=True,
                                           y_ths=.3, height_ths=5)
             # ingredients = list(map(itemgetter(1), ingredients))
-        except ValueError():
+        except ValueError:
             print('No text found')
         # remove annotations on the bottom
         # by checking the vertical distance between lines
