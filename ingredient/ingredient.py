@@ -1,4 +1,6 @@
 """Describe the class Ingredient"""
+import os
+import pathlib
 from urllib.parse import unquote
 import configparser
 import logging
@@ -32,8 +34,8 @@ class Ingredient:
         """write an ingredient on disk in json"""
         name = self.wiki_ref if self.wiki_ref else self.name
         filename = name + '.json'
-        with open(config['DEFAULT']['INGREDIENTS_DIR'] +\
-                  str(filename).encode('utf-16').decode('utf-16'),\
+        with open(os.path.join(config['DEFAULT']['INGREDIENTS_DIR'],
+                  str(filename).encode('utf-16').decode('utf-16')),\
                   'w', encoding='utf-16') as outfile:
             json.dump(self.serialize(), outfile, indent=2, ensure_ascii=False)
         logger.info('%s written', filename)
