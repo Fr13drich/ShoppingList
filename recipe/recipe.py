@@ -44,9 +44,17 @@ class IngredientBill():
             ingredient_bill (IngredientBill): Another ingredient bill to add.
 
         Returns:
-            IngredientBill: New IngredientBill with summed amount, or NotImplemented if incompatible.
+            IngredientBill: New IngredientBill with summed amount,
+            or NotImplemented if incompatible.
         """
-        pass
+        if self.ingredient == ingredient_bill.ingredient and self.unit == ingredient_bill.unit:
+            return IngredientBill(
+                amount=self.amount + ingredient_bill.amount,
+                unit=self.unit,
+                jxt=self.jxt,
+                ingredient=self.ingredient
+            )
+        return NotImplemented
 
     def serialize(self):
         """Convert the ingredient bill to a dictionary for JSON serialization.
@@ -125,7 +133,8 @@ class Menu():
         self.recipes.append((recipe, float(ratio)))
 
     def merge_ingredients(self):
-        """Merge ingredients from all recipes, summing amounts for identical ingredients.
+        """Merge ingredients from all recipes,
+        summing amounts for identical ingredients.
 
         Returns:
             list: Sorted list of merged IngredientBill objects.
@@ -145,7 +154,8 @@ class Menu():
                         and total_ingredient_bill.unit == ingredient_bill['unit']:
                         # If the ingredient already exists, update its amount
                         # and set added to True to avoid adding it again.
-                        total_ingredient_bill.amount += int(math.ceil(ingredient_bill['amount'] * float(ratio)))
+                        total_ingredient_bill.amount += int(math.ceil(ingredient_bill['amount']\
+                                                                      * float(ratio)))
                         added = True
                         break
                 if not added:

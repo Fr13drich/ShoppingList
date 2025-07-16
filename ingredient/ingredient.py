@@ -1,6 +1,5 @@
 """Describe the class Ingredient"""
 import os
-import pathlib
 from urllib.parse import unquote
 import configparser
 import logging

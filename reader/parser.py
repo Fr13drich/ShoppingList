@@ -71,8 +71,6 @@ def parse_stream(ingredient_stream: str):
 
 def get_strategy(ingredient_line: str):
     """search the tree for a strategy"""
-    config = configparser.ConfigParser()
-    config.read('./config.cfg')
     with open(file=config['DEFAULT']['TREE'], mode='r', encoding='utf-8', ) as strategy_dict:
         root = json.load(strategy_dict)
     doc = nlp(ingredient_line)
