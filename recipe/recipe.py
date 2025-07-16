@@ -5,7 +5,6 @@ Handles serialization and file writing for recipes and ingredients.
 """
 
 import os
-import pathlib 
 import logging
 import json
 import configparser
@@ -142,7 +141,10 @@ class Menu():
                     recipe_refs=set([recipe.ref])
                 )
                 for total_ingredient_bill in total_ingredients_bill:
-                    if total_ingredient_bill.ingredient is i and total_ingredient_bill.unit == ingredient_bill['unit']:
+                    if total_ingredient_bill.ingredient is i\
+                        and total_ingredient_bill.unit == ingredient_bill['unit']:
+                        # If the ingredient already exists, update its amount
+                        # and set added to True to avoid adding it again.
                         total_ingredient_bill.amount += int(math.ceil(ingredient_bill['amount'] * float(ratio)))
                         added = True
                         break
