@@ -22,7 +22,7 @@ def parse_stream(ingredient_stream: str):
        Return a list of str
        '1 pincée de sel, 1 pincée de poivre' returns ['1 pincée de sel', '1 pincée de poivre']
     """
-    with open(file='./parse_tree.json', mode='r', encoding='utf-16', ) as strategy_dict:
+    with open(file=config['DEFAULT']['TREE'], mode='r', encoding='utf-8', ) as strategy_dict:
         root = json.load(strategy_dict)
     logger.info('raw ingredient stream befor parsing: %s', ingredient_stream)
     doc = nlp(ingredient_stream)
@@ -71,7 +71,9 @@ def parse_stream(ingredient_stream: str):
 
 def get_strategy(ingredient_line: str):
     """search the tree for a strategy"""
-    with open(file='./parse_tree.json', mode='r', encoding='utf-16', ) as strategy_dict:
+    config = configparser.ConfigParser()
+    config.read('./config.cfg')
+    with open(file=config['DEFAULT']['TREE'], mode='r', encoding='utf-8', ) as strategy_dict:
         root = json.load(strategy_dict)
     doc = nlp(ingredient_line)
     cursor = root
