@@ -17,7 +17,7 @@ config = configparser.ConfigParser()
 config.read('./config.cfg')
 logger = logging.getLogger(__name__)
 
-class IngredientBill():
+class IngredientBill:
     """Represents an ingredient with its amount, unit, and additional context.
 
     Attributes:
@@ -64,7 +64,6 @@ class IngredientBill():
         return unit_mapping.get(unit, unit)
 
 
-        
     def __str__(self):
         """Return a human-readable string representation of the ingredient bill."""
         return f"{self.ingredient.name}: {self.amount} {self.unit}"

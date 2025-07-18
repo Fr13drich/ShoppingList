@@ -1,7 +1,4 @@
 """tk recipe editor"""
-import logging
-import json
-import configparser
 import tkinter
 import tkinter.messagebox
 import tkinter.filedialog
@@ -34,14 +31,17 @@ class ButtonFrame(customtkinter.CTkFrame):
     """Frame containing buttons for the application."""
     def __init__(self, master=None, **kwargs):
         super().__init__(master, **kwargs)
-        self.save_button = customtkinter.CTkButton(self, text="Save Recipe", command=self.master.save_recipe)
+        self.save_button = customtkinter.CTkButton(self, text="Save Recipe",
+                                                   command=self.master.save_recipe)
         self.save_button.grid(row=0, column=0, padx=5, pady=5)
         self.load_button = customtkinter.CTkButton(self, text="Load Recipe")
         self.load_button.grid(row=0, column=1, padx=5, pady=5)
-        self.parse_button = customtkinter.CTkButton(self, text="Parse Recipe", command=self.master.create_recipe)
+        self.parse_button = customtkinter.CTkButton(self, text="Parse Recipe",
+                                                    command=self.master.create_recipe)
         self.parse_button.grid(row=0, column=2, padx=5, pady=5)
 
 class App(customtkinter.CTk):
+    """Main application class for the recipe editor."""
     def __init__(self):
         super().__init__()
         self.title("Shopping list")
@@ -68,7 +68,7 @@ class App(customtkinter.CTk):
         print(f"Creating recipe: {recipe_name}")
         print(f"Ingredients:\n{ingredients}")
         print(f"Recipe created successfully: {recipe}")
-    
+
     def save_recipe(self):
         """Save the recipe to a file."""
         recipe_name = self.input_frame.recipe_name.get()

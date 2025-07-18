@@ -249,7 +249,7 @@ def strategy_name_only(d: str, _text_list, lemma_list, _pos_list, _book_ref: str
 #         return strategy_name_only
 
 def parse_ingredients_bill_dict(ingredients_bill_dict: dict, recipe_ref: str):
-
+    """Return a list of IngredientBill objects from a dict of ingredients"""
     ingredients = []
     for d , amount in ingredients_bill_dict.items():
         doc = nlp(' '.join([str(amount), d]))
