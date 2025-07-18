@@ -1,4 +1,5 @@
-"""Build a tree."""
+"""parser.py
+This module contains functions to parse ingredient strings"""
 import json
 import configparser
 import logging
@@ -13,9 +14,27 @@ logger = logging.getLogger(__name__)
 UNIT_LIST = ['millilitre', 'tour', 'tranche',  'l', 'pincée', 'brin',\
                  'bâton', 'bille', 'branche', 'botte', 'kilogramme', 'gramme', 'tête',\
                  'trait', 'gousse', 'pincee', 'feuille', 'grain', 'morceau',\
-                 'c. à s.']
+                 'c. à s.', 'càs', 'cuillère à soupe', 'cuillères à soupe']
     # juxtaposant_list = ['de', 'd\'', 'à']
 
+def parse_ingredients(raw_list_of_ingredients: list):
+    """Return a dict(name, amount)"""
+    result = {}
+    for item in raw_list_of_ingredients:
+        split_item = str(item).split(maxsplit=1)
+        print(split_item)
+        amount = str(split_item[0])
+        if amount.isnumeric():
+            amount = int(amount)
+            name = str(split_item[1]).lower()
+        elif ',' in amount:
+            amount = float('.'.join(amount.split(sep=',')))
+            name = str(split_item[1]).lower()
+        else:
+            amount = 1
+            name = str(item).lower()
+        result.update({name: amount})
+    return result
 
 def parse_stream(ingredient_stream: str):
     """Split a str containing potentialy multiple ingredients
@@ -41,7 +60,8 @@ def parse_stream(ingredient_stream: str):
             # print(f'tmp ingredient_str: {ingredient_str}')
         if cursor.get(token.pos_):
             cursor = cursor[token.pos_]
-            strategy = cursor['strategy'] if cursor.get('strategy') else strategy
+            strategy = cursor.get('strategy', strategy)
+            # strategy = cursor['strategy'] if cursor.get('strategy') else strategy
             j += len(token.text_with_ws)
             # print(f'current {ingredient_stream[i:j]}')
         else:
@@ -76,6 +96,8 @@ def get_strategy(ingredient_line: str):
     doc = nlp(ingredient_line)
     cursor = root
     strategy = None
+    print([token.pos_ for token in doc])
+    print([token.lemma_ for token in doc])
     for token in doc:
         if cursor.get(token.pos_):
             cursor = cursor[token.pos_]
@@ -116,9 +138,9 @@ def strategy013(d: str, text_list, lemma_list, pos_list, book_ref: str):
     if "PUNCT" in pos_list:
         d= d[0:d.index(text_list[pos_list.index("PUNCT")])] #remove all after punct
     #check for a unit
-    if lemma_list[1] in UNIT_LIST:
+    if lemma_list[1] in UNIT_LIST or text_list[1] in UNIT_LIST:
         lemma = ' '.join(lemma_list[3:])
-        unit = str(lemma_list[1])
+        unit = lemma_list[1] if lemma_list[1] in UNIT_LIST else text_list[1]
         jxt = str(text_list[2])
         name = d[d.index(text_list[3]):]  #' '.join(text_list[3:])
     else:
@@ -227,8 +249,7 @@ def strategy_name_only(d: str, _text_list, lemma_list, _pos_list, _book_ref: str
 #         return strategy_name_only
 
 def parse_ingredients_bill_dict(ingredients_bill_dict: dict, recipe_ref: str):
-    """Transform the json created by the ocr module
-        to a list of ingredients"""
+
     ingredients = []
     for d , amount in ingredients_bill_dict.items():
         doc = nlp(' '.join([str(amount), d]))

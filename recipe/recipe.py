@@ -29,10 +29,42 @@ class IngredientBill():
 
     def __init__(self, amount: float, unit: str, jxt: str, ingredient: Ingredient):
         self.amount = amount
-        self.unit = unit
+        self.unit = IngredientBill.get_std_unit(unit)
         self.jxt = jxt
         self.ingredient = ingredient
+    @classmethod
+    def get_std_unit(cls, unit: str) -> str:
+        """Convert various unit representations to a standard form.
 
+        Args:
+            unit (str): The unit to standardize.
+
+        Returns:
+            str: The standardized unit.
+        """
+        unit_mapping = {
+            'c. à s.': 'cuillère à soupe',
+            'càs': 'cuillère à soupe',
+            'l': 'litre',
+            'ml': 'millilitre',
+            'g': 'gramme',
+            'kg': 'kilogramme',
+            'pincée': 'pincée',
+            'brin': 'brin',
+            'bâton': 'bâton',
+            'bille': 'bille',
+            'branche': 'branche',
+            'botte': 'botte',
+            'tête': 'tête',
+            'trait': 'trait',
+            'gousse': 'gousse',
+            'grain': 'grain',
+            'morceau': 'morceau',
+        }
+        return unit_mapping.get(unit, unit)
+
+
+        
     def __str__(self):
         """Return a human-readable string representation of the ingredient bill."""
         return f"{self.ingredient.name}: {self.amount} {self.unit}"

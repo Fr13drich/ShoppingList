@@ -39,6 +39,9 @@
               "ADP": {
                 "NOUN": {
                   "strategy": "strategy01357"
+                },
+                "DET": {
+                  "strategy": "strategy01357"
                 }
               },
               "PUNCT": {
@@ -143,7 +146,7 @@
             },
             "ADP": {
               "VERB": {
-                "strategy": "strategy013"
+                "strategy": "strategy0135"
               }
             }
           }

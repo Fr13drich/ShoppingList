@@ -23,7 +23,7 @@ def build_tree():
         cursor['strategy'] = v
     print(root)
 
-    with open(file='./parse_tree.json', mode='w', encoding='utf-16') as f:
+    with open(file=config['DEFAULT']['TREE'], mode='w', encoding='utf-8') as f:
         json.dump(root, f, indent=2)
 
 if __name__ == '__main__':

@@ -58,25 +58,7 @@ class ReaderInterface(ABC):
         img.save("tmp/img.jpg")
         cls.autocrop("tmp/img.jpg")
         return "tmp/img.jpg"
-    @classmethod
-    def parse_ingredients(cls, raw_list_of_ingredients: list):
-        """Return a dict(name, amount)"""
-        result = {}
-        for item in raw_list_of_ingredients:
-            split_item = str(item).split(maxsplit=1)
-            print(split_item)
-            amount = str(split_item[0])
-            if amount.isnumeric():
-                amount = int(amount)
-                name = str(split_item[1]).lower()
-            elif ',' in amount:
-                amount = float('.'.join(amount.split(sep=',')))
-                name = str(split_item[1]).lower()
-            else:
-                amount = 1
-                name = str(item).lower()
-            result.update({name: amount})
-        return result
+    # parse_ingredients method moved to parser.py
     @classmethod
     @abstractmethod
     def read(cls, location, name):
@@ -114,7 +96,7 @@ class BcReader(ReaderInterface):
         title = cls.get_title(img)
         ingredients = cls.get_ingredients(img)
         print(ingredients)
-        return ref, title, cls.parse_ingredients(ingredients)
+        return ref, title, parser.parse_ingredients(ingredients)
     @classmethod
     def get_ref(cls, img):
         img_footpage = img.crop((0, img.height * 0.98, img.width, img.height))
@@ -214,7 +196,7 @@ class CgReader(ReaderInterface):
         ref = cls.get_ref(img)
         title = cls.get_title(img)
         ingredients = cls.get_ingredients(img)
-        return ref, title, cls.parse_ingredients(ingredients)
+        return ref, title, parser.parse_ingredients(ingredients)
     @classmethod
     def get_ref(cls, img):
         ref = 'CGp' + str(cls.reader_result[0][1]).split(sep=' ', maxsplit=1)[0]
@@ -264,7 +246,7 @@ class EbReader(ReaderInterface):
         ref = cls.get_ref(img)
         title = cls.get_title(img)
         ingredients = cls.get_ingredients(img)
-        return ref, title, cls.parse_ingredients(ingredients)
+        return ref, title, parser.parse_ingredients(ingredients)
     @classmethod
     def get_ref(cls, img=None):
         doc = nlp(cls.reader_result[-1][1])
