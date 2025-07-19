@@ -17,7 +17,7 @@ config = configparser.ConfigParser()
 config.read('./config.cfg')
 logger = logging.getLogger(__name__)
 
-class IngredientBill:
+class IngredientEntry:
     """Represents an ingredient with its amount, unit, and additional context.
 
     Attributes:
@@ -29,9 +29,10 @@ class IngredientBill:
 
     def __init__(self, amount: float, unit: str, jxt: str, ingredient: Ingredient):
         self.amount = amount
-        self.unit = IngredientBill.get_std_unit(unit)
+        self.unit = IngredientEntry.get_std_unit(unit)
         self.jxt = jxt
         self.ingredient = ingredient
+
     @classmethod
     def get_std_unit(cls, unit: str) -> str:
         """Convert various unit representations to a standard form.
@@ -63,24 +64,23 @@ class IngredientBill:
         }
         return unit_mapping.get(unit, unit)
 
-
     def __str__(self):
-        """Return a human-readable string representation of the ingredient bill."""
+        """Return a human-readable string representation of the ingredient entry."""
         return f"{self.ingredient.name}: {self.amount} {self.unit}"
 
-    def __add__(self, ingredient_bill):
-        """Add two IngredientBill objects if they refer to the same ingredient and unit.
+    def __add__(self, ingredient_entry):
+        """Add two IngredientEntry objects if they refer to the same ingredient and unit.
 
         Args:
-            ingredient_bill (IngredientBill): Another ingredient bill to add.
+            ingredient_entry (IngredientEntry): Another ingredient entry to add.
 
         Returns:
-            IngredientBill: New IngredientBill with summed amount,
+            IngredientEntry: New IngredientEntry with summed amount,
             or NotImplemented if incompatible.
         """
-        if self.ingredient == ingredient_bill.ingredient and self.unit == ingredient_bill.unit:
-            return IngredientBill(
-                amount=self.amount + ingredient_bill.amount,
+        if self.ingredient == ingredient_entry.ingredient and self.unit == ingredient_entry.unit:
+            return IngredientEntry(
+                amount=self.amount + ingredient_entry.amount,
                 unit=self.unit,
                 jxt=self.jxt,
                 ingredient=self.ingredient
@@ -88,7 +88,7 @@ class IngredientBill:
         return NotImplemented
 
     def serialize(self):
-        """Convert the ingredient bill to a dictionary for JSON serialization.
+        """Convert the ingredient entry to a dictionary for JSON serialization.
 
         Returns:
             dict: Dictionary of relevant attributes.
@@ -106,7 +106,7 @@ class Recipe():
     Attributes:
         ref (str): Reference code for the recipe.
         name (str): Name of the recipe.
-        ingredients_bill (list): List of IngredientBill objects.
+    ingredients_bill (list): List of IngredientEntry objects.
     """
 
     def __init__(self, ref: str, name: str, ingredients_bill):
@@ -168,7 +168,7 @@ class Menu():
         summing amounts for identical ingredients.
 
         Returns:
-            list: Sorted list of merged IngredientBill objects.
+            list: Sorted list of merged IngredientEntry objects.
         """
         total_ingredients_bill = []
         for (recipe, ratio) in self.recipes:
@@ -183,8 +183,6 @@ class Menu():
                 for total_ingredient_bill in total_ingredients_bill:
                     if total_ingredient_bill.ingredient is i\
                         and total_ingredient_bill.unit == ingredient_bill['unit']:
-                        # If the ingredient already exists, update its amount
-                        # and set added to True to avoid adding it again.
                         total_ingredient_bill.amount += int(math.ceil(ingredient_bill['amount']\
                                                                       * float(ratio)))
                         added = True
@@ -192,7 +190,7 @@ class Menu():
                 if not added:
                     amount = int(math.ceil(ingredient_bill['amount'] * float(ratio)))
                     total_ingredients_bill.append(
-                        IngredientBill(amount=amount, unit=ingredient_bill['unit'],
+                        IngredientEntry(amount=amount, unit=ingredient_bill['unit'],
                                        jxt=ingredient_bill['jxt'], ingredient=i)
                     )
         total_ingredients_bill.sort(key=lambda x: x.ingredient.name)

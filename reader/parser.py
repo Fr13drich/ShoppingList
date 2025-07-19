@@ -4,7 +4,7 @@ import json
 import configparser
 import logging
 import spacy
-from recipe import IngredientBill
+from recipe import IngredientEntry
 from ingredient import Ingredient
 config = configparser.ConfigParser()
 config.read('./config.cfg')
@@ -249,7 +249,7 @@ def strategy_name_only(d: str, _text_list, lemma_list, _pos_list, _book_ref: str
 #         return strategy_name_only
 
 def parse_ingredients_bill_dict(ingredients_bill_dict: dict, recipe_ref: str):
-    """Return a list of IngredientBill objects from a dict of ingredients"""
+    """Return a list of IngredientEntry objects from a dict of ingredients"""
     ingredients = []
     for d , amount in ingredients_bill_dict.items():
         doc = nlp(' '.join([str(amount), d]))
@@ -264,7 +264,7 @@ def parse_ingredients_bill_dict(ingredients_bill_dict: dict, recipe_ref: str):
                         pos_list=[token.pos_ for token in doc],
                         book_ref = recipe_ref[0:recipe_ref.rindex('p')]
                             if 'p' in recipe_ref else None)
-        ingredients.append(IngredientBill(amount, unit, jxt,\
+        ingredients.append(IngredientEntry(amount, unit, jxt,\
                     Ingredient.add(name=name,lemma=lemma, recipe_refs=set([str(recipe_ref)]),\
                                     other_recipe_ref=other_recipe_ref)))
     return ingredients
