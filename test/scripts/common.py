@@ -10,7 +10,10 @@ TEST_RESULTS_DIR = config['TEST']['TEST_RESULTS_DIR']
 RECIPE_DIR = config['DEFAULT']['RECIPES_DIR']
 
 def run_reader(input_dir: str):
-    subprocess.run(['python' + EXT,  './read_the_book.py',
+    """Run the reader script with the specified input directory."""
+    if not os.path.exists(TEST_RESULTS_DIR):
+        os.makedirs(TEST_RESULTS_DIR)
+    subprocess.run(['.env/Script/python' + EXT,  './read_the_book.py',
                     '--input_dir=' + input_dir, '--output_dir=' + TEST_RESULTS_DIR],
                     stdout=subprocess.PIPE, check=True)
 
