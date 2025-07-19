@@ -1,4 +1,9 @@
-"""test the ouput of read_the_book.py on one recipe"""
+"""Test the output of read_the_book.py on one recipe.
+
+Runs the OCR and parsing pipeline on a test image directory and compares the
+resulting recipe files to expected outputs.
+"""
+
 import os
 import configparser
 import common
@@ -8,7 +13,12 @@ config.read('./config.cfg')
 
 INPUT_DIR = config['TEST']['EB_PICS']
 common.run_reader(INPUT_DIR)
+
 def test_compare():
+    """Compare generated recipe files to expected test results.
+
+    Asserts that the contents of each generated recipe file match the expected output.
+    """
     for _root, _dirs, files in os.walk(common.TEST_RESULTS_DIR):
         print(files)
         for name in files:

@@ -71,7 +71,7 @@ jobs:
           name: "run test 'Bien cuisiner'"
           command: |
               python3 -m spacy download fr_core_news_md
-              mkdir ./test/test_results
+              # mkdir ./test/test_results
               pytest ./test/scripts/reader_bc_test.py
           no_output_timeout: 20m
   test_cg:
@@ -90,7 +90,7 @@ jobs:
       - run:
           name: "run test 'Café gourmand'"
           command: |
-              mkdir ./test/test_results
+              # mkdir ./test/test_results
               echo > ./log/reader.log
               pytest ./test/scripts/reader_cg_test.py
           no_output_timeout: 20m
@@ -114,7 +114,7 @@ jobs:
       - run:
           name: "install pytest"
           command: "pip install pytest"
-      - run : mkdir ./test/test_results
+      # - run : mkdir ./test/test_results
       - run:
           name: "run test 'En bocal'"
           command: |
