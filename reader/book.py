@@ -1,4 +1,5 @@
 """Extract title and ingredients from pictures"""
+import os
 import configparser
 import logging
 from operator import itemgetter
@@ -90,7 +91,7 @@ class BcReader(ReaderInterface):
         """Ingest the file."""
         if not cls.can_read(location, name):
             raise ValueError('Cannot parse exception.')
-        pic = cls.image_preprocessing('./' + location + '/' + name)
+        pic = cls.image_preprocessing(os.path.join(location, name))
         img = Image.open(pic)
         ref = cls.get_ref(img)
         title = cls.get_title(img)
@@ -190,7 +191,7 @@ class CgReader(ReaderInterface):
         """Ingest the file."""
         if not cls.can_read(location, name):
             raise ValueError('Cannot parse exception.')
-        pic = cls.image_preprocessing('./' + location + '/' + name)
+        pic = cls.image_preprocessing(os.path.join(location, name))
         cls.reader_result = reader.readtext(image=pic, detail=1, paragraph=True)
         img = Image.open(pic)
         ref = cls.get_ref(img)
@@ -239,7 +240,7 @@ class EbReader(ReaderInterface):
         """Ingest the file."""
         if not cls.can_read(location, name):
             raise ValueError('Cannot parse exception.')
-        pic = cls.image_preprocessing('./' + location + '/' + name)
+        pic = cls.image_preprocessing(os.path.join(location, name))
         cls.reader_result = reader.readtext(image=pic, detail=1, paragraph=True)
         # print(cls.reader_result)
         img = Image.open(pic)
