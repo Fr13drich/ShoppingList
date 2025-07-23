@@ -304,11 +304,11 @@ class EbReader(ReaderInterface):
                 crop_coordinates = (box[0][0][0], box[0][0][1], box[0][2][0], box[0][2][1])
                 img = img.crop(crop_coordinates)
                 img.save(pic)
-                print('---- easy ocr ----')
-                print(reader.readtext(image=pic, detail=0))
+                # print('---- easy ocr ----')
+                # print(reader.readtext(image=pic, detail=0))
                 ingredients_stream = pytesseract.image_to_string(img, lang='fra')
-                print('---- pytesseract ----')
-                print(ingredients_stream)
+                # print('---- pytesseract ----')
+                logger.info(ingredients_stream)
                 # remove first line and put the rest in one line
                 ingredients_stream = ' '.join(ingredients_stream.split(sep='\n')[1:])
                 # ingredients_stream = ingredients_stream[ingredients_stream.find('\n')+2:]

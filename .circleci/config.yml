@@ -112,6 +112,12 @@ jobs:
               sudo apt install libtesseract-dev
               sudo cp ./data/fra.traineddata /usr/share/tesseract-ocr/4.00/tessdata/
       - run:
+          name: "debug"
+          command: |
+              python3 ./read_the_book.py --input_dir=./test/EB_pics --output_dir=./test/test_results
+              cat log/reader.log
+              echo "------------------"
+      - run:
           name: "install pytest"
           command: "pip install pytest"
       # - run : mkdir ./test/test_results
