@@ -58,7 +58,7 @@ class IngredientEntry:
             'kilogramme': 'kg',
             'pincées': 'pincée',
             'brins': 'brin',
-            'bâton': 'bâton',
+            'bâtons': 'bâton',
             'billes': 'bille',
             'branches': 'branche',
             'bottes': 'botte',
@@ -193,7 +193,8 @@ class Menu():
                     logger.debug('Unit: %s', ingredient_entry['unit'])
                     # Check if the ingredient and unit match
                     if total_ingredient_entry.ingredient is i\
-                        and total_ingredient_entry.unit == IngredientEntry.get_std_unit(ingredient_entry['unit']):
+                        and total_ingredient_entry.unit\
+                            == IngredientEntry.get_std_unit(ingredient_entry['unit']):
                         total_ingredient_entry.amount += int(math.ceil(ingredient_entry['amount']\
                                                                       * float(ratio)))
                         added = True
