@@ -59,14 +59,14 @@ class IngredientEntry:
             'pincées': 'pincée',
             'brins': 'brin',
             'bâton': 'bâton',
-            'bille': 'bille',
-            'branche': 'branche',
-            'botte': 'botte',
-            'tête': 'tête',
-            'trait': 'trait',
-            'gousse': 'gousse',
-            'grain': 'grain',
-            'morceau': 'morceau',
+            'billes': 'bille',
+            'branches': 'branche',
+            'bottes': 'botte',
+            'têtes': 'tête',
+            'traits': 'trait',
+            'gousses': 'gousse',
+            'grains': 'grain',
+            'morceaux': 'morceau',
         }
         return unit_mapping.get(unit, unit)
 
@@ -178,26 +178,31 @@ class Menu():
         """
         total_ingredients_bill = []
         for (recipe, ratio) in self.recipes:
-            for ingredient_bill in recipe.ingredients_bill:
+            for ingredient_entry in recipe.ingredients_bill:
                 added = False
-                name = ingredient_bill['ingredient']
+                name = ingredient_entry['ingredient']
                 i = Ingredient.add(
                     name=name,
                     lemma=' '.join([token.lemma_ for token in nlp(name)]),
                     recipe_refs=set([recipe.ref])
                 )
-                for total_ingredient_bill in total_ingredients_bill:
-                    if total_ingredient_bill.ingredient is i\
-                        and total_ingredient_bill.unit == ingredient_bill['unit']:
-                        total_ingredient_bill.amount += int(math.ceil(ingredient_bill['amount']\
+                for total_ingredient_entry in total_ingredients_bill:
+                    logger.debug('Comparing %s with %s', total_ingredient_entry, ingredient_entry)
+                    logger.debug('IS: %s', total_ingredient_entry.ingredient is i)
+                    logger.debug('Unit: %s', total_ingredient_entry.unit)
+                    logger.debug('Unit: %s', ingredient_entry['unit'])
+                    # Check if the ingredient and unit match
+                    if total_ingredient_entry.ingredient is i\
+                        and total_ingredient_entry.unit == IngredientEntry.get_std_unit(ingredient_entry['unit']):
+                        total_ingredient_entry.amount += int(math.ceil(ingredient_entry['amount']\
                                                                       * float(ratio)))
                         added = True
                         break
                 if not added:
-                    amount = int(math.ceil(ingredient_bill['amount'] * float(ratio)))
+                    amount = int(math.ceil(ingredient_entry['amount'] * float(ratio)))
                     total_ingredients_bill.append(
-                        IngredientEntry(amount=amount, unit=ingredient_bill['unit'],
-                                       jxt=ingredient_bill['jxt'], ingredient=i)
+                        IngredientEntry(amount=amount, unit=ingredient_entry['unit'],
+                                       jxt=ingredient_entry['jxt'], ingredient=i)
                     )
         total_ingredients_bill.sort(key=lambda x: x.ingredient.name)
         return total_ingredients_bill

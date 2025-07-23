@@ -14,7 +14,7 @@ from .load import load_all_recipe_files
 config = configparser.ConfigParser()
 config.read('./config.cfg')
 logger = logging.getLogger(__name__)
-logging.basicConfig(filename=config['DEFAULT']['LOG_FILE'], level=logging.INFO, encoding='utf-8')
+logging.basicConfig(filename=config['DEFAULT']['LOG_FILE'], level=logging.DEBUG, encoding='utf-8')
 print('Logfile: ' + config['DEFAULT']['LOG_FILE'])
 
 # load.load_all_ingredient_files()
