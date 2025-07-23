@@ -4,19 +4,19 @@
   "ingredients_bill": [
     {
       "amount": 800,
-      "unit": "gramme",
+      "unit": "g",
       "jxt": "de",
       "ingredient": "framboises"
     },
     {
       "amount": 200,
-      "unit": "millilitre",
+      "unit": "ml",
       "jxt": "d'",
       "ingredient": "eau"
     },
     {
       "amount": 350,
-      "unit": "gramme",
+      "unit": "g",
       "jxt": "de",
       "ingredient": "sucre blond de canne"
     },
@@ -28,7 +28,7 @@
     },
     {
       "amount": 30,
-      "unit": "gramme",
+      "unit": "g",
       "jxt": "de",
       "ingredient": "fécule de maïs"
     }

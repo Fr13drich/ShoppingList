@@ -4,7 +4,7 @@
   "ingredients_bill": [
     {
       "amount": 175,
-      "unit": "gramme",
+      "unit": "g",
       "jxt": "de",
       "ingredient": "beurre"
     },
@@ -16,25 +16,25 @@
     },
     {
       "amount": 200,
-      "unit": "gramme",
+      "unit": "g",
       "jxt": "de",
       "ingredient": "cassonade"
     },
     {
       "amount": 300,
-      "unit": "gramme",
+      "unit": "g",
       "jxt": "de",
       "ingredient": "farine"
     },
     {
       "amount": 5,
-      "unit": "gramme",
+      "unit": "g",
       "jxt": "de",
       "ingredient": "bicarbonate"
     },
     {
       "amount": 2,
-      "unit": "cuil. à café",
+      "unit": "càc",
       "jxt": "de",
       "ingredient": "cannelle en poudre"
     },

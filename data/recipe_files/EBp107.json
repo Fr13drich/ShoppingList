@@ -4,13 +4,13 @@
   "ingredients_bill": [
     {
       "amount": 250,
-      "unit": "gramme",
+      "unit": "g",
       "jxt": "d'",
       "ingredient": "olives dénoyautées"
     },
     {
       "amount": 30,
-      "unit": "gramme",
+      "unit": "g",
       "jxt": "de",
       "ingredient": "cäpres au vinaigre"
     },

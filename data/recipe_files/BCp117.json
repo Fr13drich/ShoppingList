@@ -10,13 +10,13 @@
     },
     {
       "amount": 400,
-      "unit": "gramme",
+      "unit": "g",
       "jxt": "de",
       "ingredient": "pommes de terre"
     },
     {
       "amount": 4,
-      "unit": "cuil. à soupe",
+      "unit": "càs",
       "jxt": "d'",
       "ingredient": "huile d'olive vierge extra"
     },
@@ -34,7 +34,7 @@
     },
     {
       "amount": 130,
-      "unit": "gramme",
+      "unit": "g",
       "jxt": "d'",
       "ingredient": "oignons"
     },

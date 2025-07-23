@@ -4,61 +4,61 @@
   "ingredients_bill": [
     {
       "amount": 250,
-      "unit": "gramme",
+      "unit": "g",
       "jxt": "de",
       "ingredient": "champignons"
     },
     {
       "amount": 250,
-      "unit": "gramme",
+      "unit": "g",
       "jxt": "d'",
       "ingredient": "oignons jaunes"
     },
     {
       "amount": 75,
-      "unit": "gramme",
+      "unit": "g",
       "jxt": "d'",
       "ingredient": "ail"
     },
     {
       "amount": 75,
-      "unit": "gramme",
+      "unit": "g",
       "jxt": "de",
       "ingredient": "cerneaux de noix"
     },
     {
       "amount": 2,
-      "unit": "c. à s.",
+      "unit": "càs",
       "jxt": "d'",
       "ingredient": "huile de tournesol"
     },
     {
       "amount": 250,
-      "unit": "gramme",
+      "unit": "g",
       "jxt": "de",
       "ingredient": "châtaignes cuites"
     },
     {
       "amount": 200,
-      "unit": "millilitre",
+      "unit": "ml",
       "jxt": "de",
       "ingredient": "vin blanc moelleux"
     },
     {
       "amount": 11,
-      "unit": "gramme",
+      "unit": "g",
       "jxt": "de",
       "ingredient": "sel"
     },
     {
       "amount": 3,
-      "unit": "gramme",
+      "unit": "g",
       "jxt": "de",
       "ingredient": "poivre fraîchement moulu"
     },
     {
       "amount": 75,
-      "unit": "gramme",
+      "unit": "g",
       "jxt": "de",
       "ingredient": "beurre de cacao en pistoles"
     }

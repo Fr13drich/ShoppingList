@@ -4,55 +4,55 @@
   "ingredients_bill": [
     {
       "amount": 250,
-      "unit": "gramme",
+      "unit": "g",
       "jxt": "de",
       "ingredient": "farine de seigle"
     },
     {
       "amount": 500,
-      "unit": "gramme",
+      "unit": "g",
       "jxt": "de",
       "ingredient": "farine de type 55"
     },
     {
       "amount": 650,
-      "unit": "millilitre",
+      "unit": "ml",
       "jxt": "d'",
       "ingredient": "eau tiède"
     },
     {
       "amount": 1,
-      "unit": "cuil. à café",
+      "unit": "càc",
       "jxt": "de",
       "ingredient": "gros sel"
     },
     {
       "amount": 20,
-      "unit": "gramme",
+      "unit": "g",
       "jxt": "de",
       "ingredient": "levure fraîche de boulanger"
     },
     {
       "amount": 1,
-      "unit": "cuil. à café",
+      "unit": "càc",
       "jxt": "de",
       "ingredient": "sucre"
     },
     {
       "amount": 20,
-      "unit": "gramme",
+      "unit": "g",
       "jxt": "de",
       "ingredient": "beurre"
     },
     {
       "amount": 1,
-      "unit": "cuil. à soupe",
+      "unit": "càs",
       "jxt": "d'",
       "ingredient": "huile"
     },
     {
       "amount": 50,
-      "unit": "gramme",
+      "unit": "g",
       "jxt": "de",
       "ingredient": "farine"
     }

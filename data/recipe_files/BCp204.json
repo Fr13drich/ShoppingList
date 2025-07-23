@@ -4,7 +4,7 @@
   "ingredients_bill": [
     {
       "amount": 30,
-      "unit": "gramme",
+      "unit": "g",
       "jxt": "de",
       "ingredient": "beurre"
     },
@@ -16,13 +16,13 @@
     },
     {
       "amount": 250,
-      "unit": "gramme",
+      "unit": "g",
       "jxt": "de",
       "ingredient": "feuilles de lasagnes vertes"
     },
     {
       "amount": 750,
-      "unit": "gramme",
+      "unit": "g",
       "jxt": "de",
       "ingredient": "sauce bolognaise"
     },
@@ -34,13 +34,13 @@
     },
     {
       "amount": 100,
-      "unit": "gramme",
+      "unit": "g",
       "jxt": "d'",
       "ingredient": "edam"
     },
     {
       "amount": 2,
-      "unit": "cuil. à soupe",
+      "unit": "càs",
       "jxt": "d'",
       "ingredient": "huile d'olive vierge extra"
     }

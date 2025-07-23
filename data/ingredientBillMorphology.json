@@ -5,7 +5,7 @@
     "NUM NOUN ADP ADV NUM NOUN": "strategy01",
     "NUM NOUN VERB": "strategy01",
     "NUM ADJ CCONJ ADJ NOUN ADJ": "strategy01",
-    "NUM NOUN ADP NOUN NOUN": "strategy01",
+    "NUM NOUN ADP NOUN NOUN": "strategy013",
     "NUM NOUN ADJ": "strategy01",
     "NUM ADJ NOUN CCONJ NOUN ADP PROPN ADJ": "strategy01",
     "NUM NOUN ADP NOUN ADP NUM NOUN PRON": "strategy01",

@@ -42,7 +42,7 @@
       "amount": 20,
       "unit": "millilitre",
       "jxt": "d'",
-      "ingredient": "huile d'olive"
+      "ingredient": "huile olive"
     },
     {
       "amount": 1,
@@ -102,7 +102,7 @@
       "amount": 1,
       "unit": "pincée",
       "jxt": "de",
-      "ingredient": "noix muscade fraîchement râpée"
+      "ingredient": "noix muscade"
     },
     {
       "amount": 80,

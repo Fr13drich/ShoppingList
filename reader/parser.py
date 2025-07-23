@@ -11,10 +11,12 @@ config.read('./config.cfg')
 nlp = spacy.load("fr_core_news_md")
 logger = logging.getLogger(__name__)
 
-UNIT_LIST = ['millilitre', 'tour', 'tranche',  'l', 'pincée', 'brin',\
-                 'bâton', 'bille', 'branche', 'botte', 'kilogramme', 'gramme', 'tête',\
-                 'trait', 'gousse', 'pincee', 'feuille', 'grain', 'morceau',\
-                 'c. à s.', 'càs', 'cuillère à soupe', 'cuillères à soupe']
+UNIT_LIST = ['millilitre', 'tour', 'tranche',  'l', 'pincée', 'brin',
+                 'bâton', 'bille', 'branche', 'botte', 'kilogramme', 'gramme', 'tête',
+                 'trait', 'gousse', 'pincee', 'feuille', 'grain', 'morceau',
+                 'c. à s.', 'càs', 'cuillère à soupe', 'cuillères à soupe',
+                 'c. à c.', 'càc', 'cuillère à café', 'cuillères à café',
+                 ]
     # juxtaposant_list = ['de', 'd\'', 'à']
 
 def parse_ingredients(raw_list_of_ingredients: list):
