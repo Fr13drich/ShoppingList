@@ -114,7 +114,7 @@ jobs:
       - run:
           name: "debug"
           command: |
-              python3 ./read_the_book.py --input_dir=./test/EB_pics --output_dir=./test/test_results
+              python3 read_the_book.py --input_dir=./test/EB_pics/ --output_dir=./test/test_results/
               cat log/reader.log
               echo "------------------"
       - run:
