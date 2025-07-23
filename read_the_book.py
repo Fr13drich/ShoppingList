@@ -58,4 +58,6 @@ def pics2recipe(input_dir, output_dir):
 if __name__ == '__main__':
     read_the_book_parser = make_parser()
     args = read_the_book_parser.parse_args()
+    if not os.path.exists(args.output_dir):
+        os.makedirs(args.output_dir)
     pics2recipe(input_dir=args.input_dir, output_dir=args.output_dir)
