@@ -1,31 +1,38 @@
 """Generate a shopping list from a set of recipes"""
 import logging
 import json
+import sqlite3
 import configparser
 import tkinter
-import tkinter.messagebox
 import tkinter.filedialog
 import customtkinter
 
-from ingredient import Ingredient
-from recipe import Menu
-from .load import load_all_recipe_files
+# from ingredient import Ingredient
+# from recipe import Menu
+# from .load import load_all_recipe_files
 
+db_file = 'recipes.db'
+
+# Create a connection to the SQLite database (or create it if it doesn't exist)
+conn = sqlite3.connect(db_file)
+cursor = conn.cursor()
 config = configparser.ConfigParser()
 config.read('./config.cfg')
 logger = logging.getLogger(__name__)
 logging.basicConfig(filename=config['DEFAULT']['LOG_FILE'], level=logging.DEBUG, encoding='utf-8')
 print('Logfile: ' + config['DEFAULT']['LOG_FILE'])
 
-# load.load_all_ingredient_files()
-all_recipes = load_all_recipe_files()
-logger.info('Total number of ingredients: %s', len(Ingredient.knowkn_ingredients_list))
+cursor.execute('SELECT ref, name FROM recipes')
+all_recipes = cursor.fetchall()
+print(all_recipes)
+# logger.info('Total number of ingredients: %s', len(Ingredient.knowkn_ingredients_list))
 
 class RecipeFrame(customtkinter.CTkFrame):
     """A grid of reipe combobox + ratio slider."""
     def __init__(self, master):
         super().__init__(master)
-        values=[r.name for r in all_recipes]
+        # values=[r.name for r in all_recipes]
+        values=[r[1] for r in all_recipes]
         values.sort()
         self.recipe_picker = customtkinter.CTkComboBox(self, values=values,\
                         width=200, hover=True, command=self.combobox_callback)
@@ -55,7 +62,7 @@ class RecipesFrame(customtkinter.CTkFrame):
         self.master = master
         self.recipe_frame_list = []
         self.disable_button_list = []
-        values=[r.name for r in all_recipes]
+        values=[r[1] for r in all_recipes]
         values.sort()
         for j in range(RecipesFrame.nb_of_week):
             self.recipe_frame_list.append([])
@@ -110,31 +117,53 @@ class RecipesFrame(customtkinter.CTkFrame):
             for i in range(RecipesFrame.nb_of_combo):
                 self.recipe_frame_list[j][i].recipe_picker.set('None')
         self.master.ingredients_frame.merged_ingredients.delete("0.0", "end")
-
+    def insert_menu_item(self, recipe_ref, recipe_name, multiplier=1.0):
+        """Insert a menu item into the database."""
+        cursor.execute('SELECT id FROM recipes WHERE ref = ?', (recipe_ref,))
+        recipe_id = cursor.fetchone()
+        if recipe_id:
+            cursor.execute('INSERT INTO menu (recipe_id, multiplier) VALUES (?, ?)',
+                           (recipe_id[0], multiplier))
+            conn.commit()
+            logger.info('Inserted menu item: %s with multiplier %s', recipe_name, multiplier)
+    def sql_merge(self):
+        with open('./requests.sql', 'r', encoding='utf-8') as sql_file:
+            cursor.execute(sql_file.read())
+        logger.info('SQL merge completed')
+        return cursor.fetchall()
     def generate_shopping_list(self):
         """Collect ant scale the recipes then display the shopping list"""
-        menu = Menu('Hiver')
+        #clean menu table
+        cursor.execute('DELETE FROM menu')
+        conn.commit()
+        # menu = Menu('Hiver')
         for j in range(RecipesFrame.nb_of_week):
             if self.disable_button_list[j].get():
                 continue
             for i in range(RecipesFrame.nb_of_combo):
                 for recipe in all_recipes:
-                    if recipe.name == self.recipe_frame_list[j][i].recipe_picker.get()\
-                        and recipe.name != 'None':
-                        menu.add_recipe(recipe, self.recipe_frame_list[j][i].ratio.get())
+                    if recipe[1] == self.recipe_frame_list[j][i].recipe_picker.get()\
+                        and recipe[1] != 'None':
+                        self.insert_menu_item(recipe[0], recipe[1], self.recipe_frame_list[j][i].ratio.get())
+                        # menu.add_recipe(recipe, self.recipe_frame_list[j][i].ratio.get())
                         # print(recipe)
                         break
-        total_ingredients_bill = menu.merge_ingredients()
+        shopping_list =self.sql_merge()
+        print(shopping_list)
+        # total_ingredients_bill = menu.merge_ingredients()
         self.master.ingredients_frame.merged_ingredients.delete("0.0", "end")
-        previous_ingredient_lemma = ''
-        for bill_item in total_ingredients_bill:
-            if bill_item.ingredient.lemma != previous_ingredient_lemma:
-                self.master.ingredients_frame.merged_ingredients.insert\
-                    ("end", '\n' + str(bill_item))
-            else:
-                self.master.ingredients_frame.merged_ingredients.insert\
-                    ("end", ' ' + str(bill_item.amount) + ' ' +str(bill_item.unit))
-            previous_ingredient_lemma = bill_item.ingredient.lemma
+        # Display the shopping list in the text box
+        for bill_item in shopping_list:
+            self.master.ingredients_frame.merged_ingredients.insert("end", str(bill_item[0]) + ' ' + str(bill_item[1]) + ' ' + str(bill_item[2]) + '\n')
+        # previous_ingredient_lemma = ''
+        # for bill_item in total_ingredients_bill:
+        #     if bill_item.ingredient.lemma != previous_ingredient_lemma:
+        #         self.master.ingredients_frame.merged_ingredients.insert\
+        #             ("end", '\n' + str(bill_item))
+        #     else:
+        #         self.master.ingredients_frame.merged_ingredients.insert\
+        #             ("end", ' ' + str(bill_item.amount) + ' ' +str(bill_item.unit))
+        #     previous_ingredient_lemma = bill_item.ingredient.lemma
 
 class IngredientsFrame(customtkinter.CTkFrame):
     """Frame for the text box that display the shopping list."""

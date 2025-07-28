@@ -112,10 +112,10 @@ class Recipe():
     Attributes:
         ref (str): Reference code for the recipe.
         name (str): Name of the recipe.
-    ingredients_bill (list): List of IngredientEntry objects.
+        ingredients_bill (list): List of IngredientEntry objects.
     """
 
-    def __init__(self, ref: str, name: str, ingredients_bill):
+    def __init__(self, ref: str, name: str, ingredients_bill: list[IngredientEntry]):
         self.ref = ref
         self.name = name
         self.ingredients_bill = ingredients_bill
