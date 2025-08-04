@@ -74,12 +74,12 @@ def insert_recipe(ref, name):
 
 def insert_ingredient(name, lemma=None, category=None, synonymes=None):
     """Insert a new ingredient into the database."""
-    print(f"Inserting ingredient: {name}")
+    # print(f"Inserting ingredient: {name}")
     # Check if the ingredient already exists
     cursor.execute('SELECT id FROM ingredients WHERE name = ?', (name,))
     existing = cursor.fetchone()
     if existing:
-        print(f"Ingredient already exists: {name}")
+        # print(f"Ingredient already exists: {name}")
         return existing[0]
     cursor.execute('''
     INSERT INTO ingredients (name, lemma, category, synonymes) VALUES (?, ?, ?, ?)
@@ -89,50 +89,16 @@ def insert_ingredient(name, lemma=None, category=None, synonymes=None):
 
 def insert_ingredient_entry(recipe_id, ingredient_id, amount=None, unit=None):
     """Insert a new ingredient entry into the database."""
+    # check if the recipe_id and ingredient_id exist
+    cursor.execute('SELECT id FROM ingredient_entry WHERE recipe_id = ? AND ingredient_id = ?', (recipe_id, ingredient_id))
+    existing = cursor.fetchone()
+    if existing:
+        print(f"Ingredient entry already exists: {recipe_id} - {ingredient_id}")
+        return existing[0]
     cursor.execute('''
     INSERT INTO ingredient_entry (recipe_id, ingredient_id, amount, unit) VALUES (?, ?, ?, ?)
     ''', (recipe_id, ingredient_id, amount, unit))
     conn.commit()
-
-# Open the CSV file and insert data into the database
-# csv_file = 'ratings.csv'  # Path to your CSV file
-
-# for i in range(2):
-#     with open(csv_file, newline='', encoding='utf-8') as file:
-#         reader = csv.DictReader(file)
-#         for row in reader:
-#             try:
-#                 # Extract data from the row
-#                 name = row['name']
-#                 region = row['region']
-#                 variety = row['variety']
-#                 rating = float(row['rating'])  # Convert rating to float
-#                 notes = row['notes']
-
-#                 # Insert the row into the database
-#                 cursor.execute('''
-#                 INSERT INTO wines (name, region, variety, rating, notes)
-#                 VALUES (?, ?, ?, ?, ?)
-#                 ''', (name, region, variety, rating, notes))
-
-#             except Exception as e:
-#                 # If there's an error (e.g., missing data or conversion issues), ignore the row
-#                 print(f"Skipping row due to error: {e}")
-#                 continue
-
-# # Commit the changes and close the connection
-# conn.commit()
-# conn.close()
-
-# async def get_ratings(request: Request):
-#     # Read the SQL query from the file
-#     with open(sql_file, "r") as file:
-#         query = file.read()
-#     conn = sqlite3.connect(db_file)
-#     cursor = conn.cursor()
-#     cursor.execute(query)
-#     results = cursor.fetchall()
-#     conn.close()
 
 def json2sqlite(location=config['DEFAULT']['RECIPES_DIR']):
     """Load all recipe files from the specified directory and insert them into the database."""
@@ -162,10 +128,13 @@ def reset_db():
 
 def drop_tables():
     """Drop all tables in the database."""
+    cursor.execute('ALTER TABLE ingredient_entry DROP CONSTRAINT recipe_id')
+    cursor.execute('ALTER TABLE ingredient_entry DROP CONSTRAINT IF EXISTS ingredient_entry_ingredient_id_fkey')
     cursor.execute('DROP TABLE IF EXISTS recipes')
     cursor.execute('DROP TABLE IF EXISTS ingredients')
     cursor.execute('DROP TABLE IF EXISTS ingredient_entry')
     cursor.execute('DROP TABLE IF EXISTS menu')
+
 def load_ingredients_from_file(filename):
     """Load ingredients from a JSON file and insert them into the database."""
     with open(filename, 'r', encoding='utf-16') as file:
@@ -184,15 +153,15 @@ def show_data():
     for row in cursor.fetchall():
         print(row)
 
-    print("\nIngredients:")
-    cursor.execute('SELECT * FROM ingredients')
-    for row in cursor.fetchall():
-        print(row)
+    # print("\nIngredients:")
+    # cursor.execute('SELECT * FROM ingredients')
+    # for row in cursor.fetchall():
+    #     print(row)
 
-    print("\nIngredient Entries:")
-    cursor.execute('SELECT * FROM ingredient_entry')
-    for row in cursor.fetchall():
-        print(row)
+    # print("\nIngredient Entries:")
+    # cursor.execute('SELECT * FROM ingredient_entry')
+    # for row in cursor.fetchall():
+    #     print(row)
 
 if __name__ == '__main__':
     create_tables()

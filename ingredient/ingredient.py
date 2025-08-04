@@ -34,8 +34,8 @@ class Ingredient:
         name = self.wiki_ref if self.wiki_ref else self.name
         filename = name + '.json'
         with open(os.path.join(config['DEFAULT']['INGREDIENTS_DIR'],
-                  str(filename).encode('utf-16').decode('utf-16')),\
-                  'w', encoding='utf-16') as outfile:
+                  str(filename).encode('utf-8').decode('utf-8')),\
+                  'w', encoding='utf-8') as outfile:
             json.dump(self.serialize(), outfile, indent=2, ensure_ascii=False)
         logger.info('%s written', filename)
 
@@ -108,9 +108,18 @@ class Ingredient:
     @staticmethod
     def send_search_request(search_str: str):
         """Handle the get requests to Wikipedia. Return the response"""
+        language_code = 'fr'
+        number_of_results = 1
+        headers = {
+            # 'Authorization': 'Bearer YOUR_ACCESS_TOKEN',
+            'User-Agent': 'YOUR_APP_NAME (YOUR_EMAIL_OR_CONTACT_PAGE)'
+            }
+        base_url = 'https://api.wikimedia.org/core/v1/wikipedia/'
+        endpoint = '/search/page'
+        url = base_url + language_code + endpoint
+        parameters = {'q': search_str, 'limit': number_of_results}
         try:
-            r = requests.get(f'{config["DEFAULT"]["WIKI_SEARCH_URL"]}{search_str}',\
-                                allow_redirects=True, timeout=10)
+            r = requests.get(url, headers=headers, params=parameters, allow_redirects=True, timeout=10)
         except ConnectionError:
             logger.info('No internet!')
             return None

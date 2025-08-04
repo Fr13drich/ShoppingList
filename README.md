@@ -67,6 +67,35 @@ Then open your browser at [http://localhost:8000](http://localhost:8000)
 ## Testing
 Test scripts are available in the `test/` directory to validate OCR and parsing results.
 
+## Classes:
+Ingredient
+  └─ name: str
+  └─ lemma: str
+  └─ recipe_refs: set
+
+IngredientEntry
+  └─ amount: float
+  └─ unit: str
+  └─ jxt: str
+  └─ ingredient: Ingredient
+  └─ +get_std_unit(unit: str) -> str
+  └─ +serialize() -> dict
+  └─ +__add__(other: IngredientEntry) -> IngredientEntry
+
+Recipe
+  └─ ref: str
+  └─ name: str
+  └─ ingredients_bill: list[IngredientEntry]
+  └─ +serialize() -> dict
+  └─ +write_recipe_file(location: str)
+  └─ +__str__()
+
+Menu
+  └─ season: str
+  └─ recipes: list[tuple[Recipe, float]]
+  └─ +add_recipe(recipe: Recipe, ratio: float)
+  └─ +merge_ingredients() -> list[IngredientEntry]
+
 ## License
 MIT License
        

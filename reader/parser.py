@@ -4,14 +4,14 @@ import json
 import configparser
 import logging
 import spacy
-from recipe import IngredientEntry
 from ingredient import Ingredient
+from recipe import IngredientEntry
 config = configparser.ConfigParser()
 config.read('./config.cfg')
 nlp = spacy.load("fr_core_news_md")
 logger = logging.getLogger(__name__)
 
-UNIT_LIST = ['millilitre', 'tour', 'tranche',  'l', 'pincée', 'brin',
+UNIT_LIST = ['millilitre', 'tour', 'tranche',  'l', 'pincée', 'brin',  'tige',
                  'bâton', 'bille', 'branche', 'botte', 'kilogramme', 'gramme', 'tête',
                  'trait', 'gousses', 'gousse', 'pincee', 'feuille', 'grain', 'morceau',
                  'c. à s.', 'càs', 'cuillère à soupe', 'cuillères à soupe',
@@ -270,3 +270,7 @@ def parse_ingredients_bill_dict(ingredients_bill_dict: dict, recipe_ref: str):
                     Ingredient.add(name=name,lemma=lemma, recipe_refs=set([str(recipe_ref)]),\
                                     other_recipe_ref=other_recipe_ref)))
     return entries
+
+if __name__ == "__main__":
+    # Example usage
+    get_strategy('3 tiges de céleri-branche')

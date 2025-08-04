@@ -152,6 +152,11 @@
           }
         },
         "PROPN": {
+          "PROPN": {
+            "NOUN": {
+              "strategy": "strategy013"
+            }
+          },
           "strategy": "strategy013",
           "ADJ": {
             "strategy": "strategy013"
@@ -295,6 +300,15 @@
       },
       "X": {
         "strategy": "strategy_name_only"
+      }
+    },
+    "CCONJ": {
+      "ADV": {
+        "ADP": {
+          "NOUN": {
+            "strategy": "strategy_name_only"
+          }
+        }
       }
     }
   },

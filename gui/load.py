@@ -26,10 +26,10 @@ def load_all_recipe_files(location=config['DEFAULT']['RECIPES_DIR']):
                                ingredients_bill=[IngredientEntry(amount=entry['amount'],
                                                                  unit=entry['unit'],
                                                                  jxt=entry['jxt'],
-                                                                 ingredient=Ingredient(name=entry['ingredient'],
+                                                                 ingredient=Ingredient.add(name=entry['ingredient'],
                                                                                        lemma=entry.get('lemma', ''),
                                                                                        category=entry.get('category', ''),
-                                                                                       synonymes=entry.get('synonymes', []),
+                                                                                    #    synonymes=entry.get('synonymes', []),
                                                                                        recipe_refs=recipe_dict['ref']))
                                                 for entry in recipe_dict['ingredients_bill']]
                         ))

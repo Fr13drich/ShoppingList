@@ -6,6 +6,7 @@
     "NUM NOUN VERB": "strategy01",
     "NUM ADJ CCONJ ADJ NOUN ADJ": "strategy01",
     "NUM NOUN ADP NOUN NOUN": "strategy013",
+    "NUM NOUN ADP PROPN PROPN NOUN": "strategy013",
     "NUM NOUN ADJ": "strategy01",
     "NUM ADJ NOUN CCONJ NOUN ADP PROPN ADJ": "strategy01",
     "NUM NOUN ADP NOUN ADP NUM NOUN PRON": "strategy01",
@@ -59,5 +60,6 @@
     "NUM DET NOUN ADP NUM NOUN": "strategy34",
     "NOUN ADP X": "strategy_name_only",
     "NOUN ADP NOUN": "strategy_name_only",
+    "NOUN CCONJ ADV ADP NOUN": "strategy_name_only",
     "PROPN": "strategy_name_only"
 }

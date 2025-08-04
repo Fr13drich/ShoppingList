@@ -54,7 +54,8 @@ def pics2recipe(input_dir, output_dir):
                         ingredients_bill_dict=recipe_dict['ingredients'],
                         recipe_ref=recipe_dict['ref'])
                     ).write_recipe_file(output_dir)
-
+            print('Recipe ' + str(recipe_dict['name']) + ' ' + str(recipe_dict['ref']) + ' written')
+            print('Run setup_db.py to insert the recipe into the database')
 if __name__ == '__main__':
     read_the_book_parser = make_parser()
     args = read_the_book_parser.parse_args()
