@@ -5,7 +5,7 @@ import os
 import logging
 from recipe import Recipe, IngredientEntry
 from ingredient import Ingredient
-from reader import parse_ingredients_bill_dict
+# from reader import parse_ingredients_bill_dict
 # from ingredient import Ingredient
 
 config = configparser.ConfigParser()
@@ -23,15 +23,17 @@ def load_all_recipe_files(location=config['DEFAULT']['RECIPES_DIR']):
                 all_recipes_list.append(
                         Recipe(ref=recipe_dict['ref'],
                                name=recipe_dict['name'],
-                               ingredients_bill=[IngredientEntry(amount=entry['amount'],
-                                                                 unit=entry['unit'],
-                                                                 jxt=entry['jxt'],
-                                                                 ingredient=Ingredient.add(name=entry['ingredient'],
-                                                                                       lemma=entry.get('lemma', ''),
-                                                                                       category=entry.get('category', ''),
-                                                                                    #    synonymes=entry.get('synonymes', []),
-                                                                                       recipe_refs=recipe_dict['ref']))
-                                                for entry in recipe_dict['ingredients_bill']]
+                               ingredients_bill=[IngredientEntry(
+                                   amount=entry['amount'],
+                                            unit=entry['unit'],
+                                            jxt=entry['jxt'],
+                                            ingredient=Ingredient.add(
+                                                name=entry['ingredient'],
+                                                lemma=entry.get('lemma', ''),
+                                                category=entry.get('category', ''),
+                                            #    synonymes=entry.get('synonymes', []),
+                                                recipe_refs=recipe_dict['ref']))
+                        for entry in recipe_dict['ingredients_bill']]
                         ))
                             #    parse_ingredients_bill_dict(
                             #        ingredients_bill_dict=recipe_dict['ingredients_bill'],

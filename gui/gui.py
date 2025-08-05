@@ -11,10 +11,10 @@ import customtkinter
 # from recipe import Menu
 # from .load import load_all_recipe_files
 
-db_file = 'recipes.db'
+DB_FILE = 'recipes.db'
 
 # Create a connection to the SQLite database (or create it if it doesn't exist)
-conn = sqlite3.connect(db_file)
+conn = sqlite3.connect(DB_FILE)
 cursor = conn.cursor()
 config = configparser.ConfigParser()
 config.read('./config.cfg')
@@ -127,6 +127,7 @@ class RecipesFrame(customtkinter.CTkFrame):
             conn.commit()
             logger.info('Inserted menu item: %s with multiplier %s', recipe_name, multiplier)
     def sql_merge(self):
+        """Merge the ingredients and return the shopping list."""
         with open('./requests.sql', 'r', encoding='utf-8') as sql_file:
             cursor.execute(sql_file.read())
         logger.info('SQL merge completed')
@@ -144,17 +145,21 @@ class RecipesFrame(customtkinter.CTkFrame):
                 for recipe in all_recipes:
                     if recipe[1] == self.recipe_frame_list[j][i].recipe_picker.get()\
                         and recipe[1] != 'None':
-                        self.insert_menu_item(recipe[0], recipe[1], self.recipe_frame_list[j][i].ratio.get())
+                        self.insert_menu_item(
+                            recipe[0], recipe[1], self.recipe_frame_list[j][i].ratio.get())
                         # menu.add_recipe(recipe, self.recipe_frame_list[j][i].ratio.get())
                         # print(recipe)
                         break
-        shopping_list =self.sql_merge()
+        shopping_list = self.sql_merge()
         print(shopping_list)
         # total_ingredients_bill = menu.merge_ingredients()
         self.master.ingredients_frame.merged_ingredients.delete("0.0", "end")
         # Display the shopping list in the text box
         for bill_item in shopping_list:
-            self.master.ingredients_frame.merged_ingredients.insert("end", str(bill_item[0]) + ' ' + str(bill_item[1]) + ' ' + str(bill_item[2]) + '\n')
+            self.master.ingredients_frame.merged_ingredients.insert("end",
+                str(bill_item[0]) + ' ' +
+                str(bill_item[1]) + ' ' +
+                str(bill_item[2]) + '\n')
         # previous_ingredient_lemma = ''
         # for bill_item in total_ingredients_bill:
         #     if bill_item.ingredient.lemma != previous_ingredient_lemma:

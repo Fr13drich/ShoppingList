@@ -104,6 +104,12 @@ def insert_ingredient_entry(recipe_id, ingredient_id, amount=None, unit=None):
     INSERT INTO ingredient_entry (recipe_id, ingredient_id, amount, unit) VALUES (?, ?, ?, ?)
     ''', (recipe_id, ingredient_id, amount, unit))
     conn.commit()
+    cursor.execute(
+        'SELECT id FROM ingredient_entry WHERE recipe_id = ? AND ingredient_id = ?'
+        , (recipe_id, ingredient_id))
+    row = cursor.fetchone()
+    return row[0]
+
 
 def json2sqlite(location=config['DEFAULT']['RECIPES_DIR']):
     """Load all recipe files from the specified directory and insert them into the database."""
