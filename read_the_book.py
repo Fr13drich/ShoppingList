@@ -10,7 +10,7 @@ from reader import parse_ingredients_bill_dict
 from recipe import Recipe
 
 config = configparser.ConfigParser()
-config.read('./config.cfg')
+config.read('./config.cfg', encoding='utf-8')
 
 logger = logging.getLogger(__name__)
 FORMAT = '%(asctime)s %(message)s'

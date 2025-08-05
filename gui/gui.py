@@ -17,7 +17,7 @@ DB_FILE = 'recipes.db'
 conn = sqlite3.connect(DB_FILE)
 cursor = conn.cursor()
 config = configparser.ConfigParser()
-config.read('./config.cfg')
+config.read('./config.cfg', encoding='utf-8')
 logger = logging.getLogger(__name__)
 logging.basicConfig(filename=config['DEFAULT']['LOG_FILE'], level=logging.DEBUG, encoding='utf-8')
 print('Logfile: ' + config['DEFAULT']['LOG_FILE'])

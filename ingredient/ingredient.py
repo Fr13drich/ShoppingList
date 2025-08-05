@@ -8,7 +8,7 @@ import spacy
 import requests
 
 config = configparser.ConfigParser()
-config.read('./config.cfg')
+config.read('./config.cfg', encoding='utf-8')
 nlp = spacy.load("fr_core_news_md")
 logger = logging.getLogger(__name__)
 

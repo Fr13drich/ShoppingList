@@ -9,7 +9,7 @@ from ingredient import Ingredient
 # from ingredient import Ingredient
 
 config = configparser.ConfigParser()
-config.read('./config.cfg')
+config.read('./config.cfg', encoding='utf-8')
 logger = logging.getLogger(__name__)
 
 def load_all_recipe_files(location=config['DEFAULT']['RECIPES_DIR']):

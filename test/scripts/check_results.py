@@ -4,7 +4,7 @@ import configparser
 import common
 
 config = configparser.ConfigParser()
-config.read('./config.cfg')
+config.read('./config.cfg', encoding='utf-8')
 TEST_RESULTS_DIR = config['TEST']['TEST_RESULTS_DIR']
 RECIPE_DIR = config['DEFAULT']['RECIPES_DIR']
 # INPUT_DIR = config['TEST']['BC_PICS']

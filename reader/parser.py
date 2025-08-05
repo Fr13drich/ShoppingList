@@ -7,16 +7,17 @@ import spacy
 from ingredient import Ingredient
 from recipe import IngredientEntry
 config = configparser.ConfigParser()
-config.read('./config.cfg')
+config.read('./config.cfg', encoding='utf-8')
 nlp = spacy.load("fr_core_news_md")
 logger = logging.getLogger(__name__)
-
-UNIT_LIST = ['millilitre', 'tour', 'tranche',  'l', 'pincée', 'brin',  'tige',
-                 'bâton', 'bille', 'branche', 'botte', 'kilogramme', 'gramme', 'tête',
-                 'trait', 'gousses', 'gousse', 'pincee', 'feuille', 'grain', 'morceau',
-                 'c. à s.', 'càs', 'cuillère à soupe', 'cuillères à soupe',
-                 'c. à c.', 'càc', 'cuillère à café', 'cuillères à café',
-                 ]
+UNIT_LIST = config['DEFAULT'].get('UNIT_LIST', '').split(',')
+print('Unit list:', UNIT_LIST)
+# UNIT_LIST = ['millilitre', 'tour', 'tranche',  'l', 'pincée', 'brin',  'tige',
+#                  'bâton', 'bille', 'branche', 'botte', 'kilogramme', 'gramme', 'tête',
+#                  'trait', 'gousses', 'gousse', 'pincee', 'feuille', 'grain', 'morceau',
+#                  'c. à s.', 'càs', 'c.às', 'cuillère à soupe', 'cuillères à soupe',
+#                  'c. à c.', 'càc', 'cuillère à café', 'cuillères à café'
+#                  ]
     # juxtaposant_list = ['de', 'd\'', 'à']
 
 def parse_ingredients(raw_list_of_ingredients: list):

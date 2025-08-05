@@ -9,7 +9,7 @@ import configparser
 import common
 
 config = configparser.ConfigParser()
-config.read('./config.cfg')
+config.read('./config.cfg', encoding='utf-8')
 
 INPUT_DIR = config['TEST']['EB_PICS']
 common.run_reader(INPUT_DIR)

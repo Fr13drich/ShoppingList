@@ -6,12 +6,13 @@ from operator import itemgetter
 from abc import ABC, abstractmethod
 import spacy
 import pytesseract
+from spellchecker import SpellChecker
 from PIL import Image, ImageOps
 import easyocr
 from reader import parser
 
 config = configparser.ConfigParser()
-config.read('./config.cfg')
+config.read('./config.cfg', encoding='utf-8')
 reader = easyocr.Reader(['fr'])
 logger = logging.getLogger(__name__)
 nlp = spacy.load("fr_core_news_md")
@@ -25,6 +26,19 @@ class ReaderInterface(ABC):
     ingredients_workfile = './tmp/img_ingredients.jpg'
     reader_result = None
     left_page = True
+
+    @staticmethod
+    def spell_check(i: str) -> str:
+        """Spell check a string."""
+        spell = SpellChecker(language='fr')
+        doc = nlp(i)
+        spell.word_frequency.load_words(['dégermer', 'dénoyauter', 'cerneaux'])
+        spell.word_frequency.load_words(config['DEFAULT'].get('UNIT_LIST', '').split(','))
+        for token in doc:
+            if spell.unknown([token.text]) and spell.unknown([token.lemma_]):
+                logger.warning('Unknown word: %s', token.text)
+                i = str(i).replace(token.text, spell.candidates(token.text).pop())
+        return i
 
     @classmethod
     def can_read(cls, _location, name) -> bool:
@@ -336,7 +350,8 @@ class EbReader(ReaderInterface):
                 break
         # parsed_ingredients_list = [parser.parse_stream(i.strip())[0] for i in ingredients_list]
         # return parsed_ingredients_list
-        return [i.strip() for i in ingredients_list]
+        ingredients_list = [i.strip() for i in ingredients_list]
+        return [cls.spell_check(i) for i in ingredients_list]
 
 
 class Reader(ReaderInterface):

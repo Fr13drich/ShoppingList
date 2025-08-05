@@ -14,7 +14,7 @@ from ingredient import Ingredient
 
 nlp = spacy.load("fr_core_news_md")
 config = configparser.ConfigParser()
-config.read('./config.cfg')
+config.read('./config.cfg', encoding='utf-8')
 logger = logging.getLogger(__name__)
 
 class IngredientEntry:

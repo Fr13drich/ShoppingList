@@ -3,7 +3,7 @@ import subprocess
 import configparser
 
 config = configparser.ConfigParser()
-config.read('./config.cfg')
+config.read('./config.cfg', encoding='utf-8')
 
 EXT = '.exe' if os.name == 'nt' else '3'
 TEST_RESULTS_DIR = config['TEST']['TEST_RESULTS_DIR']
