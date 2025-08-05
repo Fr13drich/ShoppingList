@@ -334,10 +334,10 @@ class EbReader(ReaderInterface):
                 ingredients_stream = s.replace('  ', ' ')
                 ingredients_list = str(ingredients_stream).split(sep='\n')
                 break
-        parsed_ingredients_list = [parser.parse_stream(i.strip())[0] for i in ingredients_list]
+        # parsed_ingredients_list = [parser.parse_stream(i.strip())[0] for i in ingredients_list]
         # return parsed_ingredients_list
         return [i.strip() for i in ingredients_list]
-    
+
 
 class Reader(ReaderInterface):
     """pick the right reader as per file location"""

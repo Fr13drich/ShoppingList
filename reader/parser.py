@@ -270,7 +270,3 @@ def parse_ingredients_bill_dict(ingredients_bill_dict: dict, recipe_ref: str):
                     Ingredient.add(name=name,lemma=lemma, recipe_refs=set([str(recipe_ref)]),\
                                     other_recipe_ref=other_recipe_ref)))
     return entries
-
-if __name__ == "__main__":
-    # Example usage
-    get_strategy('3 tiges de céleri-branche')

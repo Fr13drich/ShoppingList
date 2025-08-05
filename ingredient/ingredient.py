@@ -119,7 +119,8 @@ class Ingredient:
         url = base_url + language_code + endpoint
         parameters = {'q': search_str, 'limit': number_of_results}
         try:
-            r = requests.get(url, headers=headers, params=parameters, allow_redirects=True, timeout=10)
+            r = requests.get(url, headers=headers, params=parameters,
+                allow_redirects=True, timeout=10)
         except ConnectionError:
             logger.info('No internet!')
             return None

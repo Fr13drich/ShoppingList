@@ -1,3 +1,4 @@
+"""(re)build the db"""
 import os
 import logging
 import sqlite3
@@ -13,10 +14,10 @@ config = configparser.ConfigParser()
 config.read('./config.cfg')
 
 # Define the SQLite3 database file
-db_file = 'recipes.db'
+DB_FILE = 'recipes.db'
 
 # Create a connection to the SQLite database (or create it if it doesn't exist)
-conn = sqlite3.connect(db_file)
+conn = sqlite3.connect(DB_FILE)
 cursor = conn.cursor()
 def create_tables():
     """Create the necessary tables in the SQLite database."""
@@ -52,7 +53,7 @@ def create_tables():
                    multiplier REAL DEFAULT 1.0,
                    FOREIGN KEY (recipe_id) REFERENCES recipes (id)
                )''')
-    
+
     # Commit the table creation
     conn.commit()
     print("Tables created successfully.")
@@ -85,12 +86,16 @@ def insert_ingredient(name, lemma=None, category=None, synonymes=None):
     INSERT INTO ingredients (name, lemma, category, synonymes) VALUES (?, ?, ?, ?)
     ''', (name, lemma, category, synonymes))
     conn.commit()
-    return cursor.execute('SELECT id FROM ingredients WHERE name = ?', (name,)).fetchone()[0]
+    cursor.execute('SELECT id FROM ingredients WHERE name = ?', (name,))
+    row = cursor.fetchone()
+    return row[0]
 
 def insert_ingredient_entry(recipe_id, ingredient_id, amount=None, unit=None):
     """Insert a new ingredient entry into the database."""
     # check if the recipe_id and ingredient_id exist
-    cursor.execute('SELECT id FROM ingredient_entry WHERE recipe_id = ? AND ingredient_id = ?', (recipe_id, ingredient_id))
+    cursor.execute(
+        'SELECT id FROM ingredient_entry WHERE recipe_id = ? AND ingredient_id = ?'
+        , (recipe_id, ingredient_id))
     existing = cursor.fetchone()
     if existing:
         print(f"Ingredient entry already exists: {recipe_id} - {ingredient_id}")
@@ -129,7 +134,8 @@ def reset_db():
 def drop_tables():
     """Drop all tables in the database."""
     cursor.execute('ALTER TABLE ingredient_entry DROP CONSTRAINT recipe_id')
-    cursor.execute('ALTER TABLE ingredient_entry DROP CONSTRAINT IF EXISTS ingredient_entry_ingredient_id_fkey')
+    cursor.execute('ALTER TABLE ingredient_entry ' \
+    '   DROP CONSTRAINT IF EXISTS ingredient_entry_ingredient_id_fkey')
     cursor.execute('DROP TABLE IF EXISTS recipes')
     cursor.execute('DROP TABLE IF EXISTS ingredients')
     cursor.execute('DROP TABLE IF EXISTS ingredient_entry')
@@ -169,16 +175,16 @@ if __name__ == '__main__':
     all_recipes = load_all_recipe_files()
     logger.info('Total number of ingredients: %s', len(Ingredient.knowkn_ingredients_list))
     for recipe in all_recipes:
-        recipe_key = insert_recipe(ref=recipe.ref, name=recipe.name)
+        r_key = insert_recipe(ref=recipe.ref, name=recipe.name)
         for entry in recipe.ingredients_bill:
             print(entry)
-            ingredient_key = insert_ingredient(name=entry.ingredient.name,
+            i_key = insert_ingredient(name=entry.ingredient.name,
                                                lemma=entry.ingredient.lemma,
                                                category=entry.ingredient.category,
                                                synonymes=' '.join(entry.ingredient.synonymes))
             insert_ingredient_entry(
-                recipe_id=recipe_key,
-                ingredient_id=ingredient_key,
+                recipe_id=r_key,
+                ingredient_id=i_key,
                 amount=entry.amount,
                 unit=entry.unit
             )
