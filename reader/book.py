@@ -347,10 +347,10 @@ class EbReader(ReaderInterface):
                 ingredients_stream = s.replace('  ', ' ')
                 ingredients_list = str(ingredients_stream).split(sep='\n')
                 break
-        ingredients_list = [i.strip() for i in ingredients_list]
-        parsed_ingredients_list = [parser.parse_stream(cls.spell_check(i))
-                                   for i in ingredients_list]
-        # parsed_ingredients_list = [parser.parse_stream(i.strip())[0] for i in ingredients_list]
+        # ingredients_list = [i.strip() for i in ingredients_list]
+        # parsed_ingredients_list = [parser.parse_stream(cls.spell_check(i))
+        #                            for i in ingredients_list]
+        parsed_ingredients_list = [parser.parse_stream(i.strip())[0] for i in ingredients_list]
         # return parsed_ingredients_list
         return parsed_ingredients_list
 
