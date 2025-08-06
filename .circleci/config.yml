@@ -110,26 +110,35 @@ jobs:
       - image: cimg/python:3.13.5
     steps:
       - checkout
-      - python/install-packages:
-          pkg-manager: pip
+      - restore_cache:
+          key: &deps1-cache deps1-{{ .Branch }}-{{ checksum "requirements.txt" }}
       - run: 
-          name: "download fr_core_news_md"
-          command: "python -m spacy download fr_core_news_md"
-      - run:
-          name: "install tesseract"
-          command: |
-              sudo apt update
-              sudo apt install tesseract-ocr
-              sudo apt install libtesseract-dev
-              sudo cp ./data/fra.traineddata /usr/share/tesseract-ocr/4.00/tessdata/
-      - run:
-          name: "install pytest"
-          command: "pip install pytest"
-      # - run : mkdir ./test/test_results
-      - run:
           name: "run test 'En bocal'"
           command: |
-              pytest ./test/scripts/reader_eb_test.py
+            ls
+            . venv/bin/activate
+            pip install pytest
+            pytest ./test/scripts/reader_eb_test.py
+      # - python/install-packages:
+      #     pkg-manager: pip
+      # - run: 
+      #     name: "download fr_core_news_md"
+      #     command: "python -m spacy download fr_core_news_md"
+      # - run:
+      #     name: "install tesseract"
+      #     command: |
+      #         sudo apt update
+      #         sudo apt install tesseract-ocr
+      #         sudo apt install libtesseract-dev
+      #         sudo cp ./data/fra.traineddata /usr/share/tesseract-ocr/4.00/tessdata/
+      # - run:
+      #     name: "install pytest"
+      #     command: "pip install pytest"
+      # # - run : mkdir ./test/test_results
+      # - run:
+      #     name: "run test 'En bocal'"
+      #     command: |
+      #         pytest ./test/scripts/reader_eb_test.py
           no_output_timeout: 20m
   test_gui:
     docker:

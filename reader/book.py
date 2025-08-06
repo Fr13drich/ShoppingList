@@ -31,7 +31,7 @@ class ReaderInterface(ABC):
         """Spell check a string."""
         spell = SpellChecker(language='fr')
         doc = nlp(i)
-        spell.word_frequency.load_words(['dégermer', 'dénoyauter', 'cerneaux'])
+        spell.word_frequency.load_words(['dégermer', 'dénoyauter', 'cerneaux', 'pistoles'])
         spell.word_frequency.load_words(config['DEFAULT'].get('UNIT_LIST', '').split(','))
         for token in doc:
             if spell.unknown([token.text]) and spell.unknown([token.lemma_]):
