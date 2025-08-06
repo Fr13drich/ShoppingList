@@ -1,14 +1,15 @@
 
-# ShoppingList
+# Cookbook2Cart
 
-ShoppingList is a tool to extract recipes and their ingredients from scanned images of cooking books, parse them using NLP, and output structured data. It also provides a GUI and a web interface to create and manage grocery lists from recipes.
+Cookbook2Cart is an intelligent tool that transforms scanned cookbook recipes into structured, digital ingredient lists using OCR and natural language processing. With a user-friendly GUI it lets you quickly  manage shopping lists from your favorite recipes, saving you time and making meal planning effortless. Perfect for home cooks, food bloggers, and anyone who wants to bridge the gap between traditional cookbooks and modern grocery shopping.
+
 
 ## Features
 - Extract recipes and ingredients from scanned images (OCR + NLP)
 - Parse and structure ingredient lists
 - Automatically create and update ingredient files
 - Generate grocery/shopping lists from selected recipes
-- GUI and web interface for editing and managing recipes
+- GUI for editing and managing recipes
 
 ## Requirements
 - Python 3.8+
