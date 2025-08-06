@@ -6,8 +6,7 @@ from operator import itemgetter
 from abc import ABC, abstractmethod
 import spacy
 import pytesseract
-# from spellchecker import SpellChecker
-from pyspellchecker import SpellChecker
+from spellchecker import SpellChecker
 from PIL import Image, ImageOps
 import easyocr
 from reader import parser
