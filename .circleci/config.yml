@@ -49,32 +49,41 @@ jobs:
             . venv/bin/activate
             pip install pylint
             find . -maxdepth 2 -name '*.py' | xargs pylint --disable='R0901, R0903, R0913'
-      - run:
-          name: "install pylint"
-          command: "pip install pylint"
-      - run:
-          name: "Lint all (disable too many ancestor/arguments)"
-          command: "find . -maxdepth 2 -name '*.py' | xargs pylint --disable='R0901, R0903, R0913'"
+      # - run:
+      #     name: "install pylint"
+      #     command: "pip install pylint"
+      # - run:
+      #     name: "Lint all (disable too many ancestor/arguments)"
+      #     command: "find . -maxdepth 2 -name '*.py' | xargs pylint --disable='R0901, R0903, R0913'"
   test_bc:
     docker:
       - image: cimg/python:3.13.5
     steps:
       - checkout
-      - run: git fetch
-      - python/install-packages:
-          pkg-manager: pip
+      - restore_cache:
+          key: &deps1-cache deps1-{{ .Branch }}-{{ checksum "requirements.txt" }}
       - run: 
-          name: "download fr_core_news_md"
-          command: "python -m spacy download fr_core_news_md"
-      - run:
-          name: "install pytest"
-          command: "pip install pytest"
-      - run:
           name: "run test 'Bien cuisiner'"
           command: |
-              python -m spacy download fr_core_news_md
-              # mkdir ./test/test_results
-              pytest ./test/scripts/reader_bc_test.py
+            ls
+            . venv/bin/activate
+            pip install pytest
+            pytest ./test/scripts/reader_bc_test.py
+      # - run: git fetch
+      # - python/install-packages:
+      #     pkg-manager: pip
+      # - run: 
+      #     name: "download fr_core_news_md"
+      #     command: "python -m spacy download fr_core_news_md"
+      # - run:
+      #     name: "install pytest"
+      #     command: "pip install pytest"
+      # - run:
+      #     name: "run test 'Bien cuisiner'"
+      #     command: |
+      #         python -m spacy download fr_core_news_md
+      #         # mkdir ./test/test_results
+      #         pytest ./test/scripts/reader_bc_test.py
           no_output_timeout: 20m
   test_cg:
     docker:
