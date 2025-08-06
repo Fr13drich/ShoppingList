@@ -1,0 +1,60 @@
+{
+  "ref": "EBp70",
+  "name": "Coulis de tomates della mamma",
+  "ingredients_bill": [
+    {
+      "amount": 6,
+      "unit": "kg",
+      "jxt": "de",
+      "ingredient": "tomates du jardin à chair pleine"
+    },
+    {
+      "amount": 20,
+      "unit": "gousse",
+      "jxt": "d'",
+      "ingredient": "ail"
+    },
+    {
+      "amount": 6,
+      "unit": "p",
+      "jxt": "",
+      "ingredient": "oignons"
+    },
+    {
+      "amount": 50,
+      "unit": "ml",
+      "jxt": "d'",
+      "ingredient": "huile d'olive"
+    },
+    {
+      "amount": 3,
+      "unit": "tige",
+      "jxt": "de",
+      "ingredient": "céleri-branche"
+    },
+    {
+      "amount": 2,
+      "unit": "p",
+      "jxt": "",
+      "ingredient": "carottes"
+    },
+    {
+      "amount": 1,
+      "unit": "p",
+      "jxt": "",
+      "ingredient": "thym ou basilic à convenance"
+    },
+    {
+      "amount": 20,
+      "unit": "g",
+      "jxt": "de",
+      "ingredient": "sel"
+    },
+    {
+      "amount": 100,
+      "unit": "g",
+      "jxt": "de",
+      "ingredient": "sucre de canne"
+    }
+  ]
+}

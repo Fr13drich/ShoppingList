@@ -10,10 +10,9 @@ from spellchecker import SpellChecker
 from PIL import Image, ImageOps
 import easyocr
 from reader import parser
-
 config = configparser.ConfigParser()
 config.read('./config.cfg', encoding='utf-8')
-reader = easyocr.Reader(['fr'])
+reader = easyocr.Reader(lang_list=['fr'], gpu=False)
 logger = logging.getLogger(__name__)
 nlp = spacy.load("fr_core_news_md")
 

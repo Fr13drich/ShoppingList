@@ -1,0 +1,48 @@
+{
+  "ref": "tzatziki",
+  "name": "Tzatziki",
+  "ingredients_bill": [
+    {
+      "amount": 2,
+      "unit": "p",
+      "jxt": "",
+      "ingredient": "yaourts grecs"
+    },
+    {
+      "amount": 1,
+      "unit": "p",
+      "jxt": "",
+      "ingredient": "concombre"
+    },
+    {
+      "amount": 1,
+      "unit": "gousse",
+      "jxt": "d'",
+      "ingredient": "ail"
+    },
+    {
+      "amount": 1,
+      "unit": "càs",
+      "jxt": "de",
+      "ingredient": "menthe ou aneth"
+    },
+    {
+      "amount": 2,
+      "unit": "cuillères à soupe",
+      "jxt": "d'",
+      "ingredient": "huile d'olive"
+    },
+    {
+      "amount": 1,
+      "unit": "pincée",
+      "jxt": "de",
+      "ingredient": "sel"
+    },
+    {
+      "amount": 1,
+      "unit": "pincée",
+      "jxt": "de",
+      "ingredient": "poivre"
+    }
+  ]
+}
