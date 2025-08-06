@@ -15,4 +15,12 @@ def test_compare():
             with open(file=os.path.join(common.TEST_RESULTS_DIR, name), mode='r', encoding='utf-8') as test_result:
                 with open(file=os.path.join(common.RECIPE_DIR, name), mode='r', encoding='utf-8') as recipe_file:
                     print(name)
-                    assert recipe_file.read() == test_result.read()
+                    expected = recipe_file.read()
+                    print(expected)
+                    test_output = test_result.read()
+                    print(test_output)
+                    assert expected == test_output
+
+if __name__ == "__main__":
+    test_compare()
+

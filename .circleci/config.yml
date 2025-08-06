@@ -85,6 +85,7 @@ jobs:
       - run:
           name: "run test 'Café gourmand'"
           command: |
+              . venv/bin/activate
               python ./read_the_book.py --input_dir=./test/CG_pics --output_dir=./test/test_results
               python ./test/scripts/reader_cg_test.py
           no_output_timeout: 20m
