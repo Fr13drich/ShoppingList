@@ -12,8 +12,10 @@ def test_compare():
     for _root, _dirs, files in os.walk(common.TEST_RESULTS_DIR):
         print(files)
         for name in files:
-            with open(file=os.path.join(common.TEST_RESULTS_DIR, name), mode='r', encoding='utf-8') as test_result:
-                with open(file=os.path.join(common.RECIPE_DIR, name), mode='r', encoding='utf-8') as recipe_file:
+            with open(file=os.path.join(common.TEST_RESULTS_DIR, name), mode='r',
+                      encoding='utf-8') as test_result:
+                with open(file=os.path.join(common.RECIPE_DIR, name), mode='r',
+                          encoding='utf-8') as recipe_file:
                     print(name)
                     expected = recipe_file.read()
                     print(expected)
