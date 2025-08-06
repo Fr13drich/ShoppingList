@@ -6,13 +6,13 @@ resulting recipe files to expected outputs.
 
 import os
 import configparser
-import common
+# import common
 
 config = configparser.ConfigParser()
 config.read('./config.cfg', encoding='utf-8')
 
 INPUT_DIR = config['TEST']['EB_PICS']
-common.run_reader(INPUT_DIR)
+# common.run_reader(INPUT_DIR)
 
 def test_compare():
     """Compare generated recipe files to expected test results.

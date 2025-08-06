@@ -274,16 +274,17 @@ class EbReader(ReaderInterface):
     @classmethod
     def get_title(cls, img):
         pic = './tmp/img.jpg'
-        title = ""
-        d = pytesseract.image_to_data(pic, lang='fra')
-        lines = d.rsplit(sep='\n')[1:]
-        for line in lines:
-            values = line.rsplit()
-            print(values)
-            if len(values) == 12 and float(values[10]) > 50.0: # confidence above 50%
-                if str(values[11]) == 'Préparation':
-                    break
-                title += ' ' + str(values[11])
+        title = reader.readtext(pic, detail=0, paragraph=True, low_text=.19, x_ths=10, y_ths=.1)[1]
+        # title = ""
+        # d = pytesseract.image_to_data(pic, lang='fra')
+        # lines = d.rsplit(sep='\n')[1:]
+        # for line in lines:
+        #     values = line.rsplit()
+        #     print(values)
+        #     if len(values) == 12 and float(values[10]) > 50.0: # confidence above 50%
+        #         if str(values[11]) == 'Préparation':
+        #             break
+        #         title += ' ' + str(values[11])
         title = title.strip().capitalize()
         # s = pytesseract.image_to_string(pic, lang='fra')
         # empty_line = s.find('\n\n')
@@ -296,17 +297,17 @@ class EbReader(ReaderInterface):
         #                       .replace('  ', ' ')\
         #                       .capitalize()\
         #                       .strip()
-        print(f'title found by tesseract: {title}')
-        if not title: # then try with easyocr results
-            pic = './tmp/title.jpg'
-            img = img.crop((cls.reader_result[1][0][0][0],\
-                            cls.reader_result[1][0][0][1],\
-                            cls.reader_result[1][0][2][0],\
-                            cls.reader_result[1][0][2][1]\
-                            ))
-            img.save(pic)
-            title = reader.readtext(image=pic, detail=0, low_text=.21, paragraph=True)
-            title = ' '.join(title).capitalize()
+        # print(f'title found by tesseract: {title}')
+        # if not title: # then try with easyocr results
+        #     pic = './tmp/title.jpg'
+        #     img = img.crop((cls.reader_result[1][0][0][0],\
+        #                     cls.reader_result[1][0][0][1],\
+        #                     cls.reader_result[1][0][2][0],\
+        #                     cls.reader_result[1][0][2][1]\
+        #                     ))
+        #     img.save(pic)
+        #     title = reader.readtext(image=pic, detail=0, low_text=.21, paragraph=True)
+        #     title = ' '.join(title).capitalize()
         logger.info('title: %s', title)
         return title
     @classmethod

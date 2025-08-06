@@ -113,12 +113,13 @@ jobs:
             sudo apt install libtesseract-dev
             sudo cp ./data/fra.traineddata /usr/share/tesseract-ocr/4.00/tessdata/fra.traineddata
             sudo cp ./data/osd.traineddata /usr/share/tesseract-ocr/4.00/tessdata/
-            pip install pytest
+            # pip install pytest
             # echo $PATH
-            # python ./read_the_book.py --input_dir=./test/EB_pics --output_dir=./test/test_results
+            python ./read_the_book.py --input_dir=./test/EB_pics --output_dir=./test/test_results
+            python ./test/scripts/reader_eb_test.py
             # cat ./log/reader.log
             # cat ./test/test_results/*
-            pytest ./test/scripts/reader_eb_test.py
+            # pytest ./test/scripts/reader_eb_test.py
       # - python/install-packages:
       #     pkg-manager: pip
       # - run: 
