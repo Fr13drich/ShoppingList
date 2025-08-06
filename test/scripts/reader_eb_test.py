@@ -6,7 +6,7 @@ resulting recipe files to expected outputs.
 
 import os
 import configparser
-# import common
+import common
 
 config = configparser.ConfigParser()
 config.read('./config.cfg', encoding='utf-8')
