@@ -108,9 +108,10 @@ jobs:
             ls
             . venv/bin/activate
             pip install pytest
+            echo $PATH
             python ./read_the_book.py --input_dir=./test/EB_pics --output_dir=./test/test_results
             cat ./log/reader.log
-            cat ./test./test_results/*
+            cat ./test/test_results/*
             # pytest ./test/scripts/reader_eb_test.py
       # - python/install-packages:
       #     pkg-manager: pip
