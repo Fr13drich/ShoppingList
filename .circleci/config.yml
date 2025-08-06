@@ -47,6 +47,8 @@ jobs:
           command: |
             ls
             . venv/bin/activate
+            pip install pylint
+            find . -maxdepth 2 -name '*.py' | xargs pylint --disable='R0901, R0903, R0913'
       - run:
           name: "install pylint"
           command: "pip install pylint"
