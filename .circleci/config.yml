@@ -60,6 +60,7 @@ jobs:
       - image: cimg/python:3.13.5
     steps:
       - checkout
+      - run: git fetch
       - restore_cache:
           key: &deps1-cache deps1-{{ .Branch }}-{{ checksum "requirements.txt" }}
       - run: 
@@ -69,7 +70,7 @@ jobs:
             . venv/bin/activate
             pip install pytest
             pytest ./test/scripts/reader_bc_test.py
-      # - run: git fetch
+      
       # - python/install-packages:
       #     pkg-manager: pip
       # - run: 
@@ -90,6 +91,7 @@ jobs:
       - image: cimg/python:3.13.5
     steps:
       - checkout
+      - run: git fetch
       - python/install-packages:
           pkg-manager: pip
       - run: 
@@ -110,6 +112,7 @@ jobs:
       - image: cimg/python:3.13.5
     steps:
       - checkout
+      - run: git fetch
       - restore_cache:
           key: &deps1-cache deps1-{{ .Branch }}-{{ checksum "requirements.txt" }}
       - run: 
@@ -122,7 +125,9 @@ jobs:
             sudo apt install tesseract-ocr
             sudo apt install libtesseract-dev
             sudo cp ./data/fra.traineddata /usr/share/tesseract-ocr/4.00/tessdata/
-            pytest ./test/scripts/reader_eb_test.py
+            python ./read_the_book.py --input_dir=./test/EB_pics --output_dir=./test/test_results
+            cat ./log/reader.log
+            # pytest ./test/scripts/reader_eb_test.py
       # - python/install-packages:
       #     pkg-manager: pip
       # - run: 
