@@ -4,6 +4,7 @@
 ./venv/*
 .env/
 .venv/
+.spell/
 __pycache__/
 log/*
 
