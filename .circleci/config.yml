@@ -107,10 +107,11 @@ jobs:
           command: |
             ls
             . venv/bin/activate
-            sudo apt update
+            sudo dpkg --configure -a
+            sudo apt-get update && sudo apt-get upgrade -y
             sudo apt install tesseract-ocr
             sudo apt install libtesseract-dev
-            sudo cp ./data/fra.best.traineddata /usr/share/tesseract-ocr/4.00/tessdata/fra.traineddata
+            sudo cp ./data/fra.my.traineddata /usr/share/tesseract-ocr/4.00/tessdata/fra.traineddata
             pip install pytest
             echo $PATH
             python ./read_the_book.py --input_dir=./test/EB_pics --output_dir=./test/test_results
