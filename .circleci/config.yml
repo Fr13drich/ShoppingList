@@ -55,8 +55,10 @@ jobs:
           command: |
             ls
             . venv/bin/activate
-            pip install pytest
-            pytest ./test/scripts/reader_bc_test.py
+            # pip install pytest
+            # pytest ./test/scripts/reader_bc_test.py
+            python ./read_the_book.py --input_dir=./test/BC_pics --output_dir=./test/test_results
+            python ./test/scripts/reader_bc_test.py
       
       # - python/install-packages:
       #     pkg-manager: pip
@@ -78,21 +80,13 @@ jobs:
       - image: cimg/python:3.13.5
     steps:
       - checkout
-      - run: git fetch
-      - python/install-packages:
-          pkg-manager: pip
-      - run: 
-          name: "download fr_core_news_md"
-          command: "python -m spacy download fr_core_news_md"
-      - run:
-          name: "install pytest"
-          command: "pip install pytest"
+      - restore_cache:
+          key: &deps1-cache deps1-{{ .Branch }}-{{ checksum "requirements.txt" }}
       - run:
           name: "run test 'Café gourmand'"
           command: |
-              # mkdir ./test/test_results
-              echo > ./log/reader.log
-              pytest ./test/scripts/reader_cg_test.py
+              python ./read_the_book.py --input_dir=./test/CG_pics --output_dir=./test/test_results
+              python ./test/scripts/reader_cg_test.py
           no_output_timeout: 20m
   test_eb:
     docker:
@@ -118,7 +112,7 @@ jobs:
             python ./read_the_book.py --input_dir=./test/EB_pics --output_dir=./test/test_results
             python ./test/scripts/reader_eb_test.py
             # cat ./log/reader.log
-            # cat ./test/test_results/*
+            cat ./test/test_results/*
             # pytest ./test/scripts/reader_eb_test.py
       # - python/install-packages:
       #     pkg-manager: pip

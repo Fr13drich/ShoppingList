@@ -7,7 +7,7 @@ config = configparser.ConfigParser()
 config.read('./config.cfg', encoding='utf-8')
 
 INPUT_DIR = config['TEST']['CG_PICS']
-common.run_reader(INPUT_DIR)
+# common.run_reader(INPUT_DIR)
 def test_compare():
     for _root, _dirs, files in os.walk(common.TEST_RESULTS_DIR):
         print(files)
