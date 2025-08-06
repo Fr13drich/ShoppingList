@@ -109,6 +109,7 @@ jobs:
             . venv/bin/activate
             pip install pytest
             echo $PATH
+            pip install tesseract
             python ./read_the_book.py --input_dir=./test/EB_pics --output_dir=./test/test_results
             cat ./log/reader.log
             cat ./test/test_results/*
