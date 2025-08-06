@@ -17,8 +17,8 @@ jobs:
       - checkout
       - python/install-packages:
           pkg-manager: pip
-      - restore_cache:
-          key: &deps1-cache deps1-{{ .Branch }}-{{ checksum "requirements.txt" }}
+      # - restore_cache:
+      #     key: &deps1-cache deps1-{{ .Branch }}-{{ checksum "requirements.txt" }}
       - run:
           name: "install tesseract"
           command: |
@@ -30,17 +30,17 @@ jobs:
             python3 -m venv venv
             . venv/bin/activate
             pip install -r requirements.txt
-      - save_cache: # ** special step to save dependency cache **
-          key: *deps1-cache
-          paths:
-            - "venv"
+      # - save_cache: # ** special step to save dependency cache **
+      #     key: *deps1-cache
+      #     paths:
+      #       - "venv"
   lint:
     docker:
       - image: cimg/python:3.13.5
     steps:
       - checkout
-      - restore_cache:
-          key: &deps1-cache deps1-{{ .Branch }}-{{ checksum "requirements.txt" }}
+      # - restore_cache:
+      #     key: &deps1-cache deps1-{{ .Branch }}-{{ checksum "requirements.txt" }}
       - python/install-packages:
           pkg-manager: pip
       - run: 
