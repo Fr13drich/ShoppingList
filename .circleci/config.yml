@@ -115,7 +115,6 @@ jobs:
             sudo cp ./data/osd.traineddata /usr/share/tesseract-ocr/4.00/tessdata/
             pip install pytest
             echo $PATH
-            sudo find / -name *.traineddata
             python ./read_the_book.py --input_dir=./test/EB_pics --output_dir=./test/test_results
             cat ./log/reader.log
             cat ./test/test_results/*
