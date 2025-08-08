@@ -298,6 +298,13 @@
         },
         "strategy": "strategy_name_only"
       },
+      "PROPN": {
+        "ADP": {
+          "NOUN": {
+            "strategy": "strategy013"
+          }
+        }
+      },
       "X": {
         "strategy": "strategy_name_only"
       }

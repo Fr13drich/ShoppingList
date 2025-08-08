@@ -31,6 +31,7 @@
     "NUM NOUN ADP NOUN ADP NOUN ADP DET": "strategy01357",
     "NUM NOUN ADP PROPN ADJ": "strategy013",
     "NOUN ADP NOUN ADJ": "strategy013",
+    "NOUN ADP PROPN ADP NOUN": "strategy013",
     "NUM NOUN ADP NOUN NOUN ADJ": "strategy013",
     "NUM NOUN ADP NOUN CCONJ ADP ADV": "strategy013",
     "NUM NOUN ADP NOUN VERB ADP NOUN": "strategy013",
