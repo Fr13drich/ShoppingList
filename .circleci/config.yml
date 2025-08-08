@@ -98,7 +98,7 @@ jobs:
             # pip install pytest
             # echo $PATH
             python ./read_the_book.py --input_dir=./test/EB_pics --output_dir=./test/test_results
-            # cat ./log/reader.log
+            cat ./log/reader.log
             for fullname in test/test_results/*; do diff ${fullname} data/recipe_files/$(basename ${fullname});done
             python ./test/scripts/reader_eb_test.py
             # cat ./test/test_results/*
