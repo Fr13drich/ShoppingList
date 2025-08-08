@@ -344,8 +344,9 @@ class EbReader(ReaderInterface):
                         parenthesis = False
                     elif not parenthesis:
                         s += i
-                #remove double whistespace
+                #remove double whistespace and double single quotes
                 ingredients_stream = s.replace('  ', ' ')
+                ingredients_stream = s.replace("''", "'")
                 ingredients_list = str(ingredients_stream).split(sep='\n')
                 break
         # ingredients_list = [i.strip() for i in ingredients_list]
