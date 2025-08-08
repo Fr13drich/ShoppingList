@@ -9,7 +9,7 @@
     "NUM ADJ NOUN CCONJ NOUN ADP PROPN ADJ": "strategy01",
     "NUM NOUN ADP NOUN": "strategy013",
     "NUM NOUN ADP NOUN NOUN": "strategy013",
-    "NUM NOUN ADP PROPN PROPN NOUN": "strategy013",
+    "NUM NOUN ADP PROPN ADP NOUN": "strategy013",
     "NUM NOUN ADP NOUN ADP NUM NOUN PRON": "strategy01",
     "NUM NOUN ADP NOUN ADJ": "strategy013",
     "NUM NOUN ADP NOUN PROPN": "strategy013",

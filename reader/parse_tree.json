@@ -152,7 +152,7 @@
           }
         },
         "PROPN": {
-          "PROPN": {
+          "ADP": {
             "NOUN": {
               "strategy": "strategy013"
             }
