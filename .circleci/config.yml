@@ -58,22 +58,8 @@ jobs:
             # pip install pytest
             # pytest ./test/scripts/reader_bc_test.py
             python ./read_the_book.py --input_dir=./test/BC_pics --output_dir=./test/test_results
+            for fullname in test/test_results/*; do diff ${fullname} data/recipe_files/$(basename ${fullname});done
             python ./test/scripts/reader_bc_test.py
-      
-      # - python/install-packages:
-      #     pkg-manager: pip
-      # - run: 
-      #     name: "download fr_core_news_md"
-      #     command: "python -m spacy download fr_core_news_md"
-      # - run:
-      #     name: "install pytest"
-      #     command: "pip install pytest"
-      # - run:
-      #     name: "run test 'Bien cuisiner'"
-      #     command: |
-      #         python -m spacy download fr_core_news_md
-      #         # mkdir ./test/test_results
-      #         pytest ./test/scripts/reader_bc_test.py
           no_output_timeout: 20m
   test_cg:
     docker:
@@ -87,6 +73,7 @@ jobs:
           command: |
               . venv/bin/activate
               python ./read_the_book.py --input_dir=./test/CG_pics --output_dir=./test/test_results
+              for fullname in test/test_results/*; do diff ${fullname} data/recipe_files/$(basename ${fullname});done
               python ./test/scripts/reader_cg_test.py
           no_output_timeout: 20m
   test_eb:
@@ -111,30 +98,10 @@ jobs:
             # pip install pytest
             # echo $PATH
             python ./read_the_book.py --input_dir=./test/EB_pics --output_dir=./test/test_results
+            for fullname in test/test_results/*; do diff ${fullname} data/recipe_files/$(basename ${fullname});done
             python ./test/scripts/reader_eb_test.py
             # cat ./log/reader.log
-            cat ./test/test_results/*
-            # pytest ./test/scripts/reader_eb_test.py
-      # - python/install-packages:
-      #     pkg-manager: pip
-      # - run: 
-      #     name: "download fr_core_news_md"
-      #     command: "python -m spacy download fr_core_news_md"
-      # - run:
-      #     name: "install tesseract"
-      #     command: |
-      #         sudo apt update
-      #         sudo apt install tesseract-ocr
-      #         sudo apt install libtesseract-dev
-      #         sudo cp ./data/fra.traineddata /usr/share/tesseract-ocr/4.00/tessdata/
-      # - run:
-      #     name: "install pytest"
-      #     command: "pip install pytest"
-      # # - run : mkdir ./test/test_results
-      # - run:
-      #     name: "run test 'En bocal'"
-      #     command: |
-      #         pytest ./test/scripts/reader_eb_test.py
+            # cat ./test/test_results/*
           no_output_timeout: 20m
   test_gui:
     docker:
