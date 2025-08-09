@@ -84,7 +84,7 @@ class RecipesFrame(customtkinter.CTkFrame):
         self.button = customtkinter.CTkButton(self, text="make shopping list",\
                                               command=self.generate_shopping_list)
         self.button.grid(row=RecipesFrame.nb_of_combo+2, column=3, padx=20, pady=20, columnspan=2)
-    
+
     def save_menu(self, filename=None):
         """Write a list of recipe along with their ratio on disk in json format."""
         if not filename:
@@ -185,11 +185,14 @@ class FilterFrame(customtkinter.CTkFrame):
         super().__init__(master)
         self.master = master
         self.ing_filter = customtkinter.CTkComboBox(self, values=self.fetch_ingredients(),\
-                                                     width=200, hover=True, command=self.combobox_callback,)
+                                    width=200, hover=True, command=self.combobox_callback,)
         self.ing_filter.set('')
-        self.ing_filter.bind('<<ComboboxSelected>>', lambda event: self.combobox_callback(self.ing_filter.get()))
-        self.ing_filter.bind('<Return>', lambda event: self.combobox_callback(self.ing_filter.get()))
-        self.ing_filter.bind('<FocusOut>', lambda event: self.combobox_callback(self.ing_filter.get()))
+        self.ing_filter.bind('<<ComboboxSelected>>',
+                             lambda event: self.combobox_callback(self.ing_filter.get()))
+        self.ing_filter.bind('<Return>',
+                             lambda event: self.combobox_callback(self.ing_filter.get()))
+        self.ing_filter.bind('<FocusOut>',
+                             lambda event: self.combobox_callback(self.ing_filter.get()))
         self.ing_filter_label = customtkinter.CTkLabel(self, text="Filter by ingredient:")
         self.ing_filter_label.grid(row=0, column=0, padx=10, pady=(10, 0), sticky="nw")
         self.ing_filter.grid(row=0, column=1, padx=10, pady=(10, 0), sticky="ne")
