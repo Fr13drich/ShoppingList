@@ -223,6 +223,9 @@
               "ADJ": {
                 "NOUN": {
                   "strategy": "strategy0156"
+                },
+                "VERB": {
+                  "strategy": "strategy0156"
                 }
               },
               "PROPN": {
@@ -292,6 +295,11 @@
   },
   "NOUN": {
     "ADP": {
+      "DET": {
+        "NOUN": {
+          "strategy": "strategy_jus_dune_orange"
+        }
+      },
       "NOUN": {
         "ADJ": {
           "strategy": "strategy013"

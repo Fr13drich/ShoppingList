@@ -1,6 +1,7 @@
 {
     "NUM NOUN": "strategy01",
     "NUM ADJ NOUN": "strategy01",
+    "NOUN ADP DET NOUN": "strategy_jus_dune_orange",
     "NUM ADJ NOUN ADP DET NOUN": "strategy01",
     "NUM NOUN ADP ADV NUM NOUN": "strategy01",
     "NUM NOUN VERB": "strategy01",
@@ -47,6 +48,7 @@
     "NUM NOUN PUNCT ADP NOUN ADP NOUN ADP NOUN NOUN VERB": "strategy0156",
     "NUM NOUN PUNCT ADP NOUN ADP NOUN": "strategy0156",
     "NUM NOUN PUNCT ADP NOUN ADP ADJ NOUN": "strategy0156",
+    "NUM NOUN PUNCT ADP NOUN ADP ADJ VERB": "strategy0156",
     "NUM NOUN PUNCT ADP NOUN ADP NOUN ADP NOUN ADJ": "strategy0156",
     "NUM NOUN PUNCT ADP NOUN ADP NOUN ADP DET": "strategy0156",
     "NUM NOUN PUNCT ADP NOUN ADP NOUN ADP NOUN": "strategy0156",
