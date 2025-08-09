@@ -7,6 +7,7 @@ import tkinter
 import tkinter.filedialog
 import customtkinter
 
+
 # from ingredient import Ingredient
 # from recipe import Menu
 # from .load import load_all_recipe_files
@@ -83,7 +84,7 @@ class RecipesFrame(customtkinter.CTkFrame):
         self.button = customtkinter.CTkButton(self, text="make shopping list",\
                                               command=self.generate_shopping_list)
         self.button.grid(row=RecipesFrame.nb_of_combo+2, column=3, padx=20, pady=20, columnspan=2)
-
+    
     def save_menu(self, filename=None):
         """Write a list of recipe along with their ratio on disk in json format."""
         if not filename:
@@ -178,6 +179,38 @@ class IngredientsFrame(customtkinter.CTkFrame):
                                         height=800, activate_scrollbars=True)
         self.merged_ingredients.grid(row=0, column=0, rowspan=6, columnspan=2, sticky="e")
 
+class FilterFrame(customtkinter.CTkFrame):
+    """Frame for the filter combobox."""
+    def __init__(self, master):
+        super().__init__(master)
+        self.master = master
+        self.ing_filter = customtkinter.CTkComboBox(self, values=self.fetch_ingredients(),\
+                                                     width=200, hover=True, command=self.combobox_callback,)
+        self.ing_filter.set('')
+        self.ing_filter.bind('<<ComboboxSelected>>', lambda event: self.combobox_callback(self.ing_filter.get()))
+        self.ing_filter.bind('<Return>', lambda event: self.combobox_callback(self.ing_filter.get()))
+        self.ing_filter.bind('<FocusOut>', lambda event: self.combobox_callback(self.ing_filter.get()))
+        self.ing_filter_label = customtkinter.CTkLabel(self, text="Filter by ingredient:")
+        self.ing_filter_label.grid(row=0, column=0, padx=10, pady=(10, 0), sticky="nw")
+        self.ing_filter.grid(row=0, column=1, padx=10, pady=(10, 0), sticky="ne")
+
+    def combobox_callback(self, choice=''):
+        """Filter the recipes based on the selected ingredient."""
+        with open('./ing_filter.sql', 'r', encoding='utf-8') as ing_filter:
+            sql_query = ing_filter.read()
+        cursor.execute(sql_query, ('%' + choice + '%',))
+        filtered_recipe = ['None'] + [r[0] for r in cursor.fetchall()]
+        print(filtered_recipe)
+        for sub_list_frame in self.master.recipes_frame.recipe_frame_list:
+            for recipe_frame in sub_list_frame:
+                recipe_frame.recipe_picker.configure(values=filtered_recipe)
+
+    def fetch_ingredients(self):
+        """Fetch the ingredients from the database and return them as a list."""
+        cursor.execute('SELECT DISTINCT name FROM ingredients ORDER BY name')
+        ingredients = cursor.fetchall()
+        return [ing[0] for ing in ingredients] + ['']
+
 class App(customtkinter.CTk):
     """Main classe. Contains a grid of recipes, a text zone and some buttons."""
     def __init__(self):
@@ -185,10 +218,12 @@ class App(customtkinter.CTk):
         self.title("Shopping list")
         self.geometry("1600x1200")
         self.grid_columnconfigure((0, 1), weight=1)
+        self.filter_frame = FilterFrame(self)
+        self.filter_frame.grid(row=0, column=0)
         self.recipes_frame = RecipesFrame(self)
-        self.recipes_frame.grid(row=0, column=0, padx=10, pady=(10, 0), sticky="nsw")
+        self.recipes_frame.grid(row=1, column=0, padx=10, pady=(10, 0), sticky="nsw")
         self.ingredients_frame = IngredientsFrame(self)
-        self.ingredients_frame.grid(row=0, column=1, padx=10, pady=(10, 0), sticky="e")
+        self.ingredients_frame.grid(row=0, column=1, rowspan=2, padx=10, pady=(10, 0), sticky="e")
 
 
 if __name__ == '__main__':
