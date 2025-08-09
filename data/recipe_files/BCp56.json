@@ -4,7 +4,7 @@
   "ingredients_bill": [
     {
       "amount": 500,
-      "unit": "millilitre",
+      "unit": "ml",
       "jxt": "de",
       "ingredient": "ketchup"
     },
@@ -16,7 +16,7 @@
     },
     {
       "amount": 5,
-      "unit": "cuil. à soupe",
+      "unit": "càs",
       "jxt": "de",
       "ingredient": "sucre"
     },
@@ -34,61 +34,61 @@
     },
     {
       "amount": 3,
-      "unit": "cuil. à soupe",
+      "unit": "càs",
       "jxt": "de",
       "ingredient": "sauce de soja"
     },
     {
       "amount": 2,
-      "unit": "cuil. à soupe",
+      "unit": "càs",
       "jxt": "de",
       "ingredient": "confiture de pêche"
     },
     {
       "amount": 50,
-      "unit": "millilitre",
+      "unit": "ml",
       "jxt": "de",
       "ingredient": "cognac"
     },
     {
       "amount": 2,
-      "unit": "cuil. à soupe",
+      "unit": "càs",
       "jxt": "de",
       "ingredient": "sirop d'érable"
     },
     {
       "amount": 1,
-      "unit": "cuil. à café",
+      "unit": "càc",
       "jxt": "de",
       "ingredient": "tabasco"
     },
     {
       "amount": 2,
-      "unit": "cuil. à soupe",
+      "unit": "càs",
       "jxt": "de",
       "ingredient": "moutarde forte"
     },
     {
       "amount": 1,
-      "unit": "cuil. à café",
+      "unit": "càc",
       "jxt": "de",
       "ingredient": "sauce worcester"
     },
     {
       "amount": 1,
-      "unit": "cuil. à soupe",
+      "unit": "càs",
       "jxt": "de",
       "ingredient": "paprika doux"
     },
     {
       "amount": 1,
-      "unit": "cuil. à soupe",
+      "unit": "càs",
       "jxt": "de",
       "ingredient": "poudre de curry"
     },
     {
       "amount": 1,
-      "unit": "cuil. à soupe",
+      "unit": "càs",
       "jxt": "de",
       "ingredient": "gingembre en poudre"
     },
@@ -100,9 +100,9 @@
     },
     {
       "amount": 1,
-      "unit": "p",
-      "jxt": "",
-      "ingredient": "cuil. à soupe de thym séché"
+      "unit": "càs",
+      "jxt": "de",
+      "ingredient": "thym séché"
     }
   ]
 }

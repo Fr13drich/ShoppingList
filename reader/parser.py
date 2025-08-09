@@ -232,7 +232,14 @@ def strategy_name_only(d: str, _text_list, lemma_list, _pos_list, _book_ref: str
     name = d
     jxt = ''
     return (unit, jxt, name, lemma, None)
-
+def strategy_jus_dune_orange(d: str, text_list, lemma_list, _pos_list, book_ref: str):
+    """Le jus d'une orange -> 1 orange"""
+    other_recipe_ref = book_ref
+    lemma = lemma_list[-1]
+    unit = 'p'
+    jxt = ''
+    name = d[d.index(text_list[-1]):]
+    return (unit, jxt, name, lemma, other_recipe_ref)
 # def choose_strategy(s: str):
 #     """Return the right parsing function"""
 #     if s == "strategy01":

@@ -26,18 +26,18 @@ class ReaderInterface(ABC):
     reader_result = None
     left_page = True
 
-    @staticmethod
-    def spell_check(i: str) -> str:
-        """Spell check a string."""
-        spell = SpellChecker(language='fr')
-        doc = nlp(i)
-        spell.word_frequency.load_words(['dégermer', 'dénoyauter', 'cerneaux', 'pistoles'])
-        spell.word_frequency.load_words(config['DEFAULT'].get('UNIT_LIST', '').split(','))
-        for token in doc:
-            if spell.unknown([token.text]) and spell.unknown([token.lemma_]):
-                logger.warning('Unknown word: %s', token.text)
-                i = str(i).replace(token.text, spell.candidates(token.text).pop())
-        return i
+    # @staticmethod
+    # def spell_check(i: str) -> str:
+    #     """Spell check a string."""
+    #     spell = SpellChecker(language='fr')
+    #     doc = nlp(i)
+    #     spell.word_frequency.load_words(['dégermer', 'dénoyauter', 'cerneaux', 'pistoles'])
+    #     spell.word_frequency.load_words(config['DEFAULT'].get('UNIT_LIST', '').split(','))
+    #     for token in doc:
+    #         if spell.unknown([token.text]) and spell.unknown([token.lemma_]):
+    #             logger.warning('Unknown word: %s', token.text)
+    #             i = str(i).replace(token.text, spell.candidates(token.text).pop())
+    #     return i
 
     @classmethod
     def can_read(cls, _location, name) -> bool:
@@ -146,6 +146,7 @@ class BcReader(ReaderInterface):
                 break
         logger.info('title: %s', title)
         return title
+
     @staticmethod
     def get_the_best_from_both(ingredients_easyocr, ingredients_tesseract):
         """Combine the results from EasyOCR and Tesseract."""
@@ -162,8 +163,12 @@ class BcReader(ReaderInterface):
         ingredients_tesseract = ingredients_tesseract.replace('\n', ' ')
         print('ingredients_tesseract: ', ingredients_tesseract)
         gen = (word for word in ingredients_tesseract.split())
+        ingredient_tmp = ''
         for elt in ingredients_easyocr:
-            ingredient_tmp = ''
+            # if len(elt[1]) < 2:
+            #     ingredient_tmp = elt[1]
+            #     token_tesseract = next(gen)
+            #     continue
             for word in elt[1].split():
                 try:
                     token_tesseract = next(gen)
@@ -173,23 +178,15 @@ class BcReader(ReaderInterface):
                 if word == token_tesseract:
                     ingredient_tmp = ' '.join([ingredient_tmp, word])
                 elif (word, token_tesseract) in mapping:
-                    print('mapping: ', word, token_tesseract, 'to', mapping[(word, token_tesseract)])
                     ingredient_tmp = ' '.join([ingredient_tmp, mapping[(word, token_tesseract)]])
-                    # ingredients_result.append([elt[0],mapping[(word, token_tesseract)]])
                 else:
-                    ingredient_tmp = ' '.join([ingredient_tmp, word])
-            ingredients_result.append([elt[0], ingredient_tmp])
-
-        # for token_easyocr, token_tesseract in zip(ingredients_easyocr_str.split(), ingredients_tesseract.split()):
-        #     if token_easyocr == token_tesseract:
-        #         print('both agreed on: ', token_easyocr)
-        #         ' '.join([ingredients, token_easyocr])
-        #     elif (token_easyocr, token_tesseract) in mapping:
-        #         print('mapping: ', token_easyocr, token_tesseract, 'to', mapping[(token_easyocr, token_tesseract)])
-        #         ' '.join([ingredients, mapping[(token_easyocr, token_tesseract)]])
-        #     else:
-        #         ' '.join([ingredients, token_easyocr])
-        #         print('no agreement on: ', token_easyocr, token_tesseract)
+                    if "'" in token_tesseract:
+                        ingredient_tmp = ' '.join([ingredient_tmp, token_tesseract])
+                    else:
+                        ingredient_tmp = ' '.join([ingredient_tmp, word])
+            if len(elt[1]) > 2 and ingredient_tmp:
+                ingredients_result.append([elt[0], ingredient_tmp])
+                ingredient_tmp = ''
         return ingredients_result
     @classmethod
     def get_ingredients(cls, img):
@@ -207,15 +204,12 @@ class BcReader(ReaderInterface):
             ingredients_easyocr = reader.readtext(image=cls.ingredients_workfile, detail=1,
                                           text_threshold=0.5, paragraph=True,
                                           y_ths=.3, height_ths=5)
-            # print('easyocr: ', ingredients_easyocr)
-            ingredients_tesseract = pytesseract.image_to_string(img_ingredients, lang='fra', config='--psm 6')
-            # print('ingredients_tesseract: ', ingredients_tesseract)
-            # ingredients_tesseract = pytesseract.image_to_data(img_ingredients, lang='fra', config='--psm 6')
-            # print('ingredients_tesseract data: ', ingredients_tesseract)
-            # ingredients = list(map(itemgetter(1), ingredients))
+            ingredients_tesseract = pytesseract.image_to_string(
+                img_ingredients, lang='fra', config='--psm 6')
         except ValueError:
             print('No text found')
-        ingredients_easyocr = BcReader.get_the_best_from_both(ingredients_easyocr, ingredients_tesseract)
+        ingredients_easyocr = BcReader.get_the_best_from_both(
+            ingredients_easyocr, ingredients_tesseract)
         # remove annotations on the bottom
         # by checking the vertical distance between lines
         distance = ingredients_easyocr[1][0][0][1] - ingredients_easyocr[0][0][0][1]
@@ -326,39 +320,7 @@ class EbReader(ReaderInterface):
     def get_title(cls, img):
         pic = './tmp/img.jpg'
         title = reader.readtext(pic, detail=0, paragraph=True, low_text=.19, x_ths=10, y_ths=.1)[1]
-        # title = ""
-        # d = pytesseract.image_to_data(pic, lang='fra')
-        # lines = d.rsplit(sep='\n')[1:]
-        # for line in lines:
-        #     values = line.rsplit()
-        #     print(values)
-        #     if len(values) == 12 and float(values[10]) > 50.0: # confidence above 50%
-        #         if str(values[11]) == 'Préparation':
-        #             break
-        #         title += ' ' + str(values[11])
         title = title.strip().capitalize()
-        # s = pytesseract.image_to_string(pic, lang='fra')
-        # empty_line = s.find('\n\n')
-        # if empty_line > 0:
-        #     s = s[empty_line+2:]
-        #     empty_line = s.find('Préparation')
-        #     if empty_line > 0:
-        #         s = s[:empty_line]
-        #         title = str(s).replace('\n', ' ')\
-        #                       .replace('  ', ' ')\
-        #                       .capitalize()\
-        #                       .strip()
-        # print(f'title found by tesseract: {title}')
-        # if not title: # then try with easyocr results
-        #     pic = './tmp/title.jpg'
-        #     img = img.crop((cls.reader_result[1][0][0][0],\
-        #                     cls.reader_result[1][0][0][1],\
-        #                     cls.reader_result[1][0][2][0],\
-        #                     cls.reader_result[1][0][2][1]\
-        #                     ))
-        #     img.save(pic)
-        #     title = reader.readtext(image=pic, detail=0, low_text=.21, paragraph=True)
-        #     title = ' '.join(title).capitalize()
         logger.info('title: %s', title)
         return title
     @classmethod
@@ -370,7 +332,6 @@ class EbReader(ReaderInterface):
                 img = img.crop(crop_coordinates)
                 img.save(pic)
                 print('---- easy ocr ----')
-                eval
                 print(reader.readtext(image=pic, detail=0))
                 ingredients_stream = pytesseract.image_to_string(img, lang='fra')
                 # print('---- pytesseract ----')

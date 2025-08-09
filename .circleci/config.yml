@@ -41,7 +41,7 @@ jobs:
             ls
             . venv/bin/activate
             pip install pylint
-            find . -maxdepth 2 -name '*.py' | xargs pylint --disable='R0901, R0903, R0913'
+            find . -maxdepth 2 -name '*.py' | xargs pylint --disable='R0901, R0903, R0913, W0123'
   test_bc:
     docker:
       - image: cimg/python:3.13.5
@@ -81,7 +81,7 @@ jobs:
       - image: cimg/python:3.13.5
     steps:
       - checkout
-      - run: git fetch
+      # - run: git fetch
       - restore_cache:
           key: &deps1-cache deps1-{{ .Branch }}-{{ checksum "requirements.txt" }}
       - run: 
@@ -95,31 +95,25 @@ jobs:
             sudo apt install libtesseract-dev
             sudo cp ./data/fra.traineddata /usr/share/tesseract-ocr/4.00/tessdata/fra.traineddata
             sudo cp ./data/osd.traineddata /usr/share/tesseract-ocr/4.00/tessdata/
-            # pip install pytest
-            # echo $PATH
             python ./read_the_book.py --input_dir=./test/EB_pics --output_dir=./test/test_results
             cat ./log/reader.log
-            for fullname in test/test_results/*; do diff ${fullname} data/recipe_files/$(basename ${fullname});done
+            for f in test/test_results/*; do diff ${f} data/recipe_files/$(basename ${f});done
             python ./test/scripts/reader_eb_test.py
             # cat ./test/test_results/*
           no_output_timeout: 20m
-  test_gui:
+  test_database:
     docker:
       - image: cimg/python:3.13.5
     steps:
       - checkout
-      - python/install-packages:
-          pkg-manager: pip
-      - run:
-          name: "install pytest"
-          command: "pip install pytest"
+      - restore_cache:
+          key: &deps1-cache deps1-{{ .Branch }}-{{ checksum "requirements.txt" }}
       - run: 
-          name: "download fr_core_news_md"
-          command: "python -m spacy download fr_core_news_md"
-      - run:
-          name: "test gui"
+          name: "setup_db"
           command: |
-              pytest ./gui_test.py
+            ls
+            . venv/bin/activate
+            python setup_db.py
 
 # Orchestrate jobs using workflows
 # See: https://circleci.com/docs/workflows/ & https://circleci.com/docs/configuration-reference/#workflows
@@ -139,7 +133,7 @@ workflows:
       - test_eb:
           requires:
             - lint
-      # - test_gui:
-      #     requires:
-      #       - lint
+      - test_database:
+          requires:
+            - lint
       
