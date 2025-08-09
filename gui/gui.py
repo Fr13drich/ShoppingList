@@ -7,11 +7,6 @@ import tkinter
 import tkinter.filedialog
 import customtkinter
 
-
-# from ingredient import Ingredient
-# from recipe import Menu
-# from .load import load_all_recipe_files
-
 DB_FILE = 'recipes.db'
 
 # Create a connection to the SQLite database (or create it if it doesn't exist)
@@ -23,17 +18,16 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(filename=config['DEFAULT']['LOG_FILE'], level=logging.DEBUG, encoding='utf-8')
 print('Logfile: ' + config['DEFAULT']['LOG_FILE'])
 
-cursor.execute('SELECT ref, name FROM recipes')
-all_recipes = cursor.fetchall()
-print(all_recipes)
+# cursor.execute('SELECT ref, name FROM recipes')
+# all_recipes = cursor.fetchall()
+# print(all_recipes)
 # logger.info('Total number of ingredients: %s', len(Ingredient.knowkn_ingredients_list))
 
 class RecipeFrame(customtkinter.CTkFrame):
     """A grid of reipe combobox + ratio slider."""
     def __init__(self, master):
         super().__init__(master)
-        # values=[r.name for r in all_recipes]
-        values=[r[1] for r in all_recipes]
+        values=[r[1] for r in master.all_recipes]
         values.sort()
         self.recipe_picker = customtkinter.CTkComboBox(self, values=values,\
                         width=200, hover=True, command=self.combobox_callback)
@@ -63,8 +57,9 @@ class RecipesFrame(customtkinter.CTkFrame):
         self.master = master
         self.recipe_frame_list = []
         self.disable_button_list = []
-        values=[r[1] for r in all_recipes]
-        values.sort()
+        self.all_recipes = cursor.execute('SELECT ref, name FROM recipes').fetchall()
+        # values=[r[1] for r in all_recipes]
+        # values.sort()
         for j in range(RecipesFrame.nb_of_week):
             self.recipe_frame_list.append([])
             for i in range(RecipesFrame.nb_of_combo):
@@ -138,18 +133,15 @@ class RecipesFrame(customtkinter.CTkFrame):
         #clean menu table
         cursor.execute('DELETE FROM menu')
         conn.commit()
-        # menu = Menu('Hiver')
         for j in range(RecipesFrame.nb_of_week):
             if self.disable_button_list[j].get():
                 continue
             for i in range(RecipesFrame.nb_of_combo):
-                for recipe in all_recipes:
+                for recipe in self.all_recipes:
                     if recipe[1] == self.recipe_frame_list[j][i].recipe_picker.get()\
                         and recipe[1] != 'None':
                         self.insert_menu_item(
                             recipe[0], recipe[1], self.recipe_frame_list[j][i].ratio.get())
-                        # menu.add_recipe(recipe, self.recipe_frame_list[j][i].ratio.get())
-                        # print(recipe)
                         break
         shopping_list = self.sql_merge()
         print(shopping_list)
