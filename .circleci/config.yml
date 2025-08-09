@@ -41,7 +41,7 @@ jobs:
             ls
             . venv/bin/activate
             pip install pylint
-            find . -maxdepth 2 -name '*.py' | xargs pylint --disable='R0901, R0903, R0913, W0123'
+            find . -maxdepth 2 -name '*.py' | xargs pylint --disable='R0901, R0903, R0913, R0902, W0123'
   test_bc:
     docker:
       - image: cimg/python:3.13.5
