@@ -4,33 +4,33 @@
   "ingredients_bill": [
     {
       "amount": 700,
-      "unit": "gramme",
+      "unit": "g",
       "jxt": "de",
       "ingredient": "foies de poulet"
     },
     {
       "amount": 250,
-      "unit": "millilitre",
+      "unit": "ml",
       "jxt": "de",
       "ingredient": "porto"
     },
     {
       "amount": 250,
-      "unit": "millilitre",
+      "unit": "ml",
       "jxt": "de",
       "ingredient": "cognac"
     },
     {
       "amount": 600,
-      "unit": "gramme",
+      "unit": "g",
       "jxt": "de",
       "ingredient": "beurre"
     },
     {
       "amount": 250,
-      "unit": "gramme",
+      "unit": "g",
       "jxt": "de",
-      "ingredient": "fines tranches de lard"
+      "ingredient": "fines tranches lard"
     },
     {
       "amount": 3,
@@ -39,10 +39,34 @@
       "ingredient": "œufs"
     },
     {
-      "amount": 112,
+      "amount": 0.5,
+      "unit": "càc",
+      "jxt": "de",
+      "ingredient": "sel"
+    },
+    {
+      "amount": 1.5,
+      "unit": "càc",
+      "jxt": "de",
+      "ingredient": "poivre noir"
+    },
+    {
+      "amount": 1,
+      "unit": "pincée",
+      "jxt": "de",
+      "ingredient": "noix muscade"
+    },
+    {
+      "amount": 4,
       "unit": "p",
       "jxt": "",
-      "ingredient": "cuil. à café de sel v2 cuil. à café de poivre noir 1 pincée de noix muscade fraîchement râpée"
+      "ingredient": "baies de genièvre"
+    },
+    {
+      "amount": 1,
+      "unit": "brin",
+      "jxt": "de",
+      "ingredient": "thym frais"
     }
   ]
 }
