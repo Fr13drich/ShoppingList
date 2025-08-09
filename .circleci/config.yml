@@ -58,8 +58,12 @@ jobs:
           command: |
             ls
             . venv/bin/activate
-            # pip install pytest
-            # pytest ./test/scripts/reader_bc_test.py
+            sudo dpkg --configure -a
+            sudo apt-get update && sudo apt-get upgrade -y
+            sudo apt install tesseract-ocr
+            sudo apt install libtesseract-dev
+            sudo cp ./data/fra.traineddata /usr/share/tesseract-ocr/4.00/tessdata/fra.traineddata
+            sudo cp ./data/osd.traineddata /usr/share/tesseract-ocr/4.00/tessdata/
             python ./read_the_book.py --input_dir=./test/BC_pics --output_dir=./test/test_results
             for fullname in test/test_results/*; do diff ${fullname} data/recipe_files/$(basename ${fullname});done
             python ./test/scripts/reader_bc_test.py
