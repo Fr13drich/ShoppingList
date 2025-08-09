@@ -11,31 +11,30 @@ config.read('./config.cfg', encoding='utf-8')
 nlp = spacy.load("fr_core_news_md")
 logger = logging.getLogger(__name__)
 UNIT_LIST = config['DEFAULT'].get('UNIT_LIST', '').split(',')
-print('Unit list:', UNIT_LIST)
-# UNIT_LIST = ['millilitre', 'tour', 'tranche',  'l', 'pincée', 'brin',  'tige',
-#                  'bâton', 'bille', 'branche', 'botte', 'kilogramme', 'gramme', 'tête',
-#                  'trait', 'gousses', 'gousse', 'pincee', 'feuille', 'grain', 'morceau',
-#                  'c. à s.', 'càs', 'c.às', 'cuillère à soupe', 'cuillères à soupe',
-#                  'c. à c.', 'càc', 'cuillère à café', 'cuillères à café'
-#                  ]
-    # juxtaposant_list = ['de', 'd\'', 'à']
 
 def parse_ingredients(raw_list_of_ingredients: list):
-    """Return a dict(name, amount)"""
+    """Isolate the amounts from the rest and return a dict(name, amount)"""
     result = {}
     for item in raw_list_of_ingredients:
         split_item = str(item).split(maxsplit=1)
         print(split_item)
-        amount = str(split_item[0])
-        if amount.isnumeric():
-            amount = int(amount)
+        amount = str(split_item[0]).replace(',', '.')
+        try:
+            amount = eval(amount)
             name = str(split_item[1]).lower()
-        elif ',' in amount:
-            amount = float('.'.join(amount.split(sep=',')))
-            name = str(split_item[1]).lower()
-        else:
+        except (NameError, SyntaxError):
             amount = 1
             name = str(item).lower()
+        # if amount.isnumeric():
+
+        #     amount = int(amount)
+        #     name = str(split_item[1]).lower()
+        # elif ',' in amount:
+        #     amount = float('.'.join(amount.split(sep=',')))
+        #     name = str(split_item[1]).lower()
+        # else:
+        #     amount = 1
+        #     name = str(item).lower()
         result.update({name: amount})
     return result
 

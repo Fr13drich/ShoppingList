@@ -21,7 +21,7 @@ def build_tree():
                 cursor[token] = {}
             cursor = cursor[token]
         cursor['strategy'] = v
-        print(f'Adding {root} with strategy {v}')
+        print(f'Adding {k} with strategy {v}')
     with open(file=config['DEFAULT']['TREE'], mode='w', encoding='utf-8') as f:
         json.dump(root, f, indent=2)
 

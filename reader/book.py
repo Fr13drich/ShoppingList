@@ -146,12 +146,57 @@ class BcReader(ReaderInterface):
                 break
         logger.info('title: %s', title)
         return title
+    @staticmethod
+    def get_the_best_from_both(ingredients_easyocr, ingredients_tesseract):
+        """Combine the results from EasyOCR and Tesseract."""
+        ingredients_result = []
+        mapping = {
+            ('g', 'q'): 'g',
+            ('112', '1/2'): '0.5',
+            ('12', '2'): '1.5'
+        }
+        # format ingredients_easyocr
+        ingredients_easyocr_str = ' '.join([ing[1] for ing in ingredients_easyocr])
+        print('ingredients_easyocr: ', ingredients_easyocr_str)
+        # format ingredients_tesseract
+        ingredients_tesseract = ingredients_tesseract.replace('\n', ' ')
+        print('ingredients_tesseract: ', ingredients_tesseract)
+        gen = (word for word in ingredients_tesseract.split())
+        for elt in ingredients_easyocr:
+            ingredient_tmp = ''
+            for word in elt[1].split():
+                try:
+                    token_tesseract = next(gen)
+                except StopIteration:
+                    token_tesseract = ''
+                print('easy ocr: ', word, 'token_tesseract: ', token_tesseract)
+                if word == token_tesseract:
+                    ingredient_tmp = ' '.join([ingredient_tmp, word])
+                elif (word, token_tesseract) in mapping:
+                    print('mapping: ', word, token_tesseract, 'to', mapping[(word, token_tesseract)])
+                    ingredient_tmp = ' '.join([ingredient_tmp, mapping[(word, token_tesseract)]])
+                    # ingredients_result.append([elt[0],mapping[(word, token_tesseract)]])
+                else:
+                    ingredient_tmp = ' '.join([ingredient_tmp, word])
+            ingredients_result.append([elt[0], ingredient_tmp])
+
+        # for token_easyocr, token_tesseract in zip(ingredients_easyocr_str.split(), ingredients_tesseract.split()):
+        #     if token_easyocr == token_tesseract:
+        #         print('both agreed on: ', token_easyocr)
+        #         ' '.join([ingredients, token_easyocr])
+        #     elif (token_easyocr, token_tesseract) in mapping:
+        #         print('mapping: ', token_easyocr, token_tesseract, 'to', mapping[(token_easyocr, token_tesseract)])
+        #         ' '.join([ingredients, mapping[(token_easyocr, token_tesseract)]])
+        #     else:
+        #         ' '.join([ingredients, token_easyocr])
+        #         print('no agreement on: ', token_easyocr, token_tesseract)
+        return ingredients_result
     @classmethod
     def get_ingredients(cls, img):
         if cls.left_page:
-            ingredients_coordinates = 0, 0, img.width/3, img.height*.85
+            ingredients_coordinates = img.width/20, 0, img.width/3, img.height*.85
         else:
-            ingredients_coordinates = 2 * img.width/3, 0, img.width, img.height*.85
+            ingredients_coordinates = 2 * img.width/3, 0, img.width*.95, img.height*.85
         img_ingredients = img.crop(ingredients_coordinates)
         # enhancer = ImageEnhance.Contrast(img_ingredients)
         # img_ingredients = enhancer.enhance(1)
@@ -159,23 +204,29 @@ class BcReader(ReaderInterface):
         # cls.autocrop(cls.ingredients_workfile)
         # img = Image.open(self.ingredients_workfile)
         try:
-            ingredients = reader.readtext(image=cls.ingredients_workfile, detail=1,
+            ingredients_easyocr = reader.readtext(image=cls.ingredients_workfile, detail=1,
                                           text_threshold=0.5, paragraph=True,
                                           y_ths=.3, height_ths=5)
+            # print('easyocr: ', ingredients_easyocr)
+            ingredients_tesseract = pytesseract.image_to_string(img_ingredients, lang='fra', config='--psm 6')
+            # print('ingredients_tesseract: ', ingredients_tesseract)
+            # ingredients_tesseract = pytesseract.image_to_data(img_ingredients, lang='fra', config='--psm 6')
+            # print('ingredients_tesseract data: ', ingredients_tesseract)
             # ingredients = list(map(itemgetter(1), ingredients))
         except ValueError:
             print('No text found')
+        ingredients_easyocr = BcReader.get_the_best_from_both(ingredients_easyocr, ingredients_tesseract)
         # remove annotations on the bottom
         # by checking the vertical distance between lines
-        distance = ingredients[1][0][0][1] - ingredients[0][0][0][1]
+        distance = ingredients_easyocr[1][0][0][1] - ingredients_easyocr[0][0][0][1]
         print(f'distance: {distance}')
         # y = ingredients[0][0][0][1]
-        y = ingredients[0][0][2][1]
-        print(ingredients)
-        for i, ingredient in enumerate(ingredients):
+        y = ingredients_easyocr[0][0][2][1]
+        print(ingredients_easyocr)
+        for i, ingredient in enumerate(ingredients_easyocr):
             # if the distance is above the threshold it means it is a comment
             if ingredient[0][0][1] - y > 2 * distance:
-                tmp_results = list(map(itemgetter(1), ingredients[:i]))
+                tmp_results = list(map(itemgetter(1), ingredients_easyocr[:i]))
                 results = []
                 for item in tmp_results:
                     results += parser.parse_stream(item)
@@ -183,7 +234,7 @@ class BcReader(ReaderInterface):
             # y = ingredient[0][0][1]
             y = ingredient[0][2][1]
         # return ingredients
-        tmp_results =  list(map(itemgetter(1), ingredients))
+        tmp_results =  list(map(itemgetter(1), ingredients_easyocr))
         results = []
         for item in tmp_results:
             results += parser.parse_stream(item)
@@ -318,11 +369,12 @@ class EbReader(ReaderInterface):
                 crop_coordinates = (box[0][0][0], box[0][0][1], box[0][2][0], box[0][2][1])
                 img = img.crop(crop_coordinates)
                 img.save(pic)
-                # print('---- easy ocr ----')
-                # print(reader.readtext(image=pic, detail=0))
+                print('---- easy ocr ----')
+                eval
+                print(reader.readtext(image=pic, detail=0))
                 ingredients_stream = pytesseract.image_to_string(img, lang='fra')
                 # print('---- pytesseract ----')
-                logger.info(ingredients_stream)
+                logger.info('pytesseract ingredients_stream: %s', ingredients_stream)
                 # remove first line and put the rest in one line
                 ingredients_stream = ' '.join(ingredients_stream.split(sep='\n')[1:])
                 # ingredients_stream = ingredients_stream[ingredients_stream.find('\n')+2:]
@@ -333,7 +385,6 @@ class EbReader(ReaderInterface):
                 for sep in ingredient_sep_list:
                     ingredients_stream = ingredients_stream.replace(' ' + sep + ' ', '\n')
                 ingredients_stream = ingredients_stream.replace("’", "'")
-                logging.info('ingredients_stream: %s', ingredients_stream)
                 # remove parenthesis
                 s = ''
                 parenthesis = False
@@ -352,8 +403,8 @@ class EbReader(ReaderInterface):
         # ingredients_list = [i.strip() for i in ingredients_list]
         # parsed_ingredients_list = [parser.parse_stream(cls.spell_check(i))
         #                            for i in ingredients_list]
+        logging.info('ingredients_stream before calling parse_stream: %s', ingredients_stream)
         parsed_ingredients_list = [parser.parse_stream(i.strip())[0] for i in ingredients_list]
-        # return parsed_ingredients_list
         return parsed_ingredients_list
 
 
