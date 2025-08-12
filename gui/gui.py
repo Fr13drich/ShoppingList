@@ -32,6 +32,7 @@ class RecipeFrame(customtkinter.CTkFrame):
         self.recipe_picker = customtkinter.CTkComboBox(self, values=values,\
                         width=200, hover=True, command=self.combobox_callback)
         self.recipe_picker.set('None')
+        self.recipe_picker.bind()
         self.recipe_picker.grid(row=0, column=0, padx=10, pady=(10, 0))#, sticky="ew"
         self.ratio = customtkinter.CTkSlider(self, from_=0, to=1,\
                         number_of_steps=4, command=self.update_label)
@@ -45,8 +46,7 @@ class RecipeFrame(customtkinter.CTkFrame):
         self.ratio_label.configure(text=str(choice))
 
     def combobox_callback(self, choice=None):
-        """Can be used one day to replace the 'make shopping list button."""
-        # pass
+        self.master.generate_shopping_list()
 
 class RecipesFrame(customtkinter.CTkFrame):
     """A grid of recipes combobox"""
@@ -70,15 +70,66 @@ class RecipesFrame(customtkinter.CTkFrame):
             disable_button.deselect()
             disable_button.grid(row=RecipesFrame.nb_of_combo+1, column=j)
             self.disable_button_list.append(disable_button)
-        self.save_button = customtkinter.CTkButton(self, text='Save', command=self.save_menu)
+        self.save_button = customtkinter.CTkButton(self, text='Save', command=self.save_view)
         self.save_button.grid(row=RecipesFrame.nb_of_combo+2, column=0, padx=10, pady=(10, 0))
         self.load_button = customtkinter.CTkButton(self, text='Load', command=self.load_menu)
         self.load_button.grid(row=RecipesFrame.nb_of_combo+2, column=1, padx=10, pady=(10, 0))
         self.reset_button = customtkinter.CTkButton(self, text='Reset', command=self.reset_menu)
         self.reset_button.grid(row=RecipesFrame.nb_of_combo+2, column=2, padx=10, pady=(10, 0))
-        self.button = customtkinter.CTkButton(self, text="make shopping list",\
-                                              command=self.generate_shopping_list)
-        self.button.grid(row=RecipesFrame.nb_of_combo+2, column=3, padx=20, pady=20, columnspan=2)
+        self.view_picker = customtkinter.CTkComboBox(self, values=self.get_views(),
+                                                     width=200, hover=True,
+                                                     command=self.load_view)
+
+        self.view_picker.grid(row=RecipesFrame.nb_of_combo+2, column=3, padx=20, pady=20, columnspan=2)
+        # self.button = customtkinter.CTkButton(self, text="make shopping list",\
+        #                                       command=self.generate_shopping_list)
+
+    def get_views(self):
+        """Return the list of all views in the database."""
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='view'")
+        return [row[0] for row in cursor.fetchall()]
+
+    def save_view(self, view_name='test_view'):
+        """Save the current menu as a view in the database."""
+        view_name = self.view_picker.get()
+        
+        if not view_name:
+            return
+        menu_list = []
+        for j in range(RecipesFrame.nb_of_week):
+            for pos, a in enumerate(self.recipe_frame_list[j]):
+                menu_list.append({'name': a.recipe_picker.get(),
+                                'ratio': a.ratio.get(),
+                                'week': j,
+                                'pos': pos}
+                            )
+        create_view_stmt = "CREATE VIEW " + view_name \
+                            +  " (name, multiplier, week, pos) AS SELECT * FROM (VALUES"\
+                            + ', '.join(['(' +  ', '.join(['"' + r['name'] + '"', str(r['ratio']),
+                                                           str(r['week']), str(r['pos'])]) + ')'
+                                                        for r in menu_list])\
+                            + ')'
+        print(create_view_stmt)
+        cursor.execute('DROP VIEW IF EXISTS ' + view_name)
+        cursor.execute(create_view_stmt)
+        conn.commit()
+        # update the view list
+        self.view_picker.configure(values=self.get_views())
+
+    def load_view(self, view_name=None):
+        """Load a view from the database and populate the recipe frames."""
+        view_name = self.view_picker.get()
+        if not view_name:
+            return
+        cursor.execute('SELECT * FROM ' + view_name)
+        recipe_list = cursor.fetchall()
+        print(recipe_list)
+        for recipe in recipe_list:
+            self.recipe_frame_list[recipe[2]][recipe[3]]\
+                .recipe_picker.set(recipe[0])
+            self.recipe_frame_list[recipe[2]][recipe[3]]\
+                .ratio.set(recipe[1])
+        self.generate_shopping_list()
 
     def save_menu(self, filename=None):
         """Write a list of recipe along with their ratio on disk in json format."""
@@ -106,6 +157,8 @@ class RecipesFrame(customtkinter.CTkFrame):
                     self.recipe_frame_list[j][i].recipe_picker.set(text[j][i][0])
                     self.recipe_frame_list[j][i].ratio.set(text[j][i][1])
                     self.recipe_frame_list[j][i].update_label(text[j][i][1])
+        self.generate_shopping_list()
+        
 
     def reset_menu(self):
         """Set all entries to a dummy empty recipe named 'None'."""
@@ -211,6 +264,7 @@ class App(customtkinter.CTk):
     def __init__(self):
         super().__init__()
         self.title("Shopping list")
+        self.protocol("WM_DELETE_WINDOW", self.on_closing)
         self.geometry("1600x1200")
         self.grid_columnconfigure((0, 1), weight=1)
         self.filter_frame = FilterFrame(self)
@@ -219,6 +273,10 @@ class App(customtkinter.CTk):
         self.recipes_frame.grid(row=1, column=0, padx=10, pady=(10, 0), sticky="nsw")
         self.ingredients_frame = IngredientsFrame(self)
         self.ingredients_frame.grid(row=0, column=1, rowspan=2, padx=10, pady=(10, 0), sticky="e")
+    
+    def on_closing(self):
+        conn.close()
+        self.destroy()
 
 
 if __name__ == '__main__':
