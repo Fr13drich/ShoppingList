@@ -43,8 +43,8 @@ def create_tables():
                 ingredient_id INTEGER NOT NULL,
                 amount REAL DEFAULT NULL,
                 unit TEXT DEFAULT NULL,
-                FOREIGN KEY (recipe_id) REFERENCES recipes (id),
-                FOREIGN KEY (ingredient_id) REFERENCES ingredients (id)
+                FOREIGN KEY (recipe_id) REFERENCES recipes (id) ON DELETE CASCADE,
+                FOREIGN KEY (ingredient_id) REFERENCES ingredients (id) ON DELETE CASCADE
     )''')
     # Create a table for storing menus
     cursor.execute('''CREATE TABLE IF NOT EXISTS menu(

@@ -66,7 +66,7 @@ class RecipesFrame(customtkinter.CTkFrame):
                 recipe_frame = RecipeFrame(self)
                 recipe_frame.grid(row=i, column=j, padx=10, pady=(10, 0))
                 self.recipe_frame_list[j].append(recipe_frame)
-            disable_button = customtkinter.CTkCheckBox(self, text='Disable')
+            disable_button = customtkinter.CTkCheckBox(self, text='Disable', command=self.generate_shopping_list)
             disable_button.deselect()
             disable_button.grid(row=RecipesFrame.nb_of_combo+1, column=j)
             self.disable_button_list.append(disable_button)
@@ -99,16 +99,22 @@ class RecipesFrame(customtkinter.CTkFrame):
         for j in range(RecipesFrame.nb_of_week):
             for pos, a in enumerate(self.recipe_frame_list[j]):
                 menu_list.append({'name': a.recipe_picker.get(),
-                                'ratio': a.ratio.get(),
-                                'week': j,
-                                'pos': pos}
+                                'ratio': a.ratio.get()
+                                # ,'week': j,
+                                # 'pos': pos
+                                }
                             )
         create_view_stmt = "CREATE VIEW " + view_name \
-                            +  " (name, multiplier, week, pos) AS SELECT * FROM (VALUES"\
-                            + ', '.join(['(' +  ', '.join(['"' + r['name'] + '"', str(r['ratio']),
-                                                           str(r['week']), str(r['pos'])]) + ')'
+                            +  " (name, multiplier) AS SELECT * FROM (VALUES"\
+                            + ', '.join(['(' +  ', '.join(['"' + r['name'] + '"', str(r['ratio'])
+                                                           ]) + ')'
                                                         for r in menu_list])\
                             + ')'
+                            # +  " (name, multiplier, week, pos) AS SELECT * FROM (VALUES"\
+                            # + ', '.join(['(' +  ', '.join(['"' + r['name'] + '"', str(r['ratio']),
+                            #                                str(r['week']), str(r['pos'])]) + ')'
+                            #                             for r in menu_list])\
+                            
         print(create_view_stmt)
         cursor.execute('DROP VIEW IF EXISTS ' + view_name)
         cursor.execute(create_view_stmt)
@@ -123,12 +129,18 @@ class RecipesFrame(customtkinter.CTkFrame):
             return
         cursor.execute('SELECT * FROM ' + view_name)
         recipe_list = cursor.fetchall()
+        gen = (r for r in recipe_list)
         print(recipe_list)
-        for recipe in recipe_list:
-            self.recipe_frame_list[recipe[2]][recipe[3]]\
-                .recipe_picker.set(recipe[0])
-            self.recipe_frame_list[recipe[2]][recipe[3]]\
-                .ratio.set(recipe[1])
+        for i in range(self.nb_of_week):
+            for j in range(self.nb_of_combo):
+                recipe = next(gen)
+                self.recipe_frame_list[i][j].recipe_picker.set(recipe[0])
+                self.recipe_frame_list[i][j].ratio.set(recipe[1])
+        # for recipe in recipe_list:
+        #     self.recipe_frame_list[recipe[2]][recipe[3]]\
+        #         .recipe_picker.set(recipe[0])
+        #     self.recipe_frame_list[recipe[2]][recipe[3]]\
+        #         .ratio.set(recipe[1])
         self.generate_shopping_list()
 
     def save_menu(self, filename=None):
