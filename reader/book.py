@@ -180,7 +180,13 @@ class BcReader(ReaderInterface):
                 elif (word, token_tesseract) in mapping:
                     ingredient_tmp = ' '.join([ingredient_tmp, mapping[(word, token_tesseract)]])
                 else:
-                    if "'" in token_tesseract:
+                    nlp_tess = nlp(token_tesseract)
+                    nlp_easy = nlp(word)
+                    if not (True in [token.is_oov for token in nlp_tess]) and\
+                        True in [token.is_oov for token in nlp_easy]:
+                    # if easyocr missed a '
+                    # if token_tesseract.replace("'", "") == word:
+                    # if "'" in token_tesseract:
                         ingredient_tmp = ' '.join([ingredient_tmp, token_tesseract])
                     else:
                         ingredient_tmp = ' '.join([ingredient_tmp, word])
@@ -193,7 +199,7 @@ class BcReader(ReaderInterface):
         if cls.left_page:
             ingredients_coordinates = img.width*.06, 0, img.width/3, img.height*.85
         else:
-            ingredients_coordinates = 2 * img.width/3, 0, img.width*.94, img.height*.85
+            ingredients_coordinates = img.width*.68, 0, img.width*.97, img.height*.85
         img_ingredients = img.crop(ingredients_coordinates)
         # enhancer = ImageEnhance.Contrast(img_ingredients)
         # img_ingredients = enhancer.enhance(1)
