@@ -45,7 +45,8 @@ class RecipeFrame(customtkinter.CTkFrame):
         """When the ratio slider is modified the ratio label is updated as well."""
         self.ratio_label.configure(text=str(choice))
 
-    def combobox_callback(self, choice=None):
+    def combobox_callback(self):
+        """When the recipe combobox is modified, the shopping list is regenerated."""
         self.master.generate_shopping_list()
 
 class RecipesFrame(customtkinter.CTkFrame):
@@ -66,7 +67,8 @@ class RecipesFrame(customtkinter.CTkFrame):
                 recipe_frame = RecipeFrame(self)
                 recipe_frame.grid(row=i, column=j, padx=10, pady=(10, 0))
                 self.recipe_frame_list[j].append(recipe_frame)
-            disable_button = customtkinter.CTkCheckBox(self, text='Disable', command=self.generate_shopping_list)
+            disable_button = customtkinter.CTkCheckBox(self, text='Disable',
+                                                       command=self.generate_shopping_list)
             disable_button.deselect()
             disable_button.grid(row=RecipesFrame.nb_of_combo+1, column=j)
             self.disable_button_list.append(disable_button)
@@ -80,7 +82,8 @@ class RecipesFrame(customtkinter.CTkFrame):
                                                      width=200, hover=True,
                                                      command=self.load_view)
 
-        self.view_picker.grid(row=RecipesFrame.nb_of_combo+2, column=3, padx=20, pady=20, columnspan=2)
+        self.view_picker.grid(row=RecipesFrame.nb_of_combo+2, column=3, padx=20,
+                                                            pady=20, columnspan=2)
         # self.button = customtkinter.CTkButton(self, text="make shopping list",\
         #                                       command=self.generate_shopping_list)
 
@@ -92,16 +95,13 @@ class RecipesFrame(customtkinter.CTkFrame):
     def save_view(self, view_name='test_view'):
         """Save the current menu as a view in the database."""
         view_name = self.view_picker.get()
-        
         if not view_name:
             return
         menu_list = []
         for j in range(RecipesFrame.nb_of_week):
-            for pos, a in enumerate(self.recipe_frame_list[j]):
+            for a in self.recipe_frame_list[j]:
                 menu_list.append({'name': a.recipe_picker.get(),
                                 'ratio': a.ratio.get()
-                                # ,'week': j,
-                                # 'pos': pos
                                 }
                             )
         create_view_stmt = "CREATE VIEW " + view_name \
@@ -110,11 +110,6 @@ class RecipesFrame(customtkinter.CTkFrame):
                                                            ]) + ')'
                                                         for r in menu_list])\
                             + ')'
-                            # +  " (name, multiplier, week, pos) AS SELECT * FROM (VALUES"\
-                            # + ', '.join(['(' +  ', '.join(['"' + r['name'] + '"', str(r['ratio']),
-                            #                                str(r['week']), str(r['pos'])]) + ')'
-                            #                             for r in menu_list])\
-                            
         print(create_view_stmt)
         cursor.execute('DROP VIEW IF EXISTS ' + view_name)
         cursor.execute(create_view_stmt)
@@ -170,7 +165,6 @@ class RecipesFrame(customtkinter.CTkFrame):
                     self.recipe_frame_list[j][i].ratio.set(text[j][i][1])
                     self.recipe_frame_list[j][i].update_label(text[j][i][1])
         self.generate_shopping_list()
-        
 
     def reset_menu(self):
         """Set all entries to a dummy empty recipe named 'None'."""
@@ -285,8 +279,9 @@ class App(customtkinter.CTk):
         self.recipes_frame.grid(row=1, column=0, padx=10, pady=(10, 0), sticky="nsw")
         self.ingredients_frame = IngredientsFrame(self)
         self.ingredients_frame.grid(row=0, column=1, rowspan=2, padx=10, pady=(10, 0), sticky="e")
-    
+
     def on_closing(self):
+        """Close the application and the database connection."""
         conn.close()
         self.destroy()
 

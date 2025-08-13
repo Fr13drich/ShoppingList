@@ -191,9 +191,9 @@ class BcReader(ReaderInterface):
     @classmethod
     def get_ingredients(cls, img):
         if cls.left_page:
-            ingredients_coordinates = img.width/20, 0, img.width/3, img.height*.85
+            ingredients_coordinates = img.width*.06, 0, img.width/3, img.height*.85
         else:
-            ingredients_coordinates = 2 * img.width/3, 0, img.width*.95, img.height*.85
+            ingredients_coordinates = 2 * img.width/3, 0, img.width*.94, img.height*.85
         img_ingredients = img.crop(ingredients_coordinates)
         # enhancer = ImageEnhance.Contrast(img_ingredients)
         # img_ingredients = enhancer.enhance(1)
