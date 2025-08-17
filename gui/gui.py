@@ -35,17 +35,18 @@ class RecipeFrame(customtkinter.CTkFrame):
         self.recipe_picker.bind()
         self.recipe_picker.grid(row=0, column=0, padx=10, pady=(10, 0))#, sticky="ew"
         self.ratio = customtkinter.CTkSlider(self, from_=0, to=1,\
-                        number_of_steps=4, command=self.update_label)
+                        number_of_steps=4, command=self.update)
         self.ratio.set(1)
         self.ratio.grid(row=1, column=0, padx=10, pady=(10, 0))
         self.ratio_label = customtkinter.CTkLabel(self, text='1')
         self.ratio_label.grid(row=1, column=1)
 
-    def update_label(self, choice=None):
+    def update(self, choice=None):
         """When the ratio slider is modified the ratio label is updated as well."""
         self.ratio_label.configure(text=str(choice))
+        self.master.generate_shopping_list()
 
-    def combobox_callback(self):
+    def combobox_callback(self, _choice=None):
         """When the recipe combobox is modified, the shopping list is regenerated."""
         self.master.generate_shopping_list()
 
@@ -72,18 +73,17 @@ class RecipesFrame(customtkinter.CTkFrame):
             disable_button.deselect()
             disable_button.grid(row=RecipesFrame.nb_of_combo+1, column=j)
             self.disable_button_list.append(disable_button)
-        self.save_button = customtkinter.CTkButton(self, text='Save', command=self.save_view)
-        self.save_button.grid(row=RecipesFrame.nb_of_combo+2, column=0, padx=10, pady=(10, 0))
-        self.load_button = customtkinter.CTkButton(self, text='Load', command=self.load_menu)
-        self.load_button.grid(row=RecipesFrame.nb_of_combo+2, column=1, padx=10, pady=(10, 0))
-        self.reset_button = customtkinter.CTkButton(self, text='Reset', command=self.reset_menu)
-        self.reset_button.grid(row=RecipesFrame.nb_of_combo+2, column=2, padx=10, pady=(10, 0))
+        # self.load_button = customtkinter.CTkButton(self, text='Load', command=self.load_menu)
+        # self.load_button.grid(row=RecipesFrame.nb_of_combo+2, column=1, padx=10, pady=(10, 0))
         self.view_picker = customtkinter.CTkComboBox(self, values=self.get_views(),
                                                      width=200, hover=True,
                                                      command=self.load_view)
-
-        self.view_picker.grid(row=RecipesFrame.nb_of_combo+2, column=3, padx=20,
-                                                            pady=20, columnspan=2)
+        self.view_picker.grid(row=RecipesFrame.nb_of_combo+2, column=0, padx=20,
+                                                            pady=20)
+        self.save_button = customtkinter.CTkButton(self, text='Save', command=self.save_view)
+        self.save_button.grid(row=RecipesFrame.nb_of_combo+2, column=1, padx=10, pady=(10, 0))
+        self.reset_button = customtkinter.CTkButton(self, text='Clear', command=self.reset_menu)
+        self.reset_button.grid(row=RecipesFrame.nb_of_combo+2, column=2, padx=10, pady=(10, 0))
         # self.button = customtkinter.CTkButton(self, text="make shopping list",\
         #                                       command=self.generate_shopping_list)
 
@@ -94,8 +94,14 @@ class RecipesFrame(customtkinter.CTkFrame):
 
     def save_view(self, view_name='test_view'):
         """Save the current menu as a view in the database."""
+        dialog = None
+        dialog = customtkinter.CTkInputDialog()
+        if not dialog:
+            print('cancelled')
+            return
         view_name = self.view_picker.get()
         if not view_name:
+            print('No view name provided')
             return
         menu_list = []
         for j in range(RecipesFrame.nb_of_week):
@@ -209,9 +215,10 @@ class RecipesFrame(customtkinter.CTkFrame):
         # Display the shopping list in the text box
         for bill_item in shopping_list:
             self.master.ingredients_frame.merged_ingredients.insert("end",
-                str(bill_item[0]) + ' ' +
-                str(bill_item[1]) + ' ' +
-                str(bill_item[2]) + '\n')
+                ' '.join([str(item) if item else '' for item in bill_item]) + '\n')
+                # str(bill_item[0]) + ' ' +
+                # str(bill_item[1]) + ' ' +
+                # str(bill_item[2]) + '\n')
         # previous_ingredient_lemma = ''
         # for bill_item in total_ingredients_bill:
         #     if bill_item.ingredient.lemma != previous_ingredient_lemma:
@@ -236,7 +243,7 @@ class FilterFrame(customtkinter.CTkFrame):
         super().__init__(master)
         self.master = master
         self.ing_filter = customtkinter.CTkComboBox(self, values=self.fetch_ingredients(),\
-                                    width=200, hover=True, command=self.combobox_callback,)
+                                    width=200, hover=True, command=self.combobox_callback)
         self.ing_filter.set('')
         self.ing_filter.bind('<<ComboboxSelected>>',
                              lambda event: self.combobox_callback(self.ing_filter.get()))
