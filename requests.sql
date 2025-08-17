@@ -22,7 +22,7 @@ unit_conv AS (
 sum_amounts AS(
     SELECT ingredients.name,
 	  CASE
-	    WHEN unit_conv.unit IN ('kg', 'l') AND SUM(unit_conv.amount) >= 1000 THEN SUM(unit_conv.amount) / 1000
+	    WHEN unit_conv.unit IN ('g', 'ml') AND SUM(unit_conv.amount) >= 1000 THEN SUM(unit_conv.amount) / 1000
 		ELSE SUM(unit_conv.amount) 
 	  END AS total_amount,
       CASE
