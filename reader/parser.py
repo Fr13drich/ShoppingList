@@ -43,9 +43,12 @@ def parse_stream(ingredient_stream: str):
        Return a list of str
        '1 pincée de sel, 1 pincée de poivre' returns ['1 pincée de sel', '1 pincée de poivre']
     """
+    logger.info('raw ingredient stream before parsing: %s', ingredient_stream)
+    # handle the case where there is just one word
+    if ingredient_stream.strip().count(' ') == 0:
+        return [ingredient_stream.strip()]
     with open(file=config['DEFAULT']['TREE'], mode='r', encoding='utf-8', ) as strategy_dict:
         root = json.load(strategy_dict)
-    logger.info('raw ingredient stream befor parsing: %s', ingredient_stream)
     doc = nlp(ingredient_stream)
     ingredient_list = []
     cursor = root
@@ -88,7 +91,7 @@ def parse_stream(ingredient_stream: str):
         else:
             ingredient_list[-1] += ' ' + ingredient_stream[i:j].strip()
     print(ingredient_list)
-    logger.info('ingredient_list: %s', ingredient_list)
+    logger.info('parse_stream: strategy %s ingredient_list: %s', strategy,ingredient_list)
     return ingredient_list
 
 def get_strategy(ingredient_line: str):
@@ -131,6 +134,7 @@ def strategy01(d: str, text_list, lemma_list, pos_list, book_ref: str):
     return (unit, jxt, name, lemma, None)
 def strategy013(d: str, text_list, lemma_list, pos_list, book_ref: str):
     """shape is: amount unit jxt name"""
+    logger.info('strategy013 %s %s', text_list, pos_list)
     other_recipe_ref = None
     #check for a ref
     if pos_list[-5:] == ["PUNCT", "VERB", "NOUN", "NUM", "PUNCT"]:
@@ -141,6 +145,7 @@ def strategy013(d: str, text_list, lemma_list, pos_list, book_ref: str):
         d= d[0:d.index(text_list[pos_list.index("PUNCT")])] #remove all after punct
     #check for a unit
     if lemma_list[1] in UNIT_LIST or text_list[1] in UNIT_LIST:
+        logger.info('found a unit %s', lemma_list[1] if lemma_list[1] in UNIT_LIST else text_list[1])
         lemma = ' '.join(lemma_list[3:])
         unit = lemma_list[1] if lemma_list[1] in UNIT_LIST else text_list[1]
         jxt = str(text_list[2])

@@ -12,12 +12,16 @@ class InputFrame(customtkinter.CTkFrame):
     """Frame representing a single recipe."""
     def __init__(self, master=None, **kwargs):
         super().__init__(master, **kwargs)
+        self.recipe_name_label = customtkinter.CTkLabel(self, text="Recipe Name:")
         self.recipe_name = customtkinter.CTkEntry(self)
-        self.recipe_name.grid(row=0, column=0, padx=5, pady=5, sticky="ew")
+        self.recipe_ref_label = customtkinter.CTkLabel(self, text="Recipe Reference:")
         self.recipe_ref = customtkinter.CTkEntry(self)
-        self.recipe_ref.grid(row=1, column=0, padx=5, pady=5, sticky="ew")
         self.ingredients = customtkinter.CTkTextbox(self, height=400, width=200)
-        self.ingredients.grid(row=2, column=0, padx=5, pady=5, sticky="nsew")
+        self.recipe_name_label.grid(row=0, column=0, padx=5, pady=5, sticky="ew")
+        self.recipe_name.grid(row=0, column=1, padx=5, pady=5, sticky="ew")
+        self.recipe_ref_label.grid(row=1, column=0, padx=5, pady=5, sticky="ew")
+        self.recipe_ref.grid(row=1, column=1, padx=5, pady=5, sticky="ew")
+        self.ingredients.grid(row=2, column=0, padx=5, pady=5, columnspan=2, sticky="nsew")
 
 class OutputFrame(customtkinter.CTkFrame):
     """Frame displaying the parsed recipe."""
@@ -44,7 +48,7 @@ class App(customtkinter.CTk):
     """Main application class for the recipe editor."""
     def __init__(self):
         super().__init__()
-        self.title("Shopping list")
+        self.title("Recipe Editor")
         self.geometry("600x800")
         self.grid_columnconfigure((0, 1), weight=1)
         self.input_frame = InputFrame(self)

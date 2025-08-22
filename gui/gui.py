@@ -94,8 +94,8 @@ class RecipesFrame(customtkinter.CTkFrame):
 
     def save_view(self, view_name='test_view'):
         """Save the current menu as a view in the database."""
-        dialog = None
-        dialog = customtkinter.CTkInputDialog()
+        dialog = tkinter.messagebox.askokcancel(title='Save', message=None)
+        # dialog = customtkinter.CTkInputDialog()
         if not dialog:
             print('cancelled')
             return
@@ -120,6 +120,7 @@ class RecipesFrame(customtkinter.CTkFrame):
         cursor.execute('DROP VIEW IF EXISTS ' + view_name)
         cursor.execute(create_view_stmt)
         conn.commit()
+        tkinter.messagebox.showinfo("Success", f"View '{view_name}' saved successfully.")
         # update the view list
         self.view_picker.configure(values=self.get_views())
 

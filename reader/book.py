@@ -45,10 +45,10 @@ class ReaderInterface(ABC):
         ext = name.split('.')[-1]
         return ext in cls.allowed_extensions #location in cls.allowed_books and
     @staticmethod
-    def autocrop(jpg):
+    def autocrop(jpg, min_size=50):
         """Crop where there is no text."""
         results = reader.readtext(image=jpg, detail=1, paragraph=True, x_ths=2000, y_ths=.2,\
-                                  text_threshold=.1, height_ths=1000, min_size=50)
+                                  text_threshold=.1, height_ths=1000, min_size=min_size)
         # logger.info('before crop results of %s : %s', jpg, results)
         max_box = [10000, 10000, 0, 0]
         for box_coordinates in results:
@@ -64,15 +64,15 @@ class ReaderInterface(ABC):
         # logger.info('after crop results of %s : %s', jpg, results)
 
     @classmethod
-    def image_preprocessing(cls, pic):
+    def image_preprocessing(cls, pic, min_size=50):
         """"grayscaled and cropped pic"""
         img = Image.open(pic)
         img = ImageOps.exif_transpose(img)
         img = ImageOps.grayscale(img)
         img.save("tmp/img.jpg")
-        cls.autocrop("tmp/img.jpg")
+        cls.autocrop("tmp/img.jpg", min_size)
         return "tmp/img.jpg"
-    # parse_ingredients method moved to parser.py
+
     @classmethod
     @abstractmethod
     def read(cls, location, name):
@@ -101,7 +101,7 @@ class BcReader(ReaderInterface):
         self.left_page = True
     @classmethod
     def read(cls, location: str, name: str):
-        """Ingest the file."""
+        """Ingest the picture."""
         if not cls.can_read(location, name):
             raise ValueError('Cannot parse exception.')
         pic = cls.image_preprocessing(os.path.join(location, name))
@@ -161,6 +161,7 @@ class BcReader(ReaderInterface):
         print('ingredients_easyocr: ', ingredients_easyocr_str)
         # format ingredients_tesseract
         ingredients_tesseract = ingredients_tesseract.replace('\n', ' ')
+        ingredients_tesseract = ingredients_tesseract.replace('| ', '')
         print('ingredients_tesseract: ', ingredients_tesseract)
         gen = (word for word in ingredients_tesseract.split())
         ingredient_tmp = ''
@@ -212,6 +213,7 @@ class BcReader(ReaderInterface):
                                           y_ths=.3, height_ths=5)
             ingredients_tesseract = pytesseract.image_to_string(
                 img_ingredients, lang='fra', config='--psm 6')
+            # pytesseract.image_to_boxes
         except ValueError:
             print('No text found')
         ingredients_easyocr = BcReader.get_the_best_from_both(
@@ -340,7 +342,6 @@ class EbReader(ReaderInterface):
                 print('---- easy ocr ----')
                 print(reader.readtext(image=pic, detail=0))
                 ingredients_stream = pytesseract.image_to_string(img, lang='fra')
-                # print('---- pytesseract ----')
                 logger.info('pytesseract ingredients_stream: %s', ingredients_stream)
                 # remove first line and put the rest in one line
                 ingredients_stream = ' '.join(ingredients_stream.split(sep='\n')[1:])
@@ -374,6 +375,61 @@ class EbReader(ReaderInterface):
         parsed_ingredients_list = [parser.parse_stream(i.strip())[0] for i in ingredients_list]
         return parsed_ingredients_list
 
+class FmReader(ReaderInterface):
+    """Read pictures from '100% fait maison'."""
+    def __init__(self, location: str, name: str) -> None:
+        """Construct."""
+        super().__init__()
+        self.location = location
+        self.name = name
+        self.left_page = True
+    @classmethod
+    def read(cls, location: str, name: str):
+        """Ingest the picture."""
+        if not cls.can_read(location, name):
+            raise ValueError('Cannot parse exception.')
+        pic = cls.image_preprocessing(os.path.join(location, name))
+        img = Image.open(pic)
+        title = cls.get_title(img)
+        print(title)
+        ref = 'FM_' + title
+        print(ref)
+        ingredients = cls.get_ingredients(img)
+        print(ingredients)
+        return ref, title, parser.parse_ingredients(ingredients)
+    @classmethod
+    def get_title(cls, img):
+        easy = reader.readtext(image="tmp/img.jpg", detail=1)
+        return easy[1][1] if cls.left_page else easy[0][1]
+    @classmethod
+    def get_ref(cls, img=None):
+        tess = pytesseract.image_to_string('tmp/img.jpg', lang='fra', config='--psm 6')
+
+        return 'FMp' + tess.split('\n')[-2].replace('|','').strip()
+    @classmethod
+    def get_ingredients(cls, img):
+        tess = pytesseract.image_to_string("tmp/img.jpg", lang='fra')
+        begin_ingredient = min(tess.find('\nO'), tess.find('\n0'), tess.find('\no'), tess.find('\n©'))
+        tess = tess[begin_ingredient:]
+        ingredient_list = []
+        ingredient = None
+        empty_line = False
+        while True:
+            elt, tess = tess.split('\n', maxsplit=1)
+            if not elt:
+                empty_line = True
+                continue
+            elt = elt.strip()
+            if elt[0] in 'Oo0©':
+                if ingredient:
+                    ingredient_list.append(ingredient)
+                ingredient = elt[1:].strip() #TODO clean the string solve '2càcde'
+            elif not empty_line:
+                ingredient += ' ' + elt.strip()
+            else:
+                break
+            empty_line = False
+        return ingredient_list
 
 class Reader(ReaderInterface):
     """pick the right reader as per file location"""
@@ -394,6 +450,8 @@ class Reader(ReaderInterface):
             book_reader = BcReader
         elif 'EB' in location: #== config['DEFAULT']['EB_PICS']:
             book_reader = EbReader
+        elif 'FM' in location: #== config['DEFAULT']['EB_PICS']:
+            book_reader = FmReader
         else:
             raise ValueError('Unsupported book: ' + location)
         return book_reader.read(location=location, name=name)
