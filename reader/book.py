@@ -339,9 +339,9 @@ class EbReader(ReaderInterface):
                 crop_coordinates = (box[0][0][0], box[0][0][1], box[0][2][0], box[0][2][1])
                 img = img.crop(crop_coordinates)
                 img.save(pic)
-                print('---- easy ocr ----')
-                print(reader.readtext(image=pic, detail=0))
-                ingredients_stream = pytesseract.image_to_string(img, lang='fra')
+                # print('---- easy ocr ----')
+                # print(reader.readtext(image=pic, detail=0))
+                ingredients_stream = pytesseract.image_to_string(img, lang='fra', config='--psm 6')
                 logger.info('pytesseract ingredients_stream: %s', ingredients_stream)
                 # remove first line and put the rest in one line
                 ingredients_stream = ' '.join(ingredients_stream.split(sep='\n')[1:])
@@ -408,8 +408,12 @@ class FmReader(ReaderInterface):
         return 'FMp' + tess.split('\n')[-2].replace('|','').strip()
     @classmethod
     def get_ingredients(cls, img):
-        tess = pytesseract.image_to_string("tmp/img.jpg", lang='fra')
-        begin_ingredient = min(tess.find('\nO'), tess.find('\n0'), tess.find('\no'), tess.find('\n©'))
+        tess = pytesseract.image_to_string("tmp/img.jpg", lang='fra', config='--psm 6')
+        begin_ingredient = min(tess.find('\nO'),
+                               tess.find('\n0'),
+                               tess.find('\no'),
+                               tess.find('\n©')
+                               )
         tess = tess[begin_ingredient:]
         ingredient_list = []
         ingredient = None
@@ -423,7 +427,7 @@ class FmReader(ReaderInterface):
             if elt[0] in 'Oo0©':
                 if ingredient:
                     ingredient_list.append(ingredient)
-                ingredient = elt[1:].strip() #TODO clean the string solve '2càcde'
+                ingredient = elt[1:].strip()
             elif not empty_line:
                 ingredient += ' ' + elt.strip()
             else:

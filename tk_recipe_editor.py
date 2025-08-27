@@ -38,7 +38,8 @@ class ButtonFrame(customtkinter.CTkFrame):
         self.save_button = customtkinter.CTkButton(self, text="Save Recipe",
                                                    command=self.master.save_recipe)
         self.save_button.grid(row=0, column=0, padx=5, pady=5)
-        self.load_button = customtkinter.CTkButton(self, text="Load Recipe")
+        self.load_button = customtkinter.CTkButton(self, text="Load Recipe",
+                                                   command=self.master.load_recipe)
         self.load_button.grid(row=0, column=1, padx=5, pady=5)
         self.parse_button = customtkinter.CTkButton(self, text="Parse Recipe",
                                                     command=self.master.create_recipe)
@@ -49,14 +50,14 @@ class App(customtkinter.CTk):
     def __init__(self):
         super().__init__()
         self.title("Recipe Editor")
-        self.geometry("600x800")
+        self.geometry("600x600")
         self.grid_columnconfigure((0, 1), weight=1)
         self.input_frame = InputFrame(self)
         self.input_frame.grid(row=0, column=0, sticky="nsew")
         self.output_frame = OutputFrame(self)
         self.output_frame.grid(row=0, column=1, sticky="nsew")
         self.button_frame = ButtonFrame(self)
-        self.button_frame.grid(row=1, column=0, columnspan=2, sticky="ew")
+        self.button_frame.grid(row=1, column=0, columnspan=2, sticky="sew")
 
     def create_recipe(self):
         """Create a recipe from the input fields."""
@@ -89,6 +90,21 @@ class App(customtkinter.CTk):
         #     return
         recipe.write_recipe_file()
         tkinter.messagebox.showinfo("Success", f"Recipe '{recipe_name}' saved successfully.")
+
+    def load_recipe(self):
+        """Load the recipe from a file."""
+        filename = tkinter.filedialog.askopenfilename(defaultextension=".json")
+        if not filename:  # askopenfilename return `None` if dialog closed with "cancel".
+            return
+        recipe = Recipe.load_recipe_file(filename)
+        if recipe:
+            self.input_frame.recipe_name.delete(0, "end")
+            self.input_frame.recipe_name.insert(0, recipe.name)
+            self.input_frame.recipe_ref.delete(0, "end")
+            self.input_frame.recipe_ref.insert(0, recipe.ref)
+            self.input_frame.ingredients.delete("1.0", "end")
+            self.input_frame.ingredients.insert("1.0", "\n".join(repr(i) for i in recipe.ingredients_bill))
+            tkinter.messagebox.showinfo("Success", f"Recipe '{recipe.name}' loaded successfully.")
 
 if __name__ == '__main__':
     app = App()

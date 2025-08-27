@@ -57,6 +57,9 @@
                 }
               }
             },
+            "DET": {
+              "strategy": "strategy013"
+            },
             "PROPN": {
               "strategy": "strategy013"
             },
@@ -304,7 +307,14 @@
         "ADJ": {
           "strategy": "strategy013"
         },
-        "strategy": "strategy_name_only"
+        "strategy": "strategy_name_only",
+        "ADP": {
+          "NUM": {
+            "NOUN": {
+              "strategy": "strategy_name_only"
+            }
+          }
+        }
       },
       "PROPN": {
         "ADP": {
@@ -330,6 +340,14 @@
   "DET": {
     "NOUN": {
       "ADP": {
+        "ADJ": {
+          "NOUN": {
+            "strategy": "strategy013"
+          }
+        },
+        "NOUN": {
+          "strategy": "strategy013"
+        },
         "NUM": {
           "NOUN": {
             "strategy": "strategy34"

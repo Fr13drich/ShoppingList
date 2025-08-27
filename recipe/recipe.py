@@ -70,6 +70,9 @@ class IngredientEntry:
         }
         return unit_mapping.get(unit, unit)
 
+    def __repr__(self):
+        return f"{self.amount} {self.unit} {self.jxt} {self.ingredient.name}"
+
     def __str__(self):
         """Return a human-readable string representation of the ingredient entry."""
         return f"{self.ingredient.name}: {self.amount} {self.unit}"
@@ -143,6 +146,45 @@ class Recipe():
         with open(os.path.join(location, filename), 'w', encoding='utf-8') as outfile:
             json.dump(self.serialize(), outfile, indent=2, ensure_ascii=False)
         logger.info('%s written', filename)
+
+    @staticmethod
+    def load_recipe_file(filename):
+        """Load a recipe from a JSON file.
+
+        Args:
+            filename (str): Path to the recipe file.
+
+        Returns:
+            Recipe: Loaded Recipe object, or None if loading fails.
+        """
+        try:
+            with open(filename, 'r', encoding='utf-8') as infile:
+                data = json.load(infile)
+            ingredients_bill = []
+            for ingredient_entry in data['ingredients_bill']:
+                ingredient = Ingredient.get(ingredient_entry['ingredient'])
+                if not ingredient:
+                    ingredient = Ingredient.add(
+                        name=ingredient_entry['ingredient'],
+                        lemma=' '.join([token.lemma_ for token in nlp(ingredient_entry['ingredient'])]),
+                        recipe_refs=set([data['ref']])
+                    )
+                ingredients_bill.append(
+                    IngredientEntry(
+                        amount=ingredient_entry['amount'],
+                        unit=ingredient_entry['unit'],
+                        jxt=ingredient_entry['jxt'],
+                        ingredient=ingredient
+                    )
+                )
+            return Recipe(
+                ref=data['ref'],
+                name=data['name'],
+                ingredients_bill=ingredients_bill
+            )
+        except Exception as e:
+            logger.error('Failed to load recipe from %s: %s', filename, e)
+            return None
 
     def __str__(self):
         """Return a human-readable string representation of the recipe."""

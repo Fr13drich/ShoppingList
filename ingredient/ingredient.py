@@ -46,6 +46,13 @@ class Ingredient:
                    + ' recipe_refs: '  + str(self.recipe_refs)
                    + ' lemma: '  + str(self.lemma)
                   )
+    @classmethod
+    def get(cls, name: str):
+        """Get an ingredient by name."""
+        for ingredient in cls.knowkn_ingredients_list:
+            if name in ingredient.synonymes:
+                return ingredient
+        return None
 
     @classmethod
     def add(cls, *, name: str, lemma: str, recipe_refs: set,\

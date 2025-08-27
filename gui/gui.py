@@ -36,9 +36,9 @@ class RecipeFrame(customtkinter.CTkFrame):
         self.recipe_picker.grid(row=0, column=0, padx=10, pady=(10, 0))#, sticky="ew"
         self.ratio = customtkinter.CTkSlider(self, from_=0, to=1,\
                         number_of_steps=4, command=self.update)
-        self.ratio.set(1)
+        self.ratio.set(1.0)
         self.ratio.grid(row=1, column=0, padx=10, pady=(10, 0))
-        self.ratio_label = customtkinter.CTkLabel(self, text='1')
+        self.ratio_label = customtkinter.CTkLabel(self, text='1.0')
         self.ratio_label.grid(row=1, column=1)
 
     def update(self, choice=None):
@@ -94,7 +94,7 @@ class RecipesFrame(customtkinter.CTkFrame):
 
     def save_view(self, view_name='test_view'):
         """Save the current menu as a view in the database."""
-        dialog = tkinter.messagebox.askokcancel(title='Save', message=None)
+        dialog = tkinter.messagebox.askokcancel(title='Save', message="Are you sure?")
         # dialog = customtkinter.CTkInputDialog()
         if not dialog:
             print('cancelled')
