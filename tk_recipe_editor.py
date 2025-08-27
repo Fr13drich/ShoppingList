@@ -103,7 +103,8 @@ class App(customtkinter.CTk):
             self.input_frame.recipe_ref.delete(0, "end")
             self.input_frame.recipe_ref.insert(0, recipe.ref)
             self.input_frame.ingredients.delete("1.0", "end")
-            self.input_frame.ingredients.insert("1.0", "\n".join(repr(i) for i in recipe.ingredients_bill))
+            self.input_frame.ingredients.insert("1.0", "\n".join(repr(i)
+                                                for i in recipe.ingredients_bill))
             tkinter.messagebox.showinfo("Success", f"Recipe '{recipe.name}' loaded successfully.")
 
 if __name__ == '__main__':

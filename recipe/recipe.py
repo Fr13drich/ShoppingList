@@ -166,8 +166,9 @@ class Recipe():
                 if not ingredient:
                     ingredient = Ingredient.add(
                         name=ingredient_entry['ingredient'],
-                        lemma=' '.join([token.lemma_ for token in nlp(ingredient_entry['ingredient'])]),
-                        recipe_refs=set([data['ref']])
+                        lemma=' '.join([token.lemma_ for token in
+                                        nlp(ingredient_entry['ingredient'])]),
+                                        recipe_refs=set([data['ref']])
                     )
                 ingredients_bill.append(
                     IngredientEntry(
@@ -182,7 +183,7 @@ class Recipe():
                 name=data['name'],
                 ingredients_bill=ingredients_bill
             )
-        except Exception as e:
+        except (FileNotFoundError, json.JSONDecodeError, KeyError) as e:
             logger.error('Failed to load recipe from %s: %s', filename, e)
             return None
 

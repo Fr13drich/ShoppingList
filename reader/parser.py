@@ -145,7 +145,7 @@ def strategy013(d: str, text_list, lemma_list, pos_list, book_ref: str):
         d= d[0:d.index(text_list[pos_list.index("PUNCT")])] #remove all after punct
     #check for a unit
     if lemma_list[1] in UNIT_LIST or text_list[1] in UNIT_LIST:
-        logger.info('found a unit %s', lemma_list[1] 
+        logger.info('found a unit %s', lemma_list[1]
                     if lemma_list[1] in UNIT_LIST else text_list[1])
         lemma = ' '.join(lemma_list[3:])
         unit = lemma_list[1] if lemma_list[1] in UNIT_LIST else text_list[1]
