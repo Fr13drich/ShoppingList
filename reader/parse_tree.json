@@ -247,6 +247,11 @@
             "NOUN": {
               "strategy": "strategy01"
             }
+          },
+          "NOUN": {
+            "ADJ": {
+              "strategy": "strategy0245"
+            }
           }
         },
         "CCONJ": {

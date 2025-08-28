@@ -10,6 +10,7 @@
     "NUM ADJ NOUN CCONJ NOUN ADP PROPN ADJ": "strategy01",
     "NUM NOUN ADP NOUN": "strategy013",
     "DET NOUN ADP ADJ NOUN": "strategy013",
+    "DET NOUN ADP NOUN": "strategy013",
     "NUM NOUN ADP NOUN NOUN": "strategy013",
     "NUM NOUN ADP PROPN ADP NOUN": "strategy013",
     "NUM NOUN ADP NOUN ADP NUM NOUN PRON": "strategy01",
@@ -66,5 +67,7 @@
     "NOUN ADP X": "strategy_name_only",
     "NOUN ADP NOUN": "strategy_name_only",
     "NOUN CCONJ ADV ADP NOUN": "strategy_name_only",
-    "PROPN": "strategy_name_only"
+    "NOUN ADP NOUN ADP NUM NOUN": "strategy_name_only",
+    "PROPN": "strategy_name_only",
+    "NUM ADJ NOUN ADP NOUN ADJ": "strategy0245"
 }

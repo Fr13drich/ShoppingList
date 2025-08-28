@@ -7,7 +7,7 @@ from abc import ABC, abstractmethod
 import spacy
 import pytesseract
 # from spellchecker import SpellChecker
-from PIL import Image, ImageOps
+from PIL import Image, ImageOps, ImageEnhance
 import easyocr
 from reader import parser
 config = configparser.ConfigParser()
@@ -59,8 +59,8 @@ class ReaderInterface(ABC):
         img = Image.open(jpg)
         img = img.crop(tuple(max_box))
         img.save(jpg)
-        results = reader.readtext(image=jpg, detail=1, paragraph=True, x_ths=2000, y_ths=.2,\
-                                  text_threshold=.1, height_ths=1000, min_size=50)
+        # results = reader.readtext(image=jpg, detail=1, paragraph=True, x_ths=2000, y_ths=.2,\
+        #                           text_threshold=.1, height_ths=1000, min_size=50)
         # logger.info('after crop results of %s : %s', jpg, results)
 
     @classmethod
@@ -68,7 +68,8 @@ class ReaderInterface(ABC):
         """"grayscaled and cropped pic"""
         img = Image.open(pic)
         img = ImageOps.exif_transpose(img)
-        img = ImageOps.grayscale(img)
+        # img = ImageOps.grayscale(img)
+        img = ImageOps.autocontrast(img)
         img.save("tmp/img.jpg")
         cls.autocrop("tmp/img.jpg", min_size)
         return "tmp/img.jpg"
@@ -154,7 +155,8 @@ class BcReader(ReaderInterface):
         mapping = {
             ('g', 'q'): 'g',
             ('112', '1/2'): '0.5',
-            ('12', '2'): '1.5'
+            ('12', '2'): '1.5',
+            ('11/2', '112'): '1.5'
         }
         # format ingredients_easyocr
         ingredients_easyocr_str = ' '.join([ing[1] for ing in ingredients_easyocr])
@@ -202,8 +204,8 @@ class BcReader(ReaderInterface):
         else:
             ingredients_coordinates = img.width*.68, 0, img.width*.97, img.height*.85
         img_ingredients = img.crop(ingredients_coordinates)
-        # enhancer = ImageEnhance.Contrast(img_ingredients)
-        # img_ingredients = enhancer.enhance(1)
+        enhancer = ImageEnhance.Contrast(img_ingredients)
+        img_ingredients = enhancer.enhance(2)
         img_ingredients.save(cls.ingredients_workfile)
         # cls.autocrop(cls.ingredients_workfile)
         # img = Image.open(self.ingredients_workfile)
@@ -336,11 +338,12 @@ class EbReader(ReaderInterface):
         pic = './tmp/ingredients.jpg'
         for box in cls.reader_result[3:-1]:
             if 'Ingrédients' in box[1] and box[1].index('Ingrédients') == 0:
-                crop_coordinates = (box[0][0][0], box[0][0][1], box[0][2][0], box[0][2][1])
+                crop_coordinates = (box[0][0][0] - 100 , box[0][0][1] - 100, box[0][2][0] + 100, box[0][2][1] + 100)
                 img = img.crop(crop_coordinates)
+                img = img.resize((img.width * 2, img.height * 2))
                 img.save(pic)
-                # print('---- easy ocr ----')
-                # print(reader.readtext(image=pic, detail=0))
+                print('---- easy ocr ----')
+                print(reader.readtext(image=pic, detail=0))
                 ingredients_stream = pytesseract.image_to_string(img, lang='fra', config='--psm 6')
                 logger.info('pytesseract ingredients_stream: %s', ingredients_stream)
                 # remove first line and put the rest in one line

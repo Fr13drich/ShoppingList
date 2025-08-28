@@ -185,18 +185,14 @@ def strategy0156(d: str, text_list, lemma_list, pos_list, book_ref: str):
     jxt = str(text_list[5])
     name = d[d.index(text_list[6]):]
     return (unit, jxt, name, lemma, other_recipe_ref)
-def strategy04(d: str, text_list, lemma_list, pos_list, book_ref: str):
-    """Ingredient name in position 4. No unit nor jxt."""
+def strategy0245(d: str, text_list, lemma_list, pos_list, book_ref: str):
+    """Ingredient name in position 4. Unit in position 2."""
     other_recipe_ref = None
-    #check for a reference to another recipe
-    if pos_list[-5:] == ["PUNCT", "VERB", "NOUN", "NUM", "PUNCT"]:
-        other_recipe_ref = book_ref + 'p' + str(text_list[-2])
-        lemma_list = lemma_list[:-5]
-        d = d[0:d.index(' (')] if d.find('(') else d
     lemma = ' '.join(lemma_list[4:])
-    unit = 'p'
+    unit = text_list[2]
+    jxt = text_list[3]
     name = d[d.index(text_list[4]):]
-    return (unit, '', name, lemma, other_recipe_ref)
+    return (unit, jxt, name, lemma, other_recipe_ref)
 def strategy34(d: str, text_list, lemma_list, pos_list, book_ref=None):
     """Le jus de 1 citron -> 1 citron"""
     print(pos_list)
